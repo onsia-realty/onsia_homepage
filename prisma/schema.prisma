@@ -1,0 +1,366 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+// 사용자 및 관리자
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  name      String?
+  role      UserRole @default(USER)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // 작성한 게시글
+  posts Post[]
+
+  // 등록한 매물
+  properties Property[]
+
+  // 매물 문의
+  inquiries PropertyInquiry[]
+
+  // NextAuth.js 관련 필드
+  accounts Account[]
+  sessions Session[]
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+// 게시글 (뉴스, 부동산 정보)
+model Post {
+  id          String      @id @default(cuid())
+  title       String
+  slug        String      @unique
+  content     String
+  excerpt     String?
+  category    PostCategory
+  status      PostStatus  @default(DRAFT)
+  featuredImage String?
+  
+  // SEO 관련
+  seoTitle       String?
+  seoDescription String?
+  
+  // 메타데이터
+  publishedAt DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  
+  // 관계
+  authorId String
+  author   User   @relation(fields: [authorId], references: [id])
+  
+  // 태그
+  tags PostTag[]
+}
+
+// 태그
+model Tag {
+  id    String @id @default(cuid())
+  name  String @unique
+  color String?
+  
+  posts PostTag[]
+}
+
+model PostTag {
+  postId String
+  tagId  String
+  
+  post Post @relation(fields: [postId], references: [id], onDelete: Cascade)
+  tag  Tag  @relation(fields: [tagId], references: [id], onDelete: Cascade)
+  
+  @@id([postId, tagId])
+}
+
+// 유튜브 영상
+model Video {
+  id            String   @id @default(cuid())
+  youtubeId     String   @unique
+  title         String
+  description   String?
+  thumbnail     String
+  duration      String?
+  publishedAt   DateTime
+  category      String?
+  tags          String   // JSON string
+  viewCount     Int?     @default(0)
+  likeCount     Int?     @default(0)
+  commentCount  Int?     @default(0)
+  
+  // 메타데이터
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  // SEO 관련
+  seoTitle       String?
+  seoDescription String?
+}
+
+// 회사 정보
+model Company {
+  id            String   @id @default(cuid())
+  name          String
+  description   String
+  mission       String?
+  vision        String?
+  
+  // JSON 필드들
+  patents       String   // JSON string
+  achievements  String   // JSON string  
+  teamMembers   String   // JSON string
+  
+  // 메타데이터
+  updatedAt DateTime @updatedAt
+  createdAt DateTime @default(now())
+}
+
+// 건설사 정보
+model Developer {
+  id          String   @id @default(cuid())
+  name        String   @unique
+  description String?
+  logoUrl     String?
+  website     String?
+
+  // 실적
+  totalProjects Int?     @default(0)
+  rating        Float?   @default(0)
+
+  // 메타데이터
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // 관계
+  properties Property[]
+}
+
+// 분양권 매물
+model Property {
+  id            String         @id @default(cuid())
+  title         String
+  slug          String         @unique
+  description   String
+
+  // 위치 정보
+  address       String
+  district      String
+  city          String
+  zipCode       String?
+
+  // 기본 정보
+  totalUnits    Int
+  availableUnits Int           @default(0)
+  buildingType  BuildingType
+  completionDate DateTime
+  moveInDate    DateTime?
+
+  // 가격 정보 (원 단위)
+  basePrice     BigInt
+  pricePerPyeong BigInt?
+  contractDeposit BigInt
+  interimPayments String       // JSON string for payment schedule
+
+  // 분양권 특화 정보
+  rightsFee     BigInt?        // 권리금
+  profitRate    Float?         // 예상 수익률
+  investmentGrade String?      // 투자 등급
+
+  // 단지 정보
+  totalBuildingCount Int?
+  parkingSpaces     Int?
+  facilities        String     // JSON string
+
+  // 상태
+  status        PropertyStatus @default(AVAILABLE)
+  featured      Boolean       @default(false)
+
+  // SEO
+  seoTitle      String?
+  seoDescription String?
+
+  // 메타데이터
+  viewCount     Int           @default(0)
+  inquiryCount  Int           @default(0)
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+  publishedAt   DateTime?
+
+  // 관계
+  developerId   String
+  developer     Developer     @relation(fields: [developerId], references: [id])
+
+  authorId      String
+  author        User          @relation(fields: [authorId], references: [id])
+
+  images        PropertyImage[]
+  inquiries     PropertyInquiry[]
+  investments   Investment[]
+
+  @@index([status, featured])
+  @@index([district, city])
+  @@index([basePrice])
+}
+
+// 매물 이미지
+model PropertyImage {
+  id          String      @id @default(cuid())
+  url         String
+  alt         String?
+  caption     String?
+  order       Int         @default(0)
+  type        ImageType   @default(EXTERIOR)
+
+  // 메타데이터
+  createdAt   DateTime    @default(now())
+
+  // 관계
+  propertyId  String
+  property    Property    @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+
+  @@index([propertyId, order])
+}
+
+// 매물 문의
+model PropertyInquiry {
+  id          String        @id @default(cuid())
+  name        String
+  email       String
+  phone       String?
+  message     String
+  inquiryType InquiryType   @default(GENERAL)
+  status      InquiryStatus @default(PENDING)
+
+  // 메타데이터
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+  respondedAt DateTime?
+
+  // 관계
+  propertyId  String
+  property    Property      @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+
+  userId      String?
+  user        User?         @relation(fields: [userId], references: [id])
+
+  @@index([status, createdAt])
+}
+
+// 투자 분석
+model Investment {
+  id                String   @id @default(cuid())
+  currentValue      BigInt
+  projectedValue    BigInt
+  profitAmount      BigInt
+  profitRate        Float
+  investmentPeriod  Int      // 개월 수
+  riskLevel        String   // LOW, MEDIUM, HIGH
+  marketAnalysis   String   // JSON string
+
+  // 메타데이터
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  // 관계
+  propertyId       String
+  property         Property @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+}
+
+
+// Enums
+enum UserRole {
+  USER
+  ADMIN
+}
+
+enum PostCategory {
+  NEWS
+  REAL_ESTATE
+  AI_TECH
+  BLOCKCHAIN
+  MARKET_ANALYSIS
+}
+
+enum PostStatus {
+  DRAFT
+  PUBLISHED
+  ARCHIVED
+}
+
+enum PropertyStatus {
+  AVAILABLE
+  SOLD_OUT
+  COMING_SOON
+  SUSPENDED
+}
+
+enum BuildingType {
+  APARTMENT
+  OFFICETEL
+  VILLA
+  TOWNHOUSE
+  COMMERCIAL
+}
+
+enum ImageType {
+  EXTERIOR
+  INTERIOR
+  FLOOR_PLAN
+  SITE_PLAN
+  AMENITY
+}
+
+enum InquiryType {
+  GENERAL
+  VIEWING
+  INVESTMENT
+  CONSULTATION
+}
+
+enum InquiryStatus {
+  PENDING
+  RESPONDED
+  CLOSED
+}
