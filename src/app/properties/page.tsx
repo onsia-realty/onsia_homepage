@@ -42,7 +42,7 @@ const mockProperties: Property[] = [
     completionDate: '2025-12',
     profitRate: 18.5,
     buildingType: 'APARTMENT',
-    image: '/property-1-gwanggyo-cloud.png',
+    image: '/property-1-gwanggyo-cloud-new.png',
     featured: true
   },
   {
@@ -58,7 +58,7 @@ const mockProperties: Property[] = [
     completionDate: '2026-03',
     profitRate: 22.3,
     buildingType: 'APARTMENT',
-    image: '/property-2-yongin-honors.png'
+    image: '/property-2-yongin-honors-new.png'
   },
   {
     id: '3',

@@ -1,10 +1,10 @@
 'use client';
 
-import { motion } from 'framer-motion';
-import { ReactNode, HTMLAttributes } from 'react';
+import { motion, HTMLMotionProps } from 'framer-motion';
+import { ReactNode } from 'react';
 import { cn } from '@/lib/utils';
 
-interface GlassCardProps extends HTMLAttributes<HTMLDivElement> {
+interface GlassCardProps extends Omit<HTMLMotionProps<'div'>, 'initial' | 'animate' | 'transition' | 'whileHover'> {
   children: ReactNode;
   hover?: boolean;
   glow?: boolean;

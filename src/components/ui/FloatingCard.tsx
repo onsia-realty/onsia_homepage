@@ -1,10 +1,10 @@
 'use client';
 
-import { motion } from 'framer-motion';
-import { ReactNode, HTMLAttributes } from 'react';
+import { motion, HTMLMotionProps } from 'framer-motion';
+import { ReactNode } from 'react';
 import { cn } from '@/lib/utils';
 
-interface FloatingCardProps extends HTMLAttributes<HTMLDivElement> {
+interface FloatingCardProps extends Omit<HTMLMotionProps<'div'>, 'animate' | 'initial' | 'transition' | 'whileHover'> {
   children: ReactNode;
   delay?: number;
   direction?: 'up' | 'down' | 'left' | 'right';

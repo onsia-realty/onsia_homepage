@@ -3,7 +3,11 @@
     "allow": [
       "Bash(curl:*)",
       "Bash(npm run dev:*)",
-      "Bash(git add:*)"
+      "Bash(git add:*)",
+      "Bash(git push:*)",
+      "WebFetch(domain:www.reby24.com)",
+      "mcp__playwright__playwright_navigate",
+      "Bash(npm run build:*)"
     ],
     "deny": [],
     "ask": []

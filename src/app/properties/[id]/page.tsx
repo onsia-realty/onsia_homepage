@@ -6,41 +6,70 @@ import {
   MapPin, Building2, Calendar, Users, Car, TrendingUp,
   Calculator, Phone, Mail, Share2, Heart, ChevronLeft,
   ChevronRight, Wifi, Dumbbell, Car as CarIcon, TreePine,
-  ShoppingCart, School, Hospital, Bus, ArrowRight
+  ShoppingCart, School, Hospital, Bus, ArrowRight, Check,
+  Home, Layers, Briefcase, Award, Star, Clock, FileText
 } from 'lucide-react';
 import { Navigation } from '@/components/Navigation';
 import { GlassCard } from '@/components/ui/GlassCard';
 import { GlassPanel } from '@/components/ui/GlassPanel';
 import { ParticlesBackground } from '@/components/ParticlesBackground';
 import Link from 'next/link';
+import Image from 'next/image';
 
 // 임시 상세 데이터
 const mockProperty = {
   id: '1',
   title: '신광교 클라우드시티',
-  developer: '대우건설',
-  location: '경기 수원시 영통구 광교중앙로 123',
-  district: '영통구',
-  basePrice: 1350000000,
+  developer: '기세',
+  location: '경기 용인시 기흥구 영덕동 1306번지',
+  district: '기흥구',
+  basePrice: 1100000000,
+  minPrice: 400000000,
+  maxPrice: 1100000000,
   pricePerPyeong: 4500000,
   rightsFee: 50000000,
-  totalUnits: 842,
+  totalUnits: 3140,
   availableUnits: 156,
-  completionDate: '2025년 12월',
-  moveInDate: '2026년 2월',
+  completionDate: '2029년 5월',
+  moveInDate: '2029년 7월',
   profitRate: 18.5,
   investmentGrade: 'A+',
   buildingType: 'APARTMENT',
-  totalBuildingCount: 7,
-  parkingSpaces: 1200,
-  description: '강남 중심부에 위치한 프리미엄 단지로, 뛰어난 접근성과 투자가치를 자랑합니다.',
+  totalBuildingCount: 5,
+  parkingSpaces: 2556,
+  landArea: '26,975.10㎡',
+  buildingArea: '346,350.13㎡',
+  floorAreaRatio: '799.75%',
+  buildingCoverageRatio: '50%',
+  description: '수원 광교 신도시 호수공원 인근에 위치한 하이엔드 지식산업센터로, 우수한 접근성과 높은 투자가치를 자랑합니다. 입주사들이 이용하는 커뮤니티 시설은 하이엔드의 가치를 높여드립니다.',
+
+  // 특장점
+  keyFeatures: [
+    { icon: Star, title: '프리미엄 입지', desc: '광교신도시 핵심상권 인접' },
+    { icon: Building2, title: '대형 브랜드', desc: '대우건설 최고급 브랜드' },
+    { icon: TreePine, title: '우수한 조망', desc: '광교호수공원 조망권 확보' },
+    { icon: Car, title: '교통편의성', desc: '신분당선 광교역 도보 10분' },
+    { icon: School, title: '교육환경', desc: '광교초·중·고 도보권' },
+    { icon: ShoppingCart, title: '생활편의', desc: '갤러리아백화점 5분 거리' }
+  ],
+
+  // 분양 조건
+  saleConditions: {
+    preSaleDate: '2024년 9월',
+    contractDate: '2024년 10월',
+    completionDate: '2029년 5월',
+    moveInDate: '2029년 7월',
+    applicationQualification: '만 19세 이상 내국인 및 재외국민',
+    restrictions: '투기과열지구 지정으로 재당첨 제한 적용',
+    loanLimit: '60% (최대 4억원)'
+  },
 
   // 가격 정보
   priceInfo: [
-    { type: '59A', size: 59, price: 1180000000, count: 156 },
-    { type: '74A', size: 74, price: 1350000000, count: 234 },
-    { type: '84A', size: 84, price: 1480000000, count: 198 },
-    { type: '99A', size: 99, price: 1650000000, count: 123 }
+    { type: 'BW1001', size: 10.55, price: 400000000, count: 800 },
+    { type: 'Aw506', size: 15.03, price: 680000000, count: 500 },
+    { type: 'EW501', size: 14.03, price: 780000000, count: 900 },
+    { type: 'CW629', size: 51.89, price: 590000000, count: 810 }
   ],
 
   // 납부 일정
@@ -56,7 +85,7 @@ const mockProperty = {
   facilities: [
     { icon: Dumbbell, name: '피트니스센터' },
     { icon: Car, name: '지하주차장' },
-    { icon: TreePine, name: '조경공원' },
+    { icon: TreePine, name: '500평 대 골프장' },
     { icon: Wifi, name: '무선인터넷' }
   ],
 
@@ -85,9 +114,11 @@ export default function PropertyDetailPage({ params }: { params: { id: string } 
 
   const tabs = [
     { id: 'overview', label: '단지개요' },
+    { id: 'features', label: '특장점' },
     { id: 'price', label: '분양가격' },
     { id: 'investment', label: '투자분석' },
-    { id: 'location', label: '입지분석' }
+    { id: 'location', label: '입지분석' },
+    { id: 'conditions', label: '분양조건' }
   ];
 
   const formatPrice = (price: number) => {
@@ -125,9 +156,14 @@ export default function PropertyDetailPage({ params }: { params: { id: string } 
 
         {/* 메인 이미지 갤러리 */}
         <section className="relative h-screen">
-          <div className="absolute inset-0 bg-gradient-to-br from-blue-500/30 to-purple-500/30 flex items-center justify-center">
-            <Building2 className="w-32 h-32 text-white/30" />
-          </div>
+          <Image
+            src="/page5_111.jpg"
+            alt={mockProperty.title}
+            fill
+            className="object-cover"
+            quality={75}
+            priority
+          />
           <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-black/30" />
 
           {/* 매물 기본 정보 오버레이 */}
@@ -170,8 +206,8 @@ export default function PropertyDetailPage({ params }: { params: { id: string } 
                 <div className="flex flex-wrap items-center gap-8">
                   <div>
                     <div className="text-gray-400 text-sm">분양가</div>
-                    <div className="text-2xl font-bold text-white">
-                      {formatPrice(mockProperty.basePrice)}
+                    <div className="text-xl md:text-2xl font-bold text-white whitespace-nowrap">
+                      {formatPrice(mockProperty.minPrice)} ~ {formatPrice(mockProperty.maxPrice)}
                     </div>
                   </div>
                   <div>
@@ -228,33 +264,62 @@ export default function PropertyDetailPage({ params }: { params: { id: string } 
                 <div className="lg:col-span-2 space-y-8">
                   <GlassCard className="p-8">
                     <h3 className="text-2xl font-bold text-white mb-6">단지 정보</h3>
-                    <div className="grid md:grid-cols-2 gap-6">
+
+                    <div className="mb-6 relative rounded-xl overflow-hidden border border-white/20">
+                      <Image
+                        src="/1029 신광교 클라우드 시티 상담북 37p 수정_2.jpg"
+                        alt="단지 정보"
+                        width={1200}
+                        height={800}
+                        className="w-full h-auto"
+                        quality={75}
+                      />
+                    </div>
+
+                    <div className="mb-6">
+                      <p className="text-gray-300 leading-relaxed">{mockProperty.description}</p>
+                    </div>
+                    <div className="grid md:grid-cols-3 gap-6">
                       <div className="space-y-4">
-                        <div>
-                          <div className="text-gray-400 text-sm">총 세대수</div>
-                          <div className="text-white font-semibold">{mockProperty.totalUnits}세대</div>
+                        <div className="p-4 bg-white/5 rounded-lg">
+                          <div className="text-gray-400 text-sm mb-1">총 세대수</div>
+                          <div className="text-white font-bold text-xl">{mockProperty.totalUnits} <span className="text-sm font-normal">세대</span></div>
                         </div>
-                        <div>
-                          <div className="text-gray-400 text-sm">총 동수</div>
-                          <div className="text-white font-semibold">{mockProperty.totalBuildingCount}동</div>
+                        <div className="p-4 bg-white/5 rounded-lg">
+                          <div className="text-gray-400 text-sm mb-1">총 동수</div>
+                          <div className="text-white font-bold text-xl">{mockProperty.totalBuildingCount} <span className="text-sm font-normal">동</span></div>
                         </div>
-                        <div>
-                          <div className="text-gray-400 text-sm">주차대수</div>
-                          <div className="text-white font-semibold">{mockProperty.parkingSpaces}대</div>
+                        <div className="p-4 bg-white/5 rounded-lg">
+                          <div className="text-gray-400 text-sm mb-1">주차대수</div>
+                          <div className="text-white font-bold text-xl">{mockProperty.parkingSpaces} <span className="text-sm font-normal">대</span></div>
                         </div>
                       </div>
                       <div className="space-y-4">
-                        <div>
-                          <div className="text-gray-400 text-sm">준공예정</div>
-                          <div className="text-white font-semibold">{mockProperty.completionDate}</div>
+                        <div className="p-4 bg-white/5 rounded-lg">
+                          <div className="text-gray-400 text-sm mb-1">대지면적</div>
+                          <div className="text-white font-bold text-lg">{mockProperty.landArea}</div>
                         </div>
-                        <div>
-                          <div className="text-gray-400 text-sm">입주예정</div>
-                          <div className="text-white font-semibold">{mockProperty.moveInDate}</div>
+                        <div className="p-4 bg-white/5 rounded-lg">
+                          <div className="text-gray-400 text-sm mb-1">건축면적</div>
+                          <div className="text-white font-bold text-lg">{mockProperty.buildingArea}</div>
                         </div>
-                        <div>
-                          <div className="text-gray-400 text-sm">건축주</div>
-                          <div className="text-white font-semibold">{mockProperty.developer}</div>
+                        <div className="p-4 bg-white/5 rounded-lg">
+                          <div className="text-gray-400 text-sm mb-1">용적률 / 건폐율</div>
+                          <div className="text-white font-bold text-lg">{mockProperty.floorAreaRatio} / {mockProperty.buildingCoverageRatio}</div>
+                        </div>
+                      </div>
+                      <div className="space-y-4">
+                        <div className="p-4 bg-white/5 rounded-lg">
+                          <div className="text-gray-400 text-sm mb-1">준공예정</div>
+                          <div className="text-white font-bold text-lg">{mockProperty.completionDate}</div>
+                        </div>
+                        <div className="p-4 bg-white/5 rounded-lg">
+                          <div className="text-gray-400 text-sm mb-1">입주예정</div>
+                          <div className="text-white font-bold text-lg">{mockProperty.moveInDate}</div>
+                        </div>
+                        <div className="p-4 bg-white/5 rounded-lg">
+                          <div className="text-gray-400 text-sm mb-1">건축주</div>
+                          <div className="text-white font-bold text-lg">{mockProperty.developer}</div>
                         </div>
                       </div>
                     </div>
@@ -293,31 +358,124 @@ export default function PropertyDetailPage({ params }: { params: { id: string } 
                     </div>
                   </GlassCard>
 
-                  {/* 수익률 계산기 */}
+                  {/* 매물 특장점 */}
                   <GlassCard className="p-6">
                     <h4 className="text-xl font-bold text-white mb-4 flex items-center gap-2">
-                      <Calculator className="w-5 h-5" />
-                      수익률 계산기
+                      <Star className="w-5 h-5 text-yellow-400" />
+                      매물 특장점
                     </h4>
-                    <div className="space-y-4">
-                      <div>
-                        <div className="text-gray-400 text-sm">현재 시세</div>
-                        <div className="text-white font-semibold">{formatPrice(mockProperty.investmentAnalysis.currentMarketPrice)}</div>
+                    <div className="space-y-3">
+                      <div className="flex items-center gap-2 p-3 bg-blue-500/10 rounded-lg border border-blue-500/20">
+                        <div className="flex-shrink-0 w-5 h-5 rounded-full bg-blue-500 text-white flex items-center justify-center text-xs font-bold">
+                          1
+                        </div>
+                        <p className="text-gray-200 text-xs">
+                          삼성 반도체 배후수요를 둔 하이엔드 지식산업센터
+                        </p>
                       </div>
-                      <div>
-                        <div className="text-gray-400 text-sm">예상 수익</div>
-                        <div className="text-green-400 font-semibold">{formatPrice(mockProperty.investmentAnalysis.expectedProfit)}</div>
+                      <div className="flex items-center gap-2 p-3 bg-green-500/10 rounded-lg border border-green-500/20">
+                        <div className="flex-shrink-0 w-5 h-5 rounded-full bg-green-500 text-white flex items-center justify-center text-xs font-bold">
+                          2
+                        </div>
+                        <p className="text-gray-200 text-xs">
+                          계약금 5% 중도금 무이자
+                        </p>
                       </div>
-                      <div>
-                        <div className="text-gray-400 text-sm">수익률</div>
-                        <div className="text-green-400 font-semibold">{mockProperty.investmentAnalysis.profitRate}%</div>
+                      <div className="flex items-center gap-2 p-3 bg-purple-500/10 rounded-lg border border-purple-500/20">
+                        <div className="flex-shrink-0 w-5 h-5 rounded-full bg-purple-500 text-white flex items-center justify-center text-xs font-bold">
+                          3
+                        </div>
+                        <p className="text-gray-200 text-xs">
+                          계약시 축하금 3% 지급
+                        </p>
                       </div>
-                      <button className="w-full px-4 py-2 bg-green-500/20 text-green-300 rounded-lg hover:bg-green-500/30 transition-colors text-sm">
-                        상세 계산하기
-                      </button>
+                      <div className="flex items-center gap-2 p-3 bg-cyan-500/10 rounded-lg border border-cyan-500/20">
+                        <div className="flex-shrink-0 w-5 h-5 rounded-full bg-cyan-500 text-white flex items-center justify-center text-xs font-bold">
+                          4
+                        </div>
+                        <p className="text-gray-200 text-xs">
+                          상업지역 시공, 헬스장, 회의실, 골프장, 커뮤니티 시설이<br />완비된 오피스
+                        </p>
+                      </div>
                     </div>
                   </GlassCard>
                 </div>
+              </motion.div>
+            )}
+
+            {/* 특장점 */}
+            {activeTab === 'features' && (
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="space-y-8"
+              >
+                <GlassCard className="p-8">
+                  <h3 className="text-2xl font-bold text-white mb-8">단지 특장점</h3>
+
+                  <div className="mb-8 space-y-6">
+                    <div className="relative rounded-xl overflow-hidden border border-white/20">
+                      <Image
+                        src="/신광교 클라우드시티 브리핑북_20240920_12.jpg"
+                        alt="단지 특장점 1"
+                        width={1200}
+                        height={800}
+                        className="w-full h-auto"
+                        quality={75}
+                      />
+                    </div>
+                    <div className="relative rounded-xl overflow-hidden border border-white/20">
+                      <Image
+                        src="/신광교 클라우드시티 브리핑북_20240920_15.jpg"
+                        alt="단지 특장점 2"
+                        width={1200}
+                        height={800}
+                        className="w-full h-auto"
+                        quality={75}
+                      />
+                    </div>
+                  </div>
+                  <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {mockProperty.keyFeatures.map((feature, index) => (
+                      <motion.div
+                        key={index}
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: index * 0.1 }}
+                        className="p-6 bg-gradient-to-br from-blue-500/10 to-purple-500/10 rounded-xl border border-white/10 hover:border-blue-400/50 transition-all duration-300 group"
+                      >
+                        <div className="w-14 h-14 rounded-xl bg-gradient-to-r from-blue-500 to-purple-600 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                          <feature.icon className="w-7 h-7 text-white" />
+                        </div>
+                        <h4 className="text-xl font-bold text-white mb-2">{feature.title}</h4>
+                        <p className="text-gray-300">{feature.desc}</p>
+                      </motion.div>
+                    ))}
+                  </div>
+                </GlassCard>
+
+                <GlassCard className="p-8">
+                  <h3 className="text-2xl font-bold text-white mb-6">투자 포인트</h3>
+                  <div className="space-y-4">
+                    {[
+                      { icon: Check, title: '프리미엄 입지', desc: '광교신도시 중심상업지구 위치로 향후 발전가능성 높음' },
+                      { icon: Check, title: '교통 편의성', desc: '신분당선 광교역 도보 10분, GTX-C노선 예정으로 교통여건 우수' },
+                      { icon: Check, title: '학군 우수', desc: '광교초·중·고 도보권, 경기과학고 인접으로 교육환경 양호' },
+                      { icon: Check, title: '생활 인프라', desc: '갤러리아백화점, 이마트 등 대형상권 인접' },
+                      { icon: Check, title: '브랜드 가치', desc: '대우건설 최고급 브랜드로 안정적 시공 및 A/S 보장' }
+                    ].map((point, index) => (
+                      <div key={index} className="flex gap-4 p-4 bg-white/5 rounded-lg hover:bg-white/10 transition-colors">
+                        <div className="flex-shrink-0 w-8 h-8 rounded-full bg-blue-500/20 flex items-center justify-center">
+                          <point.icon className="w-5 h-5 text-blue-400" />
+                        </div>
+                        <div>
+                          <h4 className="font-semibold text-white mb-1">{point.title}</h4>
+                          <p className="text-gray-300 text-sm">{point.desc}</p>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </GlassCard>
               </motion.div>
             )}
 
@@ -345,9 +503,9 @@ export default function PropertyDetailPage({ params }: { params: { id: string } 
                         {mockProperty.priceInfo.map((item, index) => (
                           <tr key={index} className="border-b border-white/10">
                             <td className="py-4 text-white font-medium">{item.type}</td>
-                            <td className="py-4 text-gray-300">{item.size}㎡</td>
+                            <td className="py-4 text-gray-300">{item.size}평</td>
                             <td className="py-4 text-white font-semibold">{formatPrice(item.price)}</td>
-                            <td className="py-4 text-gray-300">{(item.price / item.size / 10000).toFixed(0)}만원/㎡</td>
+                            <td className="py-4 text-gray-300">{(item.price / item.size / 10000).toFixed(0)}만원/평</td>
                             <td className="py-4 text-gray-300">{item.count}세대</td>
                           </tr>
                         ))}
@@ -519,6 +677,99 @@ export default function PropertyDetailPage({ params }: { params: { id: string } 
                 </GlassCard>
               </motion.div>
             )}
+
+            {/* 분양조건 */}
+            {activeTab === 'conditions' && (
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="space-y-8"
+              >
+                <GlassCard className="p-8">
+                  <h3 className="text-2xl font-bold text-white mb-8">분양 일정</h3>
+                  <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+                    <div className="p-6 bg-gradient-to-br from-blue-500/10 to-purple-500/10 rounded-xl border border-white/10">
+                      <div className="flex items-center gap-3 mb-3">
+                        <Calendar className="w-6 h-6 text-blue-400" />
+                        <h4 className="font-semibold text-white">분양공고</h4>
+                      </div>
+                      <p className="text-2xl font-bold text-white">{mockProperty.saleConditions.preSaleDate}</p>
+                    </div>
+                    <div className="p-6 bg-gradient-to-br from-blue-500/10 to-purple-500/10 rounded-xl border border-white/10">
+                      <div className="flex items-center gap-3 mb-3">
+                        <FileText className="w-6 h-6 text-purple-400" />
+                        <h4 className="font-semibold text-white">계약일</h4>
+                      </div>
+                      <p className="text-2xl font-bold text-white">{mockProperty.saleConditions.contractDate}</p>
+                    </div>
+                    <div className="p-6 bg-gradient-to-br from-blue-500/10 to-purple-500/10 rounded-xl border border-white/10">
+                      <div className="flex items-center gap-3 mb-3">
+                        <Building2 className="w-6 h-6 text-green-400" />
+                        <h4 className="font-semibold text-white">준공</h4>
+                      </div>
+                      <p className="text-2xl font-bold text-white">{mockProperty.saleConditions.completionDate}</p>
+                    </div>
+                    <div className="p-6 bg-gradient-to-br from-blue-500/10 to-purple-500/10 rounded-xl border border-white/10">
+                      <div className="flex items-center gap-3 mb-3">
+                        <Home className="w-6 h-6 text-cyan-400" />
+                        <h4 className="font-semibold text-white">입주</h4>
+                      </div>
+                      <p className="text-2xl font-bold text-white">{mockProperty.saleConditions.moveInDate}</p>
+                    </div>
+                  </div>
+                </GlassCard>
+
+                <div className="grid lg:grid-cols-2 gap-8">
+                  <GlassCard className="p-8">
+                    <h3 className="text-2xl font-bold text-white mb-6">청약 자격</h3>
+                    <div className="space-y-4">
+                      <div className="p-4 bg-white/5 rounded-lg">
+                        <div className="flex items-center gap-2 mb-2">
+                          <Users className="w-5 h-5 text-blue-400" />
+                          <h4 className="font-semibold text-white">신청 자격</h4>
+                        </div>
+                        <p className="text-gray-300">{mockProperty.saleConditions.applicationQualification}</p>
+                      </div>
+                      <div className="p-4 bg-white/5 rounded-lg">
+                        <div className="flex items-center gap-2 mb-2">
+                          <Award className="w-5 h-5 text-purple-400" />
+                          <h4 className="font-semibold text-white">제한 사항</h4>
+                        </div>
+                        <p className="text-gray-300">{mockProperty.saleConditions.restrictions}</p>
+                      </div>
+                      <div className="p-4 bg-white/5 rounded-lg">
+                        <div className="flex items-center gap-2 mb-2">
+                          <Briefcase className="w-5 h-5 text-green-400" />
+                          <h4 className="font-semibold text-white">대출 한도</h4>
+                        </div>
+                        <p className="text-gray-300">{mockProperty.saleConditions.loanLimit}</p>
+                      </div>
+                    </div>
+                  </GlassCard>
+
+                  <GlassCard className="p-8">
+                    <h3 className="text-2xl font-bold text-white mb-6">유의 사항</h3>
+                    <div className="space-y-3">
+                      {[
+                        '본 매물은 투기과열지구로 지정되어 재당첨 제한이 적용됩니다.',
+                        '청약통장 가입 기간 및 납입 회차를 확인하시기 바랍니다.',
+                        '분양가상한제 적용 단지로 추가 프리미엄 발생 가능성이 있습니다.',
+                        '전매 제한 기간은 소유권 이전 등기일로부터 3년입니다.',
+                        '대출 규제로 인해 실제 대출 한도는 개인별로 상이할 수 있습니다.',
+                        '분양 계약 전 관련 법규 및 조건을 반드시 확인하시기 바랍니다.'
+                      ].map((notice, index) => (
+                        <div key={index} className="flex gap-3 p-3 bg-yellow-500/10 rounded-lg border border-yellow-500/20">
+                          <div className="flex-shrink-0 w-5 h-5 rounded-full bg-yellow-500/20 flex items-center justify-center mt-0.5">
+                            <span className="text-yellow-400 text-xs font-bold">!</span>
+                          </div>
+                          <p className="text-gray-300 text-sm">{notice}</p>
+                        </div>
+                      ))}
+                    </div>
+                  </GlassCard>
+                </div>
+              </motion.div>
+            )}
           </div>
         </section>
 
@@ -528,7 +779,7 @@ export default function PropertyDetailPage({ params }: { params: { id: string } 
             <div className="flex items-center justify-between">
               <div>
                 <div className="text-gray-400 text-sm">분양가</div>
-                <div className="text-xl font-bold text-white">{formatPrice(mockProperty.basePrice)}</div>
+                <div className="text-base font-bold text-white whitespace-nowrap">{formatPrice(mockProperty.minPrice)} ~ {formatPrice(mockProperty.maxPrice)}</div>
               </div>
               <div className="flex gap-3">
                 <button className="px-6 py-3 bg-white/10 text-white rounded-xl font-semibold hover:bg-white/20 transition-colors">

@@ -20,7 +20,7 @@ const featuredProperties = [
     availableUnits: 156,
     completionDate: '2025-12',
     buildingType: 'APARTMENT',
-    image: '/property-1-gwanggyo-cloud.png',
+    image: '/property-1-gwanggyo-cloud-new.png',
     featured: true,
     badge: '투자추천'
   },
@@ -36,7 +36,7 @@ const featuredProperties = [
     availableUnits: 324,
     completionDate: '2026-03',
     buildingType: 'APARTMENT',
-    image: '/property-2-yongin-honors.png',
+    image: '/property-2-yongin-honors-new.png',
     featured: true,
     badge: '고수익'
   },
