@@ -1,7 +1,7 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { PlayCircle, TrendingUp, Star } from 'lucide-react';
+import { PlayCircle } from 'lucide-react';
 import { VideoCard } from './ui/VideoCard';
 import { GlassPanel } from './ui/GlassPanel';
 import { GlassCard } from './ui/GlassCard';
@@ -41,12 +41,6 @@ export const VideoGallerySection = () => {
     }
   ];
 
-  const videoStats = [
-    { label: '총 영상', value: '150+', icon: PlayCircle },
-    { label: '누적 조회수', value: '500만+', icon: TrendingUp },
-    { label: '구독자', value: '25만+', icon: Star }
-  ];
-
   return (
     <section className="relative py-32 overflow-hidden">
       {/* 배경 그라디언트 */}
@@ -83,37 +77,6 @@ export const VideoGallerySection = () => {
             </GlassPanel>
           </motion.div>
 
-          {/* 통계 카드들 */}
-          <motion.div
-            className="grid md:grid-cols-3 gap-8 mb-20"
-            initial={{ opacity: 0, y: 50 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.8 }}
-          >
-            {videoStats.map((stat, index) => (
-              <GlassCard
-                key={index}
-                className="text-center p-8"
-                hover
-                glow
-                size="lg"
-              >
-                <motion.div
-                  initial={{ opacity: 0, scale: 0.5 }}
-                  whileInView={{ opacity: 1, scale: 1 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: index * 0.2, duration: 0.6 }}
-                >
-                  <stat.icon className="w-12 h-12 mx-auto mb-4 text-green-300" />
-                  <div className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-green-300 to-blue-300 bg-clip-text text-transparent mb-3">
-                    {stat.value}
-                  </div>
-                  <p className="text-xl text-gray-300 font-semibold">{stat.label}</p>
-                </motion.div>
-              </GlassCard>
-            ))}
-          </motion.div>
 
           {/* 추천 영상 그리드 */}
           <motion.div

@@ -1,68 +1,76 @@
 'use client';
 
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { ArrowRight, MapPin, TrendingUp, Building2, Calculator, Eye } from 'lucide-react';
 import { GlassCard } from './ui/GlassCard';
 import Link from 'next/link';
 import Image from 'next/image';
 
-// 임시 추천 매물 데이터
-const featuredProperties = [
-  {
-    id: '1',
-    title: '신광교 클라우드시티',
-    developer: '대우건설',
-    location: '경기 수원시 영통구',
-    district: '영통구',
-    basePrice: 1350000000,
-    pricePerPyeong: 4500000,
-    profitRate: 18.5,
-    availableUnits: 156,
-    completionDate: '2025-12',
-    buildingType: 'APARTMENT',
-    image: '/property-1-gwanggyo-cloud-new.png',
-    featured: true,
-    badge: '투자추천'
-  },
-  {
-    id: '2',
-    title: '용인 경남아너스빌',
-    developer: '경남기업',
-    location: '경기 용인시 기흥구',
-    district: '기흥구',
-    basePrice: 890000000,
-    pricePerPyeong: 3200000,
-    profitRate: 22.3,
-    availableUnits: 324,
-    completionDate: '2026-03',
-    buildingType: 'APARTMENT',
-    image: '/property-2-yongin-honors-new.png',
-    featured: true,
-    badge: '고수익'
-  },
-  {
-    id: '3',
-    title: '이천 부발역 에피트',
-    developer: '대방건설',
-    location: '경기 이천시 부발읍',
-    district: '부발읍',
-    basePrice: 1180000000,
-    pricePerPyeong: 4100000,
-    profitRate: 15.7,
-    availableUnits: 89,
-    completionDate: '2025-09',
-    buildingType: 'APARTMENT',
-    image: '/property-3-bubal-station.png',
-    featured: true,
-    badge: '프리미엄'
-  }
-];
+interface Developer {
+  id: string;
+  name: string;
+}
+
+interface Property {
+  id: string;
+  title: string;
+  developer: Developer;
+  address: string;
+  district: string;
+  city: string;
+  basePrice: string;
+  pricePerPyeong: string;
+  availableUnits: number;
+  moveInDate: Date;
+  profitRate?: number | null;
+  constructor?: string | null;
+  keyFeature?: string | null;
+  featured: boolean;
+}
 
 export const FeaturedPropertiesSection = () => {
-  const formatPrice = (price: number) => {
-    const eok = Math.floor(price / 100000000);
-    const man = Math.floor((price % 100000000) / 10000);
+  const [properties, setProperties] = useState<Property[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchProperties = async () => {
+      try {
+        const response = await fetch('/api/properties');
+        const data = await response.json();
+        console.log('All properties:', data);
+        // featured 속성이 true인 매물만 필터링
+        const featuredProps = data.filter((p: Property) => p.featured);
+        console.log('Featured properties:', featuredProps);
+        setProperties(featuredProps);
+      } catch (error) {
+        console.error('Failed to fetch properties:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProperties();
+  }, []);
+  const formatPrice = (price: string) => {
+    if (!price) return '0억';
+    const numPrice = parseInt(price);
+    if (isNaN(numPrice)) return '0억';
+    const eok = Math.floor(numPrice / 100000000);
+    const man = Math.floor((numPrice % 100000000) / 10000);
     return `${eok}억 ${man > 0 ? man + '만' : ''}`;
+  };
+
+  const formatDate = (date: Date) => {
+    if (!date) return '-';
+    const d = new Date(date);
+    if (isNaN(d.getTime())) return '-';
+    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
+  };
+
+  const getBadge = (index: number) => {
+    const badges = ['투자추천', '고수익', '프리미엄'];
+    return badges[index] || '추천';
   };
 
   const getBadgeColor = (badge: string) => {
@@ -113,7 +121,9 @@ export const FeaturedPropertiesSection = () => {
 
         {/* 매물 카드 그리드 */}
         <div className="grid lg:grid-cols-3 gap-8 mb-12">
-          {featuredProperties.map((property, index) => (
+          {properties.map((property, index) => {
+            const badge = getBadge(index);
+            return (
             <motion.div
               key={property.id}
               initial={{ opacity: 0, y: 30 }}
@@ -132,7 +142,7 @@ export const FeaturedPropertiesSection = () => {
                   <div className="relative h-64 overflow-hidden">
                     {/* 배경 이미지 */}
                     <Image
-                      src={property.image}
+                      src={index === 0 ? '/property-1-gwanggyo-cloud-new.png' : index === 1 ? '/property-2-yongin-honors-new.png' : '/property-3-bubal-station.png'}
                       alt={property.title}
                       fill
                       className="object-cover"
@@ -141,15 +151,17 @@ export const FeaturedPropertiesSection = () => {
                     />
 
                     {/* 배지 */}
-                    <div className={`absolute top-4 left-4 px-4 py-2 rounded-full text-white text-sm font-bold bg-gradient-to-r ${getBadgeColor(property.badge)} shadow-lg z-10`}>
-                      {property.badge}
+                    <div className={`absolute top-4 left-4 px-4 py-2 rounded-full text-white text-sm font-bold bg-gradient-to-r ${getBadgeColor(badge)} shadow-lg z-10`}>
+                      {badge}
                     </div>
 
-                    {/* 수익률 배지 */}
-                    <div className="absolute top-4 right-4 px-3 py-2 bg-black/50 backdrop-blur-sm rounded-full text-green-400 text-sm font-semibold flex items-center gap-1 z-10">
-                      <TrendingUp className="w-3 h-3" />
-                      {property.profitRate}%
-                    </div>
+                    {/* 시공사 배지 */}
+                    {property.constructor && (
+                      <div className="absolute top-4 right-4 px-3 py-2 bg-black/50 backdrop-blur-sm rounded-full text-blue-400 text-sm font-semibold flex items-center gap-1 z-10">
+                        <Building2 className="w-3 h-3" />
+                        {property.constructor}
+                      </div>
+                    )}
 
                     {/* 그라데이션 오버레이 */}
                     <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
@@ -158,7 +170,7 @@ export const FeaturedPropertiesSection = () => {
                     <div className="absolute bottom-4 left-4 right-4 z-10">
                       <div className="flex items-center gap-2 text-white/90 text-sm">
                         <MapPin className="w-3 h-3" />
-                        <span>{property.location}</span>
+                        <span>{property.city} {property.district}</span>
                       </div>
                     </div>
                   </div>
@@ -169,7 +181,7 @@ export const FeaturedPropertiesSection = () => {
                       <h3 className="text-xl font-bold text-white mb-2 group-hover:text-blue-300 transition-colors">
                         {property.title}
                       </h3>
-                      <p className="text-gray-400 text-sm">{property.developer}</p>
+                      <p className="text-gray-400 text-sm">{property.developer.name}</p>
                     </div>
 
                     {/* 가격 정보 */}
@@ -180,7 +192,11 @@ export const FeaturedPropertiesSection = () => {
                       </div>
                       <div className="flex justify-between items-center">
                         <span className="text-gray-400 text-sm">평단가</span>
-                        <span className="text-white font-semibold">{(property.pricePerPyeong / 10000).toFixed(0)}만원/평</span>
+                        <span className="text-white font-semibold">
+                          {property.pricePerPyeong && !isNaN(parseInt(property.pricePerPyeong))
+                            ? `${(parseInt(property.pricePerPyeong) / 10000).toFixed(0)}만원/평`
+                            : '가격문의'}
+                        </span>
                       </div>
                       <div className="flex justify-between items-center">
                         <span className="text-gray-400 text-sm">잔여세대</span>
@@ -190,12 +206,14 @@ export const FeaturedPropertiesSection = () => {
 
                     {/* 투자 지표 */}
                     <div className="grid grid-cols-2 gap-4 mb-6">
-                      <div className="text-center p-3 bg-green-500/10 rounded-lg border border-green-500/20">
-                        <div className="text-green-400 font-bold text-lg">{property.profitRate}%</div>
-                        <div className="text-gray-400 text-xs">예상수익률</div>
-                      </div>
                       <div className="text-center p-3 bg-blue-500/10 rounded-lg border border-blue-500/20">
-                        <div className="text-blue-400 font-bold text-lg">{property.completionDate}</div>
+                        <div className="text-blue-400 font-bold text-base md:text-lg whitespace-nowrap">{property.constructor}</div>
+                      </div>
+                      <div className="text-center p-3 bg-green-500/10 rounded-lg border border-green-500/20">
+                        <div className="text-green-400 font-bold text-base md:text-lg">{property.keyFeature}</div>
+                      </div>
+                      <div className="col-span-2 text-center p-3 bg-purple-500/10 rounded-lg border border-purple-500/20">
+                        <div className="text-purple-400 font-bold text-lg">{formatDate(property.moveInDate)}</div>
                         <div className="text-gray-400 text-xs">입주예정</div>
                       </div>
                     </div>
@@ -227,7 +245,8 @@ export const FeaturedPropertiesSection = () => {
                 </GlassCard>
               </Link>
             </motion.div>
-          ))}
+            );
+          })}
         </div>
 
         {/* 더보기 버튼 */}

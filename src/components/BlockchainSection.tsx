@@ -1,44 +1,11 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { Shield, Zap, Globe, Award, Lock, TrendingUp } from 'lucide-react';
-import { FloatingCard } from './ui/FloatingCard';
+import { Award, Lock } from 'lucide-react';
 import { GlassPanel } from './ui/GlassPanel';
 import { GlassCard } from './ui/GlassCard';
 
 export const BlockchainSection = () => {
-  const patentFeatures = [
-    {
-      icon: Shield,
-      title: '보안성',
-      description: '블록체인 기반의 안전한 거래 시스템',
-      color: 'from-blue-500 to-blue-600'
-    },
-    {
-      icon: Zap,
-      title: '투명성',
-      description: '모든 거래 기록의 투명한 공개',
-      color: 'from-green-500 to-green-600'
-    },
-    {
-      icon: Globe,
-      title: '글로벌',
-      description: '국경을 넘나드는 부동산 투자',
-      color: 'from-purple-500 to-purple-600'
-    },
-    {
-      icon: TrendingUp,
-      title: '효율성',
-      description: '중개 수수료 최소화 및 빠른 처리',
-      color: 'from-orange-500 to-orange-600'
-    }
-  ];
-
-  const achievements = [
-    { label: '특허 등록', value: '3건', icon: Award },
-    { label: '거래 완료', value: '500+', icon: TrendingUp },
-    { label: '보안 수준', value: '99.9%', icon: Lock }
-  ];
 
   return (
     <section className="relative py-32 overflow-hidden">
@@ -76,63 +43,6 @@ export const BlockchainSection = () => {
             </GlassPanel>
           </motion.div>
 
-          {/* 특허 기술 특징 카드들 */}
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8 mb-20">
-            {patentFeatures.map((feature, index) => (
-              <FloatingCard
-                key={index}
-                delay={index * 0.2}
-                direction={index % 2 === 0 ? 'up' : 'down'}
-                intensity="subtle"
-                className="p-8 text-center"
-              >
-                <motion.div
-                  initial={{ opacity: 0, scale: 0.8 }}
-                  whileInView={{ opacity: 1, scale: 1 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: index * 0.1 + 0.3, duration: 0.6 }}
-                >
-                  <div className={`w-20 h-20 mx-auto mb-6 rounded-full bg-gradient-to-r ${feature.color} flex items-center justify-center glow shadow-2xl`}>
-                    <feature.icon className="w-10 h-10 text-white" />
-                  </div>
-                  <h3 className="text-2xl font-bold text-white mb-4">{feature.title}</h3>
-                  <p className="text-gray-300 leading-relaxed">{feature.description}</p>
-                </motion.div>
-              </FloatingCard>
-            ))}
-          </div>
-
-          {/* 성과 지표 */}
-          <motion.div
-            className="grid md:grid-cols-3 gap-8 mb-20"
-            initial={{ opacity: 0, y: 50 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.8 }}
-          >
-            {achievements.map((achievement, index) => (
-              <GlassCard
-                key={index}
-                className="text-center p-8"
-                hover
-                glow
-                size="lg"
-              >
-                <motion.div
-                  initial={{ opacity: 0, scale: 0.5 }}
-                  whileInView={{ opacity: 1, scale: 1 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: index * 0.2, duration: 0.6 }}
-                >
-                  <achievement.icon className="w-12 h-12 mx-auto mb-4 text-blue-300" />
-                  <div className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-blue-300 to-green-300 bg-clip-text text-transparent mb-3">
-                    {achievement.value}
-                  </div>
-                  <p className="text-xl text-gray-300 font-semibold">{achievement.label}</p>
-                </motion.div>
-              </GlassCard>
-            ))}
-          </motion.div>
 
           {/* 기술 상세 설명 */}
           <motion.div

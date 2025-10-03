@@ -7,7 +7,11 @@
       "Bash(git push:*)",
       "WebFetch(domain:www.reby24.com)",
       "mcp__playwright__playwright_navigate",
-      "Bash(npm run build:*)"
+      "Bash(npm run build:*)",
+      "Bash(npx prisma:*)",
+      "Bash(npm run:*)",
+      "Bash(python:*)",
+      "WebFetch(domain:www.onsia.city)"
     ],
     "deny": [],
     "ask": []

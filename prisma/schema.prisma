@@ -207,6 +207,8 @@ model Property {
   rightsFee     BigInt?        // 권리금
   profitRate    Float?         // 예상 수익률
   investmentGrade String?      // 투자 등급
+  constructor   String?        // 시공사
+  keyFeature    String?        // 특장점
 
   // 단지 정보
   totalBuildingCount Int?

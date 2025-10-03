@@ -8,74 +8,32 @@ import { GlassCard } from '@/components/ui/GlassCard';
 import { GlassPanel } from '@/components/ui/GlassPanel';
 import { ParticlesBackground } from '@/components/ParticlesBackground';
 import Image from 'next/image';
+import Link from 'next/link';
 
-// 임시 데이터 타입
+// API에서 받아올 데이터 타입
+interface Developer {
+  id: string;
+  name: string;
+}
+
 interface Property {
   id: string;
   title: string;
-  developer: string;
-  location: string;
+  developer: Developer;
+  address: string;
   district: string;
-  basePrice: number;
-  pricePerPyeong: number;
+  basePrice: string; // BigInt는 문자열로 전송됨
+  pricePerPyeong: string;
   totalUnits: number;
   availableUnits: number;
-  completionDate: string;
-  profitRate?: number;
+  completionDate: Date;
+  moveInDate: Date;
+  profitRate?: number | null;
   buildingType: string;
-  image: string;
   featured?: boolean;
+  constructor?: string | null;
+  keyFeature?: string | null;
 }
-
-// 임시 데이터
-const mockProperties: Property[] = [
-  {
-    id: '1',
-    title: '신광교 클라우드시티',
-    developer: '대우건설',
-    location: '경기 수원시 영통구',
-    district: '영통구',
-    basePrice: 1350000000,
-    pricePerPyeong: 4500000,
-    totalUnits: 842,
-    availableUnits: 156,
-    completionDate: '2025-12',
-    profitRate: 18.5,
-    buildingType: 'APARTMENT',
-    image: '/property-1-gwanggyo-cloud-new.png',
-    featured: true
-  },
-  {
-    id: '2',
-    title: '용인 경남아너스빌',
-    developer: '경남기업',
-    location: '경기 용인시 기흥구',
-    district: '기흥구',
-    basePrice: 890000000,
-    pricePerPyeong: 3200000,
-    totalUnits: 1248,
-    availableUnits: 324,
-    completionDate: '2026-03',
-    profitRate: 22.3,
-    buildingType: 'APARTMENT',
-    image: '/property-2-yongin-honors-new.png'
-  },
-  {
-    id: '3',
-    title: '이천 부발역 에피트',
-    developer: '대방건설',
-    location: '경기 이천시 부발읍',
-    district: '부발읍',
-    basePrice: 1180000000,
-    pricePerPyeong: 4100000,
-    totalUnits: 687,
-    availableUnits: 89,
-    completionDate: '2025-09',
-    profitRate: 15.7,
-    buildingType: 'APARTMENT',
-    image: '/property-3-bubal-station.png'
-  }
-];
 
 export default function PropertiesPage() {
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
@@ -83,24 +41,51 @@ export default function PropertiesPage() {
   const [selectedDistrict, setSelectedDistrict] = useState('');
   const [selectedType, setSelectedType] = useState('');
   const [sortBy, setSortBy] = useState('latest');
+  const [properties, setProperties] = useState<Property[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  // API에서 매물 데이터 가져오기
+  useEffect(() => {
+    const fetchProperties = async () => {
+      try {
+        const response = await fetch('/api/properties');
+        const data = await response.json();
+        setProperties(data);
+      } catch (error) {
+        console.error('Failed to fetch properties:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProperties();
+  }, []);
 
   const districts = ['영통구', '기흥구', '부발읍', '서초구', '마포구'];
   const buildingTypes = ['APARTMENT', 'OFFICETEL', 'VILLA'];
 
   // 필터링된 매물 목록
-  const filteredProperties = mockProperties.filter(property => {
+  const filteredProperties = properties.filter(property => {
     const matchesSearch = property.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         property.location.toLowerCase().includes(searchTerm.toLowerCase());
+                         property.address.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesDistrict = !selectedDistrict || property.district === selectedDistrict;
     const matchesType = !selectedType || property.buildingType === selectedType;
 
     return matchesSearch && matchesDistrict && matchesType;
   });
 
-  const formatPrice = (price: number) => {
-    const eok = Math.floor(price / 100000000);
-    const man = Math.floor((price % 100000000) / 10000);
+  const formatPrice = (price: string) => {
+    const numPrice = parseInt(price);
+    const eok = Math.floor(numPrice / 100000000);
+    const man = Math.floor((numPrice % 100000000) / 10000);
     return `${eok}억 ${man > 0 ? man + '만' : ''}`;
+  };
+
+  const formatDate = (date: Date) => {
+    if (!date) return '-';
+    const d = new Date(date);
+    if (isNaN(d.getTime())) return '-';
+    return `${d.getFullYear()}년 ${d.getMonth() + 1}월`;
   };
 
   return (
@@ -222,90 +207,108 @@ export default function PropertiesPage() {
               </select>
             </div>
 
+            {/* 로딩 상태 */}
+            {loading && (
+              <div className="text-center py-20">
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-400 mx-auto mb-4"></div>
+                <p className="text-gray-400">매물을 불러오는 중...</p>
+              </div>
+            )}
+
             {/* 매물 카드 */}
-            <div className={`grid gap-8 ${viewMode === 'grid' ? 'md:grid-cols-2 lg:grid-cols-3' : 'grid-cols-1'}`}>
-              {filteredProperties.map((property, index) => (
-                <motion.div
-                  key={property.id}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.6, delay: index * 0.1 }}
-                >
-                  <GlassCard
-                    className={`overflow-hidden cursor-pointer group ${property.featured ? 'ring-2 ring-blue-400/50' : ''}`}
-                    hover
-                    glow={property.featured}
+            {!loading && (
+              <div className={`grid gap-8 ${viewMode === 'grid' ? 'md:grid-cols-2 lg:grid-cols-3' : 'grid-cols-1'}`}>
+                {filteredProperties.map((property, index) => (
+                  <motion.div
+                    key={property.id}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.6, delay: index * 0.1 }}
                   >
-                    {/* 이미지 */}
-                    <div className="relative h-48 overflow-hidden">
-                      <Image
-                        src={property.image}
-                        alt={property.title}
-                        fill
-                        className="object-cover"
-                        quality={75}
-                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                      />
-                      {property.featured && (
-                        <div className="absolute top-4 left-4 px-3 py-1 bg-blue-500 text-white text-xs font-semibold rounded-full z-10">
-                          추천매물
-                        </div>
-                      )}
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
-                    </div>
-
-                    {/* 콘텐츠 */}
-                    <div className="p-6">
-                      <div className="mb-4">
-                        <h3 className="text-xl font-bold text-white mb-2 group-hover:text-blue-300 transition-colors">
-                          {property.title}
-                        </h3>
-                        <div className="flex items-center gap-2 text-gray-400 mb-2">
-                          <MapPin className="w-4 h-4" />
-                          <span className="text-sm">{property.location}</span>
-                        </div>
-                        <p className="text-sm text-gray-400">{property.developer}</p>
-                      </div>
-
-                      <div className="space-y-3 mb-6">
-                        <div className="flex justify-between text-sm">
-                          <span className="text-gray-400">분양가</span>
-                          <span className="text-white font-semibold">{formatPrice(property.basePrice)}</span>
-                        </div>
-                        <div className="flex justify-between text-sm">
-                          <span className="text-gray-400">평단가</span>
-                          <span className="text-white font-semibold">{(property.pricePerPyeong / 10000).toFixed(0)}만원/평</span>
-                        </div>
-                        <div className="flex justify-between text-sm">
-                          <span className="text-gray-400">입주예정</span>
-                          <span className="text-white font-semibold">{property.completionDate}</span>
-                        </div>
-                        {property.profitRate && (
-                          <div className="flex justify-between text-sm">
-                            <span className="text-gray-400">예상수익률</span>
-                            <span className="text-green-400 font-semibold flex items-center gap-1">
-                              <TrendingUp className="w-3 h-3" />
-                              {property.profitRate}%
-                            </span>
+                    <GlassCard
+                      className={`overflow-hidden cursor-pointer group ${property.featured ? 'ring-2 ring-blue-400/50' : ''}`}
+                      hover
+                      glow={property.featured}
+                    >
+                      {/* 이미지 */}
+                      <div className="relative h-48 overflow-hidden bg-gradient-to-br from-blue-500/20 to-purple-500/20">
+                        {property.featured && (
+                          <div className="absolute top-4 left-4 px-3 py-1 bg-blue-500 text-white text-xs font-semibold rounded-full z-10">
+                            추천매물
                           </div>
                         )}
+                        <div className="absolute inset-0 flex items-center justify-center">
+                          <Building2 className="w-16 h-16 text-white/30" />
+                        </div>
                       </div>
 
-                      <div className="flex gap-2">
-                        <button className="flex-1 px-4 py-2 bg-blue-500/20 text-blue-300 rounded-lg hover:bg-blue-500/30 transition-colors text-sm font-medium">
-                          상세보기
-                        </button>
-                        <button className="px-3 py-2 bg-white/10 text-white rounded-lg hover:bg-white/20 transition-colors">
-                          <Calculator className="w-4 h-4" />
-                        </button>
-                      </div>
-                    </div>
-                  </GlassCard>
-                </motion.div>
-              ))}
-            </div>
+                      {/* 콘텐츠 */}
+                      <div className="p-6">
+                        <div className="mb-4">
+                          <h3 className="text-xl font-bold text-white mb-2 group-hover:text-blue-300 transition-colors">
+                            {property.title}
+                          </h3>
+                          <div className="flex items-center gap-2 text-gray-400 mb-2">
+                            <MapPin className="w-4 h-4" />
+                            <span className="text-sm">{property.address}</span>
+                          </div>
+                          <p className="text-sm text-gray-400">{property.developer.name}</p>
+                        </div>
 
-            {filteredProperties.length === 0 && (
+                        <div className="space-y-3 mb-6">
+                          <div className="flex justify-between text-sm">
+                            <span className="text-gray-400">분양가</span>
+                            <span className="text-white font-semibold">{formatPrice(property.basePrice)}</span>
+                          </div>
+                          <div className="flex justify-between text-sm">
+                            <span className="text-gray-400">평단가</span>
+                            <span className="text-white font-semibold">
+                              {property.pricePerPyeong && !isNaN(parseInt(property.pricePerPyeong))
+                                ? `${(parseInt(property.pricePerPyeong) / 10000).toFixed(0)}만원/평`
+                                : '가격문의'}
+                            </span>
+                          </div>
+                          <div className="flex justify-between text-sm">
+                            <span className="text-gray-400">입주예정</span>
+                            <span className="text-white font-semibold">{formatDate(property.moveInDate)}</span>
+                          </div>
+                          {property.constructor && (
+                            <div className="flex justify-between text-sm">
+                              <span className="text-gray-400">시공사</span>
+                              <span className="text-blue-400 font-semibold">
+                                {property.constructor}
+                              </span>
+                            </div>
+                          )}
+                          {property.keyFeature && (
+                            <div className="flex justify-between text-sm">
+                              <span className="text-gray-400">특장점</span>
+                              <span className="text-green-400 font-semibold flex items-center gap-1">
+                                <TrendingUp className="w-3 h-3" />
+                                {property.keyFeature}
+                              </span>
+                            </div>
+                          )}
+                        </div>
+
+                        <div className="flex gap-2">
+                          <Link href={`/properties/${property.id}`} className="flex-1">
+                            <button className="w-full px-4 py-2 bg-blue-500/20 text-blue-300 rounded-lg hover:bg-blue-500/30 transition-colors text-sm font-medium">
+                              상세보기
+                            </button>
+                          </Link>
+                          <button className="px-3 py-2 bg-white/10 text-white rounded-lg hover:bg-white/20 transition-colors">
+                            <Calculator className="w-4 h-4" />
+                          </button>
+                        </div>
+                      </div>
+                    </GlassCard>
+                  </motion.div>
+                ))}
+              </div>
+            )}
+
+            {!loading && filteredProperties.length === 0 && (
               <div className="text-center py-20">
                 <Building2 className="w-16 h-16 text-gray-500 mx-auto mb-4" />
                 <p className="text-gray-400 text-lg">검색 조건에 맞는 매물이 없습니다.</p>

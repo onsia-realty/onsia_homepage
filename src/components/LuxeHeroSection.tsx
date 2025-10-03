@@ -1,7 +1,7 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { ArrowRight, TrendingUp, Shield, Users, Award, ChevronDown } from 'lucide-react';
+import { ArrowRight, TrendingUp, Shield, Award, ChevronDown } from 'lucide-react';
 import { GlassCard } from './ui/GlassCard';
 import Link from 'next/link';
 import Image from 'next/image';
@@ -113,26 +113,6 @@ export const LuxeHeroSection = () => {
                   </button>
                 </motion.div>
 
-                {/* 미니 통계 */}
-                <motion.div
-                  className="grid grid-cols-3 gap-4"
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 1, duration: 0.6 }}
-                >
-                  <div className="backdrop-blur-xl bg-white/5 border border-white/10 rounded-xl p-3">
-                    <div className="text-2xl font-bold text-white mb-1">2,847</div>
-                    <div className="text-white/60 text-sm">등록 매물</div>
-                  </div>
-                  <div className="backdrop-blur-xl bg-white/5 border border-white/10 rounded-xl p-3">
-                    <div className="text-2xl font-bold text-green-400 mb-1">1,236</div>
-                    <div className="text-white/60 text-sm">상담 진행</div>
-                  </div>
-                  <div className="backdrop-blur-xl bg-white/5 border border-white/10 rounded-xl p-3">
-                    <div className="text-2xl font-bold text-blue-400 mb-1">92.8%</div>
-                    <div className="text-white/60 text-sm">계약 성사율</div>
-                  </div>
-                </motion.div>
               </motion.div>
 
               {/* 우측: 글래스 카드 정보 박스 */}
@@ -178,15 +158,6 @@ export const LuxeHeroSection = () => {
                         </div>
                       </div>
 
-                      <div className="flex items-start gap-3">
-                        <div className="w-10 h-10 rounded-xl bg-gradient-to-r from-green-500 to-emerald-500 flex items-center justify-center flex-shrink-0">
-                          <Users className="w-5 h-5 text-white" />
-                        </div>
-                        <div>
-                          <h4 className="text-white font-semibold mb-1">전문가 컨설팅</h4>
-                          <p className="text-white/60 text-sm">분양권 전문 공인중개사가<br />1:1 맞춤 전략 상담 제공</p>
-                        </div>
-                      </div>
                     </div>
 
                     {/* 수상 내역 */}
@@ -256,35 +227,6 @@ export const LuxeHeroSection = () => {
         </motion.div>
       </div>
 
-      {/* 럭셔리 통계 섹션 (Hero 하단) */}
-      <div className="relative z-10 bg-black/50 backdrop-blur-xl border-t border-white/10">
-        <div className="container mx-auto px-6 py-8">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-            {[
-              { label: '총 거래액', value: '1,847', unit: '억원', trend: '+23%' },
-              { label: '성공 투자', value: '2,364', unit: '건', trend: '+18%' },
-              { label: '평균 수익률', value: '19.2', unit: '%', trend: '+5.2%' },
-              { label: '활성 투자자', value: '8,742', unit: '명', trend: '+142' }
-            ].map((stat, index) => (
-              <motion.div
-                key={index}
-                className="text-center"
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: index * 0.1, duration: 0.6 }}
-              >
-                <div className="text-2xl md:text-3xl font-bold text-white mb-1">
-                  {stat.value}
-                  <span className="text-base md:text-lg text-white/60">{stat.unit}</span>
-                </div>
-                <div className="text-white/60 text-xs mb-1">{stat.label}</div>
-                <div className="text-green-400 text-xs font-medium">{stat.trend}</div>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </div>
     </section>
   );
 };

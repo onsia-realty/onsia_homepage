@@ -170,6 +170,170 @@ async function main() {
   }
 
   console.log('🏷️ 태그 생성 완료');
+
+  // 건설사 데이터 생성
+  const developers = [
+    {
+      name: '대우건설',
+      description: '대한민국 대표 건설사로 프리미엄 주거 브랜드를 선도합니다',
+      logoUrl: '/developers/daewoo.png',
+      website: 'https://www.daewooenc.com',
+      totalProjects: 150,
+      rating: 4.8
+    },
+    {
+      name: '경남기업',
+      description: '아너스빌 브랜드로 유명한 믿을 수 있는 건설사',
+      logoUrl: '/developers/kyungnam.png',
+      website: 'https://www.kyungnam.co.kr',
+      totalProjects: 85,
+      rating: 4.6
+    },
+    {
+      name: '대방건설',
+      description: '합리적인 가격의 고품질 주거 공간을 제공합니다',
+      logoUrl: '/developers/daebang.png',
+      website: 'https://www.daebang.co.kr',
+      totalProjects: 120,
+      rating: 4.5
+    }
+  ];
+
+  const createdDevelopers: any[] = [];
+  for (const dev of developers) {
+    const developer = await prisma.developer.upsert({
+      where: { name: dev.name },
+      update: {},
+      create: dev
+    });
+    createdDevelopers.push(developer);
+    console.log(`🏗️ 건설사 생성: ${developer.name}`);
+  }
+
+  // 매물 데이터 생성
+  const properties = [
+    {
+      title: '신광교 클라우드시티',
+      slug: 'sin-gwang-gyo-cloud-city',
+      description: '수원 광교 신도시 호수공원 인근에 위치한 프리미엄 아파트로, 신분당선 광교역 도보 10분 거리의 우수한 접근성과 높은 투자가치를 자랑합니다.',
+      address: '경기 수원시 영통구 광교호수공원로 154',
+      district: '영통구',
+      city: '수원시',
+      zipCode: '16514',
+      totalUnits: 842,
+      availableUnits: 156,
+      buildingType: 'APARTMENT' as const,
+      completionDate: new Date('2028-03-31'),
+      moveInDate: new Date('2028-05-31'),
+      basePrice: BigInt(1350000000),
+      pricePerPyeong: BigInt(4500000),
+      contractDeposit: BigInt(135000000),
+      interimPayments: JSON.stringify({
+        payments: [
+          { step: '1차 중도금', rate: 10, amount: 135000000, date: '2024-12' },
+          { step: '2차 중도금', rate: 10, amount: 135000000, date: '2025-04' },
+          { step: '3차 중도금', rate: 10, amount: 135000000, date: '2025-08' }
+        ]
+      }),
+      rightsFee: BigInt(50000000),
+      profitRate: 18.5,
+      investmentGrade: 'A+',
+      constructor: '현대엔지니어링',
+      keyFeature: '계약금 0원',
+      totalBuildingCount: 5,
+      parkingSpaces: 920,
+      facilities: JSON.stringify(['피트니스센터', '대형 회의실', '숙면실', '커뮤니티센터']),
+      status: 'AVAILABLE' as const,
+      featured: true,
+      developerId: createdDevelopers[0].id,
+      authorId: adminUser.id
+    },
+    {
+      title: '용인 경남아너스빌',
+      slug: 'yongin-kyungnam-honors-ville',
+      description: '용인 기흥구 중동에 위치한 경남기업의 아너스빌 브랜드 아파트입니다. 삼성전자 기흥캠퍼스와 인접하여 안정적인 배후수요를 확보하고 있습니다.',
+      address: '경기 용인시 기흥구 중동 1234번지',
+      district: '기흥구',
+      city: '용인시',
+      zipCode: '17086',
+      totalUnits: 1248,
+      availableUnits: 324,
+      buildingType: 'APARTMENT' as const,
+      completionDate: new Date('2028-03-31'),
+      moveInDate: new Date('2028-05-31'),
+      basePrice: BigInt(890000000),
+      pricePerPyeong: BigInt(3200000),
+      contractDeposit: BigInt(89000000),
+      interimPayments: JSON.stringify({
+        payments: [
+          { step: '1차 중도금', rate: 10, amount: 89000000, date: '2024-11' },
+          { step: '2차 중도금', rate: 10, amount: 89000000, date: '2025-03' },
+          { step: '3차 중도금', rate: 10, amount: 89000000, date: '2025-09' }
+        ]
+      }),
+      rightsFee: BigInt(35000000),
+      profitRate: 22.3,
+      investmentGrade: 'A',
+      constructor: 'SM건설',
+      keyFeature: '6500세대 대단지 아파트',
+      totalBuildingCount: 12,
+      parkingSpaces: 1450,
+      facilities: JSON.stringify(['휘트니스클럽', '지하주차장', '어린이놀이터', '작은도서관']),
+      status: 'AVAILABLE' as const,
+      featured: true,
+      developerId: createdDevelopers[1].id,
+      authorId: adminUser.id
+    },
+    {
+      title: '이천 부발역 에피트',
+      slug: 'icheon-bubal-epit',
+      description: '이천 부발역 도보 5분 거리에 위치한 역세권 아파트입니다. SK하이닉스 이천캠퍼스와 가까워 안정적인 수요층을 확보하고 있습니다.',
+      address: '경기 이천시 부발읍 부발리 567번지',
+      district: '부발읍',
+      city: '이천시',
+      zipCode: '17417',
+      totalUnits: 687,
+      availableUnits: 89,
+      buildingType: 'APARTMENT' as const,
+      completionDate: new Date('2028-03-31'),
+      moveInDate: new Date('2028-05-31'),
+      basePrice: BigInt(1180000000),
+      pricePerPyeong: BigInt(4100000),
+      contractDeposit: BigInt(118000000),
+      interimPayments: JSON.stringify({
+        payments: [
+          { step: '1차 중도금', rate: 10, amount: 118000000, date: '2024-09' },
+          { step: '2차 중도금', rate: 10, amount: 118000000, date: '2024-12' },
+          { step: '3차 중도금', rate: 10, amount: 118000000, date: '2025-05' }
+        ]
+      }),
+      rightsFee: BigInt(28000000),
+      profitRate: 15.7,
+      investmentGrade: 'B+',
+      constructor: '한라건설',
+      keyFeature: '계약금 0원',
+      totalBuildingCount: 7,
+      parkingSpaces: 820,
+      facilities: JSON.stringify(['피트니스센터', '지하주차장', '어린이공원', '게스트하우스']),
+      status: 'AVAILABLE' as const,
+      featured: true,
+      developerId: createdDevelopers[2].id,
+      authorId: adminUser.id
+    }
+  ];
+
+  for (const prop of properties) {
+    const property = await prisma.property.upsert({
+      where: { slug: prop.slug },
+      update: {
+        featured: prop.featured,
+        facilities: prop.facilities
+      },
+      create: prop
+    });
+    console.log(`🏘️ 매물 생성: ${property.title}`);
+  }
+
   console.log('✅ 시드 데이터 생성 완료!');
 }
 
