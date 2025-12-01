@@ -7,12 +7,14 @@ import {
   MapPin, Building2, Calendar, Users, Car, TrendingUp,
   Calculator, Phone, Mail, Share2, Heart, ChevronLeft,
   ArrowRight, Check, Home, Award, Star, Clock, Wifi,
-  Trees, Dumbbell, Store, GraduationCap
+  Trees, Dumbbell, Store, GraduationCap, Play, FileText,
+  Navigation2, Square
 } from 'lucide-react';
 import { Navigation } from '@/components/Navigation';
 import { GlassCard } from '@/components/ui/GlassCard';
 import { GlassPanel } from '@/components/ui/GlassPanel';
 import { ParticlesBackground } from '@/components/ParticlesBackground';
+import { InquiryForm } from '@/components/InquiryForm';
 import Link from 'next/link';
 import Image from 'next/image';
 
@@ -53,6 +55,13 @@ interface Property {
   facilities: string | null;
   status: string;
   featured: boolean;
+  // 신규 필드
+  pdfUrl: string | null;
+  youtubeVideoId: string | null;
+  locationDesc: string | null;
+  pyeongTypes: string | null;
+  subdomain: string | null;
+  isPremium: boolean;
   developer: Developer;
   images: Array<{
     id: string;
@@ -124,6 +133,15 @@ export default function PropertyDetailPage({ params }: { params: Promise<{ id: s
     }
   };
 
+  const parsePyeongTypes = (pyeongTypesJson: string | null): string[] => {
+    if (!pyeongTypesJson) return [];
+    try {
+      return JSON.parse(pyeongTypesJson);
+    } catch {
+      return [];
+    }
+  };
+
   // 이미지 선택 함수
   const getPropertyImages = () => {
     // 실제 이미지가 없으므로 임시 이미지 배열 생성
@@ -189,6 +207,7 @@ export default function PropertyDetailPage({ params }: { params: Promise<{ id: s
   const facilities = parseFacilities(property.facilities);
   const interimPayments = parseInterimPayments(property.interimPayments);
   const propertyImages = getPropertyImages();
+  const pyeongTypes = parsePyeongTypes(property.pyeongTypes);
 
   return (
     <>
@@ -214,86 +233,255 @@ export default function PropertyDetailPage({ params }: { params: Promise<{ id: s
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8 }}
             >
-              {/* 이미지 갤러리 */}
+              {/* 히어로 이미지 갤러리 - 임팩트 극대화 */}
               <div className="mb-8">
-                <div className="relative h-[400px] md:h-[500px] rounded-2xl overflow-hidden">
-                  <Image
-                    src={propertyImages[selectedImage]}
-                    alt={property.title}
-                    fill
-                    className="object-cover"
-                    priority
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+                <div className="relative h-[500px] md:h-[600px] rounded-3xl overflow-hidden group">
+                  {/* 외곽 글로우 효과 */}
+                  <div className="absolute -inset-1 bg-gradient-to-r from-blue-500 via-purple-500 to-cyan-500 rounded-3xl blur-lg opacity-30 group-hover:opacity-50 transition-opacity duration-500" />
 
-                  {/* 오버레이 정보 */}
-                  <div className="absolute bottom-0 left-0 right-0 p-8 text-white">
-                    <div className="flex flex-wrap gap-3 mb-4">
-                      {property.featured && (
-                        <span className="px-4 py-2 bg-blue-500 text-white text-sm font-bold rounded-full">
-                          추천매물
-                        </span>
-                      )}
-                      {property.investmentGrade && (
-                        <span className="px-4 py-2 bg-purple-500 text-white text-sm font-bold rounded-full">
-                          투자등급 {property.investmentGrade}
-                        </span>
-                      )}
-                      {property.keyFeature && (
-                        <span className="px-4 py-2 bg-green-500 text-white text-sm font-bold rounded-full">
-                          {property.keyFeature}
-                        </span>
-                      )}
-                    </div>
-                    <h1 className="text-3xl md:text-5xl font-bold mb-4">
-                      {property.title}
-                    </h1>
-                    <div className="flex items-center gap-4 text-lg">
-                      <div className="flex items-center gap-2">
-                        <MapPin className="w-5 h-5" />
-                        <span>{property.city} {property.district}</span>
-                      </div>
-                      {property.constructor && (
-                        <div className="flex items-center gap-2">
-                          <Building2 className="w-5 h-5" />
-                          <span>{property.constructor}</span>
+                  <div className="relative h-full rounded-3xl overflow-hidden">
+                    <Image
+                      src={propertyImages[selectedImage]}
+                      alt={property.title}
+                      fill
+                      className="object-cover transition-transform duration-700 group-hover:scale-110"
+                      priority
+                    />
+                    {/* 다층 그라데이션 오버레이 */}
+                    <div className="absolute inset-0 bg-gradient-to-t from-black via-black/30 to-transparent opacity-90" />
+                    <div className="absolute inset-0 bg-gradient-to-r from-blue-900/40 via-transparent to-purple-900/30" />
+                    <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/10 to-transparent" />
+
+                    {/* 프리미엄 뱃지 (좌측 상단) - 애니메이션 추가 */}
+                    {property.isPremium && (
+                      <motion.div
+                        className="absolute top-6 left-6 z-10"
+                        initial={{ opacity: 0, x: -20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ delay: 0.3 }}
+                      >
+                        <div className="relative">
+                          <div className="absolute -inset-1 bg-gradient-to-r from-yellow-400 to-amber-500 rounded-full blur opacity-75 animate-pulse" />
+                          <div className="relative px-6 py-2.5 bg-gradient-to-r from-yellow-500 via-amber-400 to-yellow-500 text-black text-sm font-black rounded-full shadow-2xl shadow-yellow-500/50 flex items-center gap-2 backdrop-blur-sm">
+                            <Star className="w-4 h-4 fill-current animate-spin" style={{ animationDuration: '3s' }} />
+                            PREMIUM
+                            <Star className="w-4 h-4 fill-current animate-spin" style={{ animationDuration: '3s', animationDirection: 'reverse' }} />
+                          </div>
+                        </div>
+                      </motion.div>
+                    )}
+
+                    {/* 핵심 숫자 (우측 상단) - 글로우 효과 */}
+                    <motion.div
+                      className="absolute top-6 right-6 flex gap-3 z-10"
+                      initial={{ opacity: 0, x: 20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: 0.4 }}
+                    >
+                      {property.profitRate && (
+                        <div className="relative group/profit">
+                          <div className="absolute -inset-1 bg-gradient-to-r from-green-400 to-emerald-500 rounded-2xl blur opacity-50 group-hover/profit:opacity-75 transition-opacity" />
+                          <div className="relative backdrop-blur-xl bg-black/40 border border-green-400/50 rounded-2xl px-6 py-4 text-center">
+                            <div className="text-4xl font-black bg-gradient-to-r from-green-300 to-emerald-400 bg-clip-text text-transparent">{property.profitRate}%</div>
+                            <div className="text-xs text-green-300/80 font-medium tracking-wider">예상 수익률</div>
+                          </div>
                         </div>
                       )}
-                    </div>
+                    </motion.div>
+
+                    {/* 오버레이 정보 - 하단 */}
+                    <motion.div
+                      className="absolute bottom-0 left-0 right-0 p-8 text-white"
+                      initial={{ opacity: 0, y: 30 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: 0.5, duration: 0.6 }}
+                    >
+                      {/* 배지들 - 순차 애니메이션 */}
+                      <div className="flex flex-wrap gap-3 mb-5">
+                        {property.featured && (
+                          <motion.span
+                            initial={{ scale: 0, rotate: -10 }}
+                            animate={{ scale: 1, rotate: 0 }}
+                            transition={{ type: "spring", delay: 0.6 }}
+                            className="relative group/badge"
+                          >
+                            <div className="absolute -inset-0.5 bg-gradient-to-r from-orange-400 to-red-500 rounded-full blur opacity-60 group-hover/badge:opacity-100 transition-opacity" />
+                            <div className="relative px-5 py-2 bg-gradient-to-r from-orange-500 to-red-500 text-white text-sm font-bold rounded-full shadow-xl">
+                              🔥 추천매물
+                            </div>
+                          </motion.span>
+                        )}
+                        {property.investmentGrade && (
+                          <motion.span
+                            initial={{ scale: 0, rotate: 10 }}
+                            animate={{ scale: 1, rotate: 0 }}
+                            transition={{ type: "spring", delay: 0.7 }}
+                            className="relative group/badge"
+                          >
+                            <div className="absolute -inset-0.5 bg-gradient-to-r from-purple-400 to-pink-500 rounded-full blur opacity-60 group-hover/badge:opacity-100 transition-opacity" />
+                            <div className="relative px-5 py-2 bg-gradient-to-r from-purple-500 to-pink-500 text-white text-sm font-bold rounded-full shadow-xl">
+                              🏆 투자등급 {property.investmentGrade}
+                            </div>
+                          </motion.span>
+                        )}
+                        {property.keyFeature && (
+                          <motion.span
+                            initial={{ scale: 0 }}
+                            animate={{ scale: 1 }}
+                            transition={{ type: "spring", delay: 0.8 }}
+                            className="relative group/badge"
+                          >
+                            <div className="absolute -inset-0.5 bg-gradient-to-r from-green-400 to-emerald-500 rounded-full blur opacity-60 group-hover/badge:opacity-100 transition-opacity animate-pulse" />
+                            <div className="relative px-5 py-2 bg-gradient-to-r from-green-500 to-emerald-500 text-white text-sm font-bold rounded-full shadow-xl">
+                              ✨ {property.keyFeature}
+                            </div>
+                          </motion.span>
+                        )}
+                      </div>
+
+                      {/* 제목 - 그라데이션 텍스트 */}
+                      <h1 className="text-4xl md:text-6xl font-black mb-4">
+                        <span className="bg-gradient-to-r from-white via-blue-100 to-white bg-clip-text text-transparent drop-shadow-2xl">
+                          {property.title}
+                        </span>
+                      </h1>
+
+                      {/* 위치 및 시공사 - 호버 효과 강화 */}
+                      <div className="flex flex-wrap items-center gap-4 text-lg">
+                        <motion.div
+                          whileHover={{ scale: 1.05 }}
+                          className="flex items-center gap-2 backdrop-blur-md bg-white/15 px-5 py-2.5 rounded-full border border-white/20 hover:bg-white/25 transition-all cursor-pointer"
+                        >
+                          <MapPin className="w-5 h-5 text-blue-400" />
+                          <span className="font-semibold">{property.city} {property.district}</span>
+                        </motion.div>
+                        {property.constructor && (
+                          <motion.div
+                            whileHover={{ scale: 1.05 }}
+                            className="flex items-center gap-2 backdrop-blur-md bg-white/15 px-5 py-2.5 rounded-full border border-white/20 hover:bg-white/25 transition-all cursor-pointer"
+                          >
+                            <Building2 className="w-5 h-5 text-cyan-400" />
+                            <span className="font-semibold">{property.constructor}</span>
+                          </motion.div>
+                        )}
+                      </div>
+                    </motion.div>
                   </div>
                 </div>
               </div>
 
-              {/* 주요 정보 카드 그리드 */}
+              {/* 주요 정보 카드 그리드 - 임팩트 강화 */}
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-                <GlassCard className="p-6 text-center">
-                  <div className="text-sm text-gray-400 mb-2">입주예정</div>
-                  <div className="text-2xl font-bold text-white">
-                    2029년 5월
-                  </div>
-                </GlassCard>
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.1 }}
+                >
+                  <GlassCard className="p-6 text-center hover:scale-105 transition-transform duration-300 cursor-pointer group">
+                    <Calendar className="w-8 h-8 text-blue-400 mx-auto mb-3 group-hover:scale-110 transition-transform" />
+                    <div className="text-xs text-gray-400 mb-1 uppercase tracking-wider">입주예정</div>
+                    <div className="text-2xl font-black text-white">
+                      {formatDate(property.moveInDate)}
+                    </div>
+                  </GlassCard>
+                </motion.div>
 
-                <GlassCard className="p-6 text-center">
-                  <div className="text-sm text-gray-400 mb-2">분양가</div>
-                  <div className="text-2xl font-bold text-white">
-                    4억대~
-                  </div>
-                </GlassCard>
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.2 }}
+                >
+                  <GlassCard className="p-6 text-center hover:scale-105 transition-transform duration-300 cursor-pointer group bg-gradient-to-br from-blue-500/10 to-cyan-500/10 border-blue-400/30">
+                    <TrendingUp className="w-8 h-8 text-cyan-400 mx-auto mb-3 group-hover:scale-110 transition-transform" />
+                    <div className="text-xs text-gray-400 mb-1 uppercase tracking-wider">분양가</div>
+                    <div className="text-2xl font-black text-cyan-400">
+                      {formatPrice(property.basePrice)}
+                    </div>
+                  </GlassCard>
+                </motion.div>
 
-                <GlassCard className="p-6 text-center bg-green-500/10 border-green-400/30">
-                  <div className="text-sm text-gray-400 mb-2">특장점</div>
-                  <div className="text-2xl font-bold text-green-400 flex items-center justify-center gap-1">
-                    계약금 0원
-                  </div>
-                </GlassCard>
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.3 }}
+                >
+                  <GlassCard className="p-6 text-center hover:scale-105 transition-transform duration-300 cursor-pointer group bg-gradient-to-br from-green-500/10 to-emerald-500/10 border-green-400/30">
+                    <Award className="w-8 h-8 text-green-400 mx-auto mb-3 group-hover:scale-110 transition-transform" />
+                    <div className="text-xs text-gray-400 mb-1 uppercase tracking-wider">특장점</div>
+                    <div className="text-xl font-black text-green-400">
+                      {property.keyFeature || '프리미엄'}
+                    </div>
+                  </GlassCard>
+                </motion.div>
 
-                <GlassCard className="p-6 text-center bg-gradient-to-br from-yellow-500/10 to-yellow-500/20 border-yellow-400/30">
-                  <div className="text-sm text-gray-400 mb-2">상담문의</div>
-                  <div className="text-xl font-bold text-yellow-400">
-                    카카오톡
-                  </div>
-                </GlassCard>
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.4 }}
+                >
+                  <GlassCard className="p-6 text-center hover:scale-105 transition-transform duration-300 cursor-pointer group bg-gradient-to-br from-purple-500/10 to-pink-500/10 border-purple-400/30">
+                    <Users className="w-8 h-8 text-purple-400 mx-auto mb-3 group-hover:scale-110 transition-transform" />
+                    <div className="text-xs text-gray-400 mb-1 uppercase tracking-wider">총 세대수</div>
+                    <div className="text-xl font-black text-purple-400">
+                      {property.totalUnits.toLocaleString()}세대
+                    </div>
+                  </GlassCard>
+                </motion.div>
               </div>
+
+              {/* 위치 정보 섹션 */}
+              {property.locationDesc && (
+                <GlassCard className="p-6 mb-8 bg-gradient-to-r from-blue-500/10 to-cyan-500/10 border-blue-400/20">
+                  <div className="flex items-start gap-4">
+                    <div className="p-3 bg-blue-500/20 rounded-xl">
+                      <Navigation2 className="w-6 h-6 text-blue-400" />
+                    </div>
+                    <div>
+                      <h3 className="text-lg font-bold text-white mb-2">위치 및 교통</h3>
+                      <p className="text-gray-300 leading-relaxed">{property.locationDesc}</p>
+                    </div>
+                  </div>
+                </GlassCard>
+              )}
+
+              {/* 평형 구성 */}
+              {pyeongTypes.length > 0 && (
+                <div className="mb-8">
+                  <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
+                    <Square className="w-5 h-5 text-purple-400" />
+                    평형 구성
+                  </h3>
+                  <div className="flex flex-wrap gap-3">
+                    {pyeongTypes.map((pyeong, index) => (
+                      <div
+                        key={index}
+                        className="px-4 py-2 bg-purple-500/20 border border-purple-400/30 rounded-lg text-purple-300 font-medium"
+                      >
+                        {pyeong}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* 유튜브 영상 섹션 */}
+              {property.youtubeVideoId && (
+                <GlassCard className="p-6 mb-8">
+                  <h3 className="text-xl font-bold text-white mb-4 flex items-center gap-2">
+                    <Play className="w-5 h-5 text-red-400" />
+                    현장 소개 영상
+                  </h3>
+                  <div className="relative aspect-video rounded-xl overflow-hidden">
+                    <iframe
+                      src={`https://www.youtube.com/embed/${property.youtubeVideoId}`}
+                      title={`${property.title} 소개 영상`}
+                      className="absolute inset-0 w-full h-full"
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                      allowFullScreen
+                    />
+                  </div>
+                </GlassCard>
+              )}
             </motion.div>
           </div>
         </section>
@@ -336,7 +524,7 @@ export default function PropertyDetailPage({ params }: { params: Promise<{ id: s
                         {/* 총세대수 */}
                         <div className="bg-gradient-to-br from-white/5 to-white/10 rounded-lg p-4 text-center backdrop-blur-sm border border-white/10 hover:border-blue-400/30 hover:from-blue-500/10 hover:to-blue-500/20 transition-all duration-300 group">
                           <div className="text-2xl font-bold text-white mb-1 group-hover:text-blue-300 transition-colors">
-                            3,140
+                            {property.totalUnits.toLocaleString()}
                           </div>
                           <div className="text-xs text-gray-400">세대</div>
                         </div>
@@ -344,7 +532,7 @@ export default function PropertyDetailPage({ params }: { params: Promise<{ id: s
                         {/* 총 동수 */}
                         <div className="bg-gradient-to-br from-white/5 to-white/10 rounded-lg p-4 text-center backdrop-blur-sm border border-white/10 hover:border-purple-400/30 hover:from-purple-500/10 hover:to-purple-500/20 transition-all duration-300 group">
                           <div className="text-2xl font-bold text-white mb-1 group-hover:text-purple-300 transition-colors">
-                            5
+                            {property.totalBuildingCount || '-'}
                           </div>
                           <div className="text-xs text-gray-400">동</div>
                         </div>
@@ -352,7 +540,7 @@ export default function PropertyDetailPage({ params }: { params: Promise<{ id: s
                         {/* 주차대수 */}
                         <div className="bg-gradient-to-br from-white/5 to-white/10 rounded-lg p-4 text-center backdrop-blur-sm border border-white/10 hover:border-green-400/30 hover:from-green-500/10 hover:to-green-500/20 transition-all duration-300 group">
                           <div className="text-2xl font-bold text-white mb-1 group-hover:text-green-300 transition-colors">
-                            2,556
+                            {property.parkingSpaces?.toLocaleString() || '-'}
                           </div>
                           <div className="text-xs text-gray-400">주차대수</div>
                         </div>
@@ -360,7 +548,7 @@ export default function PropertyDetailPage({ params }: { params: Promise<{ id: s
                         {/* 시행사 */}
                         <div className="bg-gradient-to-br from-white/5 to-white/10 rounded-lg p-4 text-center backdrop-blur-sm border border-white/10 hover:border-blue-400/30 hover:from-blue-500/10 hover:to-blue-500/20 transition-all duration-300 group">
                           <div className="text-base font-semibold text-blue-400 mb-1 group-hover:text-blue-300 transition-colors">
-                            기세
+                            {property.developer?.name || '미정'}
                           </div>
                           <div className="text-xs text-gray-400">시행사</div>
                         </div>
@@ -388,23 +576,23 @@ export default function PropertyDetailPage({ params }: { params: Promise<{ id: s
                         <div className="bg-white/5 rounded-lg px-4 py-3 backdrop-blur-sm border border-white/10 hover:bg-white/10 transition-colors">
                           <div className="flex justify-between items-center">
                             <span className="text-sm text-gray-400">입주예정일</span>
-                            <span className="text-white font-semibold">2029년 5월</span>
+                            <span className="text-white font-semibold">{formatDate(property.moveInDate)}</span>
                           </div>
                         </div>
 
-                        {/* 대지면적 */}
+                        {/* 잔여세대 */}
                         <div className="bg-white/5 rounded-lg px-4 py-3 backdrop-blur-sm border border-white/10 hover:bg-white/10 transition-colors">
                           <div className="flex justify-between items-center">
-                            <span className="text-sm text-gray-400">대지면적</span>
-                            <span className="text-white font-semibold text-sm">26,975.10 m²</span>
+                            <span className="text-sm text-gray-400">잔여세대</span>
+                            <span className="text-white font-semibold">{property.availableUnits}세대</span>
                           </div>
                         </div>
 
-                        {/* 건축면적 */}
+                        {/* 투자등급 */}
                         <div className="bg-white/5 rounded-lg px-4 py-3 backdrop-blur-sm border border-white/10 hover:bg-white/10 transition-colors col-span-2">
                           <div className="flex justify-between items-center">
-                            <span className="text-sm text-gray-400">건축면적</span>
-                            <span className="text-white font-semibold">346,350.13 m²</span>
+                            <span className="text-sm text-gray-400">투자등급</span>
+                            <span className="text-purple-400 font-semibold">{property.investmentGrade || '-'}</span>
                           </div>
                         </div>
                       </div>
@@ -419,46 +607,106 @@ export default function PropertyDetailPage({ params }: { params: Promise<{ id: s
                   </div>
                 </GlassCard>
 
-                {/* 단지 내 시설 */}
+                {/* 단지 내 시설 - 애니메이션 추가 */}
                 {facilities.length > 0 && (
-                  <GlassCard className="p-8">
-                    <h2 className="text-2xl font-bold text-white mb-6">단지 내 시설</h2>
-                    <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                  <GlassCard className="p-8 overflow-hidden relative">
+                    <div className="absolute -top-20 -right-20 w-40 h-40 bg-purple-500/10 rounded-full blur-3xl" />
+                    <h2 className="text-2xl font-bold text-white mb-6 flex items-center gap-3">
+                      <div className="p-2 bg-gradient-to-br from-purple-500/20 to-pink-500/20 rounded-lg">
+                        <Home className="w-6 h-6 text-purple-400" />
+                      </div>
+                      단지 내 시설
+                    </h2>
+                    <div className="grid grid-cols-2 md:grid-cols-3 gap-4 relative">
                       {facilities.map((facility, index) => (
-                        <div key={index} className="flex items-center gap-3 p-4 rounded-lg bg-gradient-to-r from-blue-500/10 to-purple-500/10 border border-blue-400/20">
-                          <div className="text-blue-400">
+                        <motion.div
+                          key={index}
+                          initial={{ opacity: 0, y: 20 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          transition={{ delay: index * 0.1 }}
+                          whileHover={{ scale: 1.05, y: -5 }}
+                          className="flex items-center gap-3 p-4 rounded-xl bg-gradient-to-br from-white/5 to-white/10 border border-white/10 hover:border-purple-400/30 hover:from-purple-500/10 hover:to-pink-500/10 transition-all cursor-pointer group"
+                        >
+                          <div className="p-2 bg-gradient-to-br from-blue-500/20 to-purple-500/20 rounded-lg group-hover:from-blue-500/30 group-hover:to-purple-500/30 transition-all">
                             {getFacilityIcon(facility)}
                           </div>
-                          <span className="text-gray-200 font-medium">{facility}</span>
-                        </div>
+                          <span className="text-gray-200 font-medium group-hover:text-white transition-colors">{facility}</span>
+                        </motion.div>
                       ))}
                     </div>
                   </GlassCard>
                 )}
 
-                {/* 매물 특장점 */}
-                <GlassCard className="p-6">
-                  <h4 className="text-xl font-bold text-white mb-4 flex items-center gap-2">
-                    <Star className="w-5 h-5 text-yellow-400" />
+                {/* 매물 특장점 - 화려한 애니메이션 */}
+                <GlassCard className="p-8 overflow-hidden relative">
+                  <div className="absolute -top-20 -left-20 w-40 h-40 bg-yellow-500/10 rounded-full blur-3xl" />
+                  <div className="absolute -bottom-20 -right-20 w-40 h-40 bg-cyan-500/10 rounded-full blur-3xl" />
+
+                  <h4 className="text-2xl font-bold text-white mb-6 flex items-center gap-3 relative">
+                    <div className="p-2 bg-gradient-to-br from-yellow-500/20 to-orange-500/20 rounded-lg">
+                      <Star className="w-6 h-6 text-yellow-400 fill-yellow-400" />
+                    </div>
                     매물 특장점
+                    <div className="ml-auto px-3 py-1 bg-gradient-to-r from-yellow-500/20 to-orange-500/20 rounded-full text-sm text-yellow-300 font-medium">
+                      WHY INVEST?
+                    </div>
                   </h4>
-                  <div className="space-y-3">
-                    <div className="flex items-center gap-2 p-3 bg-blue-500/10 rounded-lg border border-blue-500/20">
-                      <div className="flex-shrink-0 w-5 h-5 rounded-full bg-blue-500 text-white flex items-center justify-center text-xs font-bold">1</div>
-                      <p className="text-gray-200 text-sm">삼성 반도체 배후수요를 둔 하이엔드 지식산업센터</p>
-                    </div>
-                    <div className="flex items-center gap-2 p-3 bg-green-500/10 rounded-lg border border-green-500/20">
-                      <div className="flex-shrink-0 w-5 h-5 rounded-full bg-green-500 text-white flex items-center justify-center text-xs font-bold">2</div>
-                      <p className="text-gray-200 text-sm">계약금 5% 중도금 무이자</p>
-                    </div>
-                    <div className="flex items-center gap-2 p-3 bg-purple-500/10 rounded-lg border border-purple-500/20">
-                      <div className="flex-shrink-0 w-5 h-5 rounded-full bg-purple-500 text-white flex items-center justify-center text-xs font-bold">3</div>
-                      <p className="text-gray-200 text-sm">계약시 축하금 3% 지급</p>
-                    </div>
-                    <div className="flex items-center gap-2 p-3 bg-cyan-500/10 rounded-lg border border-cyan-500/20">
-                      <div className="flex-shrink-0 w-5 h-5 rounded-full bg-cyan-500 text-white flex items-center justify-center text-xs font-bold">4</div>
-                      <p className="text-gray-200 text-sm">상업지역 시공, 헬스장, 회의실, 골프장, 커뮤니티 시설이 완비된 오피스</p>
-                    </div>
+                  <div className="space-y-4 relative">
+                    <motion.div
+                      initial={{ opacity: 0, x: -20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: 0 }}
+                      whileHover={{ scale: 1.02, x: 10 }}
+                      className="flex items-center gap-4 p-4 rounded-xl bg-gradient-to-r from-blue-500/10 to-blue-500/5 border border-blue-500/20 hover:border-blue-400/40 transition-all cursor-pointer group"
+                    >
+                      <div className="flex-shrink-0 w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500 to-blue-600 text-white flex items-center justify-center text-lg font-bold shadow-lg shadow-blue-500/30">
+                        🏢
+                      </div>
+                      <p className="text-gray-200 font-medium group-hover:text-white transition-colors">삼성 반도체 배후수요를 둔 하이엔드 지식산업센터</p>
+                      <ArrowRight className="w-5 h-5 text-blue-400 opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all ml-auto" />
+                    </motion.div>
+
+                    <motion.div
+                      initial={{ opacity: 0, x: -20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: 0.15 }}
+                      whileHover={{ scale: 1.02, x: 10 }}
+                      className="flex items-center gap-4 p-4 rounded-xl bg-gradient-to-r from-green-500/10 to-green-500/5 border border-green-500/20 hover:border-green-400/40 transition-all cursor-pointer group"
+                    >
+                      <div className="flex-shrink-0 w-10 h-10 rounded-xl bg-gradient-to-br from-green-500 to-green-600 text-white flex items-center justify-center text-lg font-bold shadow-lg shadow-green-500/30">
+                        💰
+                      </div>
+                      <p className="text-gray-200 font-medium group-hover:text-white transition-colors">계약금 5% 중도금 무이자</p>
+                      <ArrowRight className="w-5 h-5 text-green-400 opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all ml-auto" />
+                    </motion.div>
+
+                    <motion.div
+                      initial={{ opacity: 0, x: -20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: 0.3 }}
+                      whileHover={{ scale: 1.02, x: 10 }}
+                      className="flex items-center gap-4 p-4 rounded-xl bg-gradient-to-r from-purple-500/10 to-purple-500/5 border border-purple-500/20 hover:border-purple-400/40 transition-all cursor-pointer group"
+                    >
+                      <div className="flex-shrink-0 w-10 h-10 rounded-xl bg-gradient-to-br from-purple-500 to-purple-600 text-white flex items-center justify-center text-lg font-bold shadow-lg shadow-purple-500/30">
+                        🎁
+                      </div>
+                      <p className="text-gray-200 font-medium group-hover:text-white transition-colors">계약시 축하금 3% 지급</p>
+                      <ArrowRight className="w-5 h-5 text-purple-400 opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all ml-auto" />
+                    </motion.div>
+
+                    <motion.div
+                      initial={{ opacity: 0, x: -20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: 0.45 }}
+                      whileHover={{ scale: 1.02, x: 10 }}
+                      className="flex items-center gap-4 p-4 rounded-xl bg-gradient-to-r from-cyan-500/10 to-cyan-500/5 border border-cyan-500/20 hover:border-cyan-400/40 transition-all cursor-pointer group"
+                    >
+                      <div className="flex-shrink-0 w-10 h-10 rounded-xl bg-gradient-to-br from-cyan-500 to-cyan-600 text-white flex items-center justify-center text-lg font-bold shadow-lg shadow-cyan-500/30">
+                        🏋️
+                      </div>
+                      <p className="text-gray-200 font-medium group-hover:text-white transition-colors">상업지역 시공, 헬스장, 회의실, 골프장, 커뮤니티 시설이 완비된 오피스</p>
+                      <ArrowRight className="w-5 h-5 text-cyan-400 opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all ml-auto" />
+                    </motion.div>
                   </div>
                 </GlassCard>
 
@@ -490,6 +738,14 @@ export default function PropertyDetailPage({ params }: { params: Promise<{ id: s
                     </div>
                   </GlassCard>
                 )}
+
+                {/* 문의 폼 섹션 - 메인 콘텐츠 영역 */}
+                <div className="mt-8">
+                  <InquiryForm
+                    propertyId={property.id}
+                    propertyTitle={property.title}
+                  />
+                </div>
               </div>
 
               {/* 사이드바 */}
@@ -534,36 +790,119 @@ export default function PropertyDetailPage({ params }: { params: Promise<{ id: s
                   </div>
                 </GlassCard>
 
-                {/* 문의하기 */}
-                <GlassCard className="p-6">
-                  <h3 className="text-xl font-bold text-white mb-6">상담 문의</h3>
-                  <div className="space-y-3">
-                    <button className="w-full flex items-center justify-center gap-3 px-6 py-4 bg-gradient-to-r from-blue-500 to-cyan-500 text-white rounded-xl hover:shadow-lg hover:shadow-blue-500/30 transition-all font-semibold">
-                      <Phone className="w-5 h-5" />
-                      <span>전화 문의</span>
-                    </button>
-                    <button className="w-full flex items-center justify-center gap-3 px-6 py-4 bg-white/10 text-white rounded-xl hover:bg-white/20 transition-colors font-semibold">
+                {/* 문의하기 - 임팩트 있는 CTA */}
+                <GlassCard className="p-6 overflow-hidden relative">
+                  {/* 배경 애니메이션 */}
+                  <div className="absolute -top-20 -right-20 w-40 h-40 bg-blue-500/20 rounded-full blur-3xl" />
+                  <div className="absolute -bottom-20 -left-20 w-40 h-40 bg-purple-500/20 rounded-full blur-3xl" />
+
+                  <h3 className="text-xl font-bold text-white mb-6 relative">
+                    상담 문의
+                    <span className="absolute -top-1 -right-1 flex h-3 w-3">
+                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+                      <span className="relative inline-flex rounded-full h-3 w-3 bg-green-500"></span>
+                    </span>
+                  </h3>
+                  <div className="space-y-3 relative">
+                    {/* 전화 문의 - 메인 CTA */}
+                    <motion.button
+                      whileHover={{ scale: 1.02 }}
+                      whileTap={{ scale: 0.98 }}
+                      className="w-full relative group"
+                    >
+                      <div className="absolute -inset-0.5 bg-gradient-to-r from-blue-500 via-cyan-500 to-blue-500 rounded-xl blur opacity-60 group-hover:opacity-100 transition-opacity animate-pulse" />
+                      <div className="relative flex items-center justify-center gap-3 px-6 py-4 bg-gradient-to-r from-blue-600 to-cyan-500 text-white rounded-xl font-bold shadow-xl shadow-blue-500/25">
+                        <Phone className="w-5 h-5 animate-bounce" />
+                        <span>지금 바로 전화상담</span>
+                        <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                      </div>
+                    </motion.button>
+
+                    {/* 카카오톡 문의 */}
+                    <motion.button
+                      whileHover={{ scale: 1.02 }}
+                      whileTap={{ scale: 0.98 }}
+                      className="w-full relative group"
+                    >
+                      <div className="absolute -inset-0.5 bg-gradient-to-r from-yellow-400 to-yellow-500 rounded-xl blur opacity-0 group-hover:opacity-60 transition-opacity" />
+                      <div className="relative flex items-center justify-center gap-3 px-6 py-4 bg-yellow-400 text-yellow-900 rounded-xl font-bold hover:bg-yellow-300 transition-colors">
+                        <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
+                          <path d="M12 3c-5.5 0-10 3.58-10 8 0 2.79 1.86 5.24 4.65 6.62-.21.79-.78 2.86-.9 3.3-.14.55.2.54.43.39.17-.11 2.78-1.84 3.92-2.59.6.08 1.22.13 1.9.13 5.5 0 10-3.58 10-8s-4.5-8-10-8z"/>
+                        </svg>
+                        <span>카카오톡 상담</span>
+                      </div>
+                    </motion.button>
+
+                    {/* 이메일 문의 */}
+                    <motion.button
+                      whileHover={{ scale: 1.02 }}
+                      whileTap={{ scale: 0.98 }}
+                      className="w-full flex items-center justify-center gap-3 px-6 py-4 bg-white/10 text-white rounded-xl hover:bg-white/20 transition-all font-semibold border border-white/10 hover:border-white/20"
+                    >
                       <Mail className="w-5 h-5" />
                       <span>이메일 문의</span>
-                    </button>
-                    <button className="w-full flex items-center justify-center gap-3 px-6 py-4 bg-green-500/20 text-green-300 rounded-xl hover:bg-green-500/30 transition-colors font-semibold">
-                      <Calculator className="w-5 h-5" />
-                      <span>수익률 계산기</span>
-                    </button>
+                    </motion.button>
+
+                    {/* 수익률 계산기 */}
+                    <motion.button
+                      whileHover={{ scale: 1.02 }}
+                      whileTap={{ scale: 0.98 }}
+                      className="w-full relative group"
+                    >
+                      <div className="absolute -inset-0.5 bg-gradient-to-r from-green-400 to-emerald-500 rounded-xl blur opacity-0 group-hover:opacity-60 transition-opacity" />
+                      <div className="relative flex items-center justify-center gap-3 px-6 py-4 bg-gradient-to-r from-green-500/20 to-emerald-500/20 text-green-300 rounded-xl font-semibold border border-green-500/30 hover:border-green-400/50 transition-all">
+                        <Calculator className="w-5 h-5" />
+                        <span>수익률 계산기</span>
+                        <span className="text-xs bg-green-500/30 px-2 py-0.5 rounded-full">무료</span>
+                      </div>
+                    </motion.button>
                   </div>
                 </GlassCard>
 
-                {/* 공유 및 저장 */}
+                {/* 공유 및 저장 - 호버 효과 강화 */}
                 <div className="flex gap-3">
-                  <button className="flex-1 flex items-center justify-center gap-2 p-3 rounded-xl bg-white/10 text-white hover:bg-white/20 transition-colors">
-                    <Heart className="w-5 h-5" />
-                    <span>저장</span>
-                  </button>
-                  <button className="flex-1 flex items-center justify-center gap-2 p-3 rounded-xl bg-white/10 text-white hover:bg-white/20 transition-colors">
+                  <motion.button
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    className="flex-1 flex items-center justify-center gap-2 p-4 rounded-xl bg-white/10 text-white hover:bg-pink-500/20 hover:text-pink-300 transition-all border border-white/10 hover:border-pink-400/30 group"
+                  >
+                    <Heart className="w-5 h-5 group-hover:fill-pink-400 transition-all" />
+                    <span className="font-medium">저장</span>
+                  </motion.button>
+                  <motion.button
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    className="flex-1 flex items-center justify-center gap-2 p-4 rounded-xl bg-white/10 text-white hover:bg-blue-500/20 hover:text-blue-300 transition-all border border-white/10 hover:border-blue-400/30"
+                  >
                     <Share2 className="w-5 h-5" />
-                    <span>공유</span>
-                  </button>
+                    <span className="font-medium">공유</span>
+                  </motion.button>
                 </div>
+
+                {/* PDF 다운로드 버튼 */}
+                {property.pdfUrl && (
+                  <motion.a
+                    href={property.pdfUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                    className="block"
+                  >
+                    <GlassCard className="p-5 hover:bg-white/10 transition-all cursor-pointer group">
+                      <div className="flex items-center gap-4">
+                        <div className="p-3 bg-gradient-to-br from-red-500/20 to-orange-500/20 rounded-xl group-hover:from-red-500/30 group-hover:to-orange-500/30 transition-all">
+                          <FileText className="w-6 h-6 text-red-400" />
+                        </div>
+                        <div className="flex-1">
+                          <div className="text-white font-bold">교육자료 PDF</div>
+                          <div className="text-sm text-gray-400">상세 현장 정보 다운로드</div>
+                        </div>
+                        <ArrowRight className="w-5 h-5 text-gray-400 group-hover:text-white group-hover:translate-x-1 transition-all" />
+                      </div>
+                    </GlassCard>
+                  </motion.a>
+                )}
               </div>
             </div>
           </div>

@@ -219,6 +219,14 @@ model Property {
   status        PropertyStatus @default(AVAILABLE)
   featured      Boolean       @default(false)
 
+  // 신규 추가 필드 (2024-12)
+  pdfUrl        String?       // 교육자료 PDF 링크
+  youtubeVideoId String?      // 현장 소개 유튜브 영상 ID
+  locationDesc  String?       // 위치 설명 (역세권, 학군, 교통 등)
+  pyeongTypes   String?       // 평형 구성 JSON (["59A", "84B", "114C"])
+  subdomain     String?       @unique // 프리미엄 현장 서브도메인
+  isPremium     Boolean       @default(false) // 프리미엄 현장 여부
+
   // SEO
   seoTitle      String?
   seoDescription String?
@@ -274,6 +282,7 @@ model PropertyInquiry {
   message     String
   inquiryType InquiryType   @default(GENERAL)
   status      InquiryStatus @default(PENDING)
+  source      String?       // 유입 경로 (google, direct, sns 등)
 
   // 메타데이터
   createdAt   DateTime      @default(now())

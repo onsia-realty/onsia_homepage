@@ -245,6 +245,11 @@ async function main() {
       facilities: JSON.stringify(['피트니스센터', '대형 회의실', '숙면실', '커뮤니티센터']),
       status: 'AVAILABLE' as const,
       featured: true,
+      // 신규 추가 필드
+      youtubeVideoId: 'dQw4w9WgXcQ',
+      locationDesc: '신분당선 광교역 도보 10분, 광교호수공원 인접, 경기대학교 근처 학군 우수',
+      pyeongTypes: JSON.stringify(['59A', '84B', '114C']),
+      isPremium: true,
       developerId: createdDevelopers[0].id,
       authorId: adminUser.id
     },
@@ -281,6 +286,11 @@ async function main() {
       facilities: JSON.stringify(['휘트니스클럽', '지하주차장', '어린이놀이터', '작은도서관']),
       status: 'AVAILABLE' as const,
       featured: true,
+      // 신규 추가 필드
+      youtubeVideoId: 'jNQXAC9IVRw',
+      locationDesc: '삼성전자 기흥캠퍼스 10분, GTX-A 구성역 예정, 용인세브란스병원 인접',
+      pyeongTypes: JSON.stringify(['59A', '74B', '84C', '101D']),
+      isPremium: false,
       developerId: createdDevelopers[1].id,
       authorId: adminUser.id
     },
@@ -317,6 +327,10 @@ async function main() {
       facilities: JSON.stringify(['피트니스센터', '지하주차장', '어린이공원', '게스트하우스']),
       status: 'AVAILABLE' as const,
       featured: true,
+      // 신규 추가 필드
+      locationDesc: '부발역 도보 5분, SK하이닉스 이천캠퍼스 15분, 이천IC 10분 접근성',
+      pyeongTypes: JSON.stringify(['59A', '84B']),
+      isPremium: false,
       developerId: createdDevelopers[2].id,
       authorId: adminUser.id
     }
