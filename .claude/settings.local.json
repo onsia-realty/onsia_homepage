@@ -11,7 +11,9 @@
       "Bash(npx prisma:*)",
       "Bash(npm run:*)",
       "Bash(python:*)",
-      "WebFetch(domain:www.onsia.city)"
+      "WebFetch(domain:www.onsia.city)",
+      "Bash(git fetch:*)",
+      "Bash(git commit:*)"
     ],
     "deny": [],
     "ask": []
