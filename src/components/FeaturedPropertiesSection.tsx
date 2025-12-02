@@ -50,12 +50,18 @@ export const FeaturedPropertiesSection = () => {
         const response = await fetch('/api/properties');
         const data = await response.json();
         console.log('All properties:', data);
-        // featured 속성이 true인 매물만 필터링
-        const featuredProps = data.filter((p: Property) => p.featured);
-        console.log('Featured properties:', featuredProps);
-        setProperties(featuredProps);
+        // 배열인지 확인 후 featured 속성이 true인 매물만 필터링
+        if (Array.isArray(data)) {
+          const featuredProps = data.filter((p: Property) => p.featured);
+          console.log('Featured properties:', featuredProps);
+          setProperties(featuredProps);
+        } else {
+          console.log('Data is not an array, using empty array');
+          setProperties([]);
+        }
       } catch (error) {
         console.error('Failed to fetch properties:', error);
+        setProperties([]);
       } finally {
         setLoading(false);
       }

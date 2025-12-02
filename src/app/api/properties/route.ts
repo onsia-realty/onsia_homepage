@@ -35,6 +35,7 @@ export async function GET() {
     return NextResponse.json(serializedProperties);
   } catch (error) {
     console.error('Properties fetch error:', error);
-    return NextResponse.json({ error: 'Failed to fetch properties' }, { status: 500 });
+    // 에러 발생해도 빈 배열 반환 (프론트에서 폴백 처리)
+    return NextResponse.json([]);
   }
 }

@@ -58,9 +58,16 @@ export const PopularListingsSection = () => {
       try {
         const response = await fetch('/api/properties');
         const data = await response.json();
-        setProperties(data);
+        // 배열인지 확인
+        if (Array.isArray(data)) {
+          setProperties(data);
+        } else {
+          console.log('Data is not an array, using empty array');
+          setProperties([]);
+        }
       } catch (error) {
         console.error('Failed to fetch properties:', error);
+        setProperties([]);
       } finally {
         setLoading(false);
       }
