@@ -93,7 +93,7 @@ export async function GET(request: NextRequest) {
     const page = parseInt(searchParams.get('page') || '1');
     const limit = parseInt(searchParams.get('limit') || '20');
 
-    const where: any = {};
+    const where: { status?: string; propertyId?: string } = {};
     if (status) where.status = status;
     if (propertyId) where.propertyId = propertyId;
 

@@ -724,7 +724,7 @@ export default function PropertyDetailPage({ params }: { params: Promise<{ id: s
                       중도금 납부 일정
                     </h2>
                     <div className="space-y-4">
-                      {interimPayments.map((payment: any, index: number) => (
+                      {interimPayments.map((payment: { step: string; date: string; amount: string }, index: number) => (
                         <div key={index} className="flex items-center justify-between p-4 rounded-lg bg-white/5 hover:bg-white/10 transition-colors">
                           <div className="flex items-center gap-4">
                             <div className="w-12 h-12 rounded-full bg-gradient-to-r from-blue-500 to-purple-500 flex items-center justify-center text-white font-bold">
