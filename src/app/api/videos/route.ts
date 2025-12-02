@@ -9,7 +9,7 @@ export async function GET(request: NextRequest) {
     const limit = parseInt(searchParams.get('limit') || '20');
     const page = parseInt(searchParams.get('page') || '1');
 
-    const where: any = {};
+    const where: Record<string, string> = {};
     if (category) where.category = category;
 
     const [videos, total] = await Promise.all([
@@ -40,10 +40,16 @@ export async function GET(request: NextRequest) {
 
   } catch (error) {
     console.error('Videos fetch error:', error);
-    return NextResponse.json(
-      { error: '영상 목록을 불러오는 중 오류가 발생했습니다.' },
-      { status: 500 }
-    );
+    // 에러 발생해도 빈 배열 반환 (프론트에서 폴백 처리)
+    return NextResponse.json({
+      videos: [],
+      pagination: {
+        total: 0,
+        page: 1,
+        limit: 20,
+        totalPages: 0
+      }
+    });
   }
 }
 

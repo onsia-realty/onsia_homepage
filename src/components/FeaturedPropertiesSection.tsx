@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { ArrowRight, MapPin, TrendingUp, Building2, Calculator, Eye } from 'lucide-react';
+import { ArrowRight, MapPin, TrendingUp, Building2, Calendar, MessageCircle, FileText } from 'lucide-react';
 import { GlassCard } from './ui/GlassCard';
 import Link from 'next/link';
 import Image from 'next/image';
@@ -10,6 +10,13 @@ import Image from 'next/image';
 interface Developer {
   id: string;
   name: string;
+}
+
+interface PropertyImage {
+  id: string;
+  url: string;
+  alt?: string;
+  order: number;
 }
 
 interface Property {
@@ -21,12 +28,16 @@ interface Property {
   city: string;
   basePrice: string;
   pricePerPyeong: string;
+  contractDeposit: string;
+  totalUnits: number;
   availableUnits: number;
   moveInDate: Date;
+  completionDate: Date;
   profitRate?: number | null;
   constructor?: string | null;
   keyFeature?: string | null;
   featured: boolean;
+  images?: PropertyImage[];
 }
 
 export const FeaturedPropertiesSection = () => {
@@ -119,8 +130,8 @@ export const FeaturedPropertiesSection = () => {
           </p>
         </motion.div>
 
-        {/* 매물 카드 그리드 */}
-        <div className="grid lg:grid-cols-3 gap-8 mb-12">
+        {/* 매물 카드 그리드 - 4열 */}
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-12">
           {properties.map((property, index) => {
             const badge = getBadge(index);
             return (
@@ -140,9 +151,11 @@ export const FeaturedPropertiesSection = () => {
                 >
                   {/* 이미지 섹션 */}
                   <div className="relative h-64 overflow-hidden">
-                    {/* 배경 이미지 */}
+                    {/* 배경 이미지 - DB에서 가져오거나 기본 이미지 */}
                     <Image
-                      src={index === 0 ? '/property-1-gwanggyo-cloud-new.png' : index === 1 ? '/property-2-yongin-honors-new.png' : '/property-3-bubal-station.png'}
+                      src={property.images && property.images.length > 0
+                        ? property.images[0].url
+                        : '/property-placeholder.png'}
                       alt={property.title}
                       fill
                       className="object-cover"
@@ -175,70 +188,80 @@ export const FeaturedPropertiesSection = () => {
                     </div>
                   </div>
 
-                  {/* 콘텐츠 섹션 */}
-                  <div className="p-6">
-                    <div className="mb-4">
-                      <h3 className="text-xl font-bold text-white mb-2 group-hover:text-blue-300 transition-colors">
+                  {/* 콘텐츠 섹션 - 높이 고정 */}
+                  <div className="p-5 flex flex-col" style={{ height: '320px' }}>
+                    <div className="mb-3">
+                      <h3
+                        className="font-bold text-white group-hover:text-blue-300 transition-colors line-clamp-1"
+                        style={{ fontSize: 'clamp(14px, 1.1vw, 18px)' }}
+                        title={property.title}
+                      >
                         {property.title}
                       </h3>
-                      <p className="text-gray-400 text-sm">{property.developer.name}</p>
+                      <p className="text-gray-400 text-xs mt-1">{property.constructor || '시공사 미정'}</p>
                     </div>
 
                     {/* 가격 정보 */}
-                    <div className="space-y-3 mb-6">
+                    <div className="space-y-2 mb-4 flex-shrink-0">
                       <div className="flex justify-between items-center">
-                        <span className="text-gray-400 text-sm">분양가</span>
-                        <span className="text-white font-bold text-lg">{formatPrice(property.basePrice)}</span>
+                        <span className="text-gray-400 text-xs">분양가</span>
+                        <span className="text-white font-bold text-base">{formatPrice(property.basePrice)}</span>
                       </div>
                       <div className="flex justify-between items-center">
-                        <span className="text-gray-400 text-sm">평단가</span>
-                        <span className="text-white font-semibold">
-                          {property.pricePerPyeong && !isNaN(parseInt(property.pricePerPyeong))
-                            ? `${(parseInt(property.pricePerPyeong) / 10000).toFixed(0)}만원/평`
-                            : '가격문의'}
+                        <span className="text-gray-400 text-xs">계약금</span>
+                        <span className="text-white font-semibold text-sm">
+                          {property.contractDeposit && !isNaN(parseInt(property.contractDeposit))
+                            ? formatPrice(property.contractDeposit)
+                            : '문의'}
                         </span>
                       </div>
                       <div className="flex justify-between items-center">
-                        <span className="text-gray-400 text-sm">잔여세대</span>
-                        <span className="text-white font-semibold">{property.availableUnits}세대</span>
+                        <span className="text-gray-400 text-xs">총 세대수</span>
+                        <span className="text-white font-semibold text-sm">{property.totalUnits}세대</span>
                       </div>
                     </div>
 
-                    {/* 투자 지표 */}
-                    <div className="grid grid-cols-2 gap-4 mb-6">
-                      <div className="text-center p-3 bg-blue-500/10 rounded-lg border border-blue-500/20">
-                        <div className="text-blue-400 font-bold text-base md:text-lg whitespace-nowrap">{property.constructor}</div>
-                      </div>
-                      <div className="text-center p-3 bg-green-500/10 rounded-lg border border-green-500/20">
-                        <div className="text-green-400 font-bold text-base md:text-lg">{property.keyFeature}</div>
-                      </div>
-                      <div className="col-span-2 text-center p-3 bg-purple-500/10 rounded-lg border border-purple-500/20">
-                        <div className="text-purple-400 font-bold text-lg">{formatDate(property.moveInDate)}</div>
-                        <div className="text-gray-400 text-xs">입주예정</div>
-                      </div>
+                    {/* 특장점 - 없으면 빈 공간 유지 */}
+                    <div className="h-10 mb-3 flex-shrink-0">
+                      {property.keyFeature ? (
+                        <div className="p-2 bg-green-500/10 rounded-lg border border-green-500/20 h-full flex items-center">
+                          <div className="text-green-400 font-semibold text-xs line-clamp-1">{property.keyFeature}</div>
+                        </div>
+                      ) : (
+                        <div className="h-full" />
+                      )}
                     </div>
 
-                    {/* 액션 버튼 */}
-                    <div className="flex gap-2">
+                    {/* 준공예정 */}
+                    <div className="flex items-center gap-2 text-gray-400 text-xs mb-3 flex-shrink-0">
+                      <Calendar className="w-3 h-3" />
+                      <span>준공예정: <span className="text-white font-semibold">{formatDate(property.completionDate)}</span></span>
+                    </div>
+
+                    {/* 버튼 영역 - 항상 하단에 고정 */}
+                    <div className="mt-auto space-y-2">
+                      {/* 카카오톡 문의 버튼 */}
                       <button
                         onClick={(e) => {
                           e.preventDefault();
-                          // 상세 페이지로 이동
+                          window.open('https://pf.kakao.com/_xnxaxmxj', '_blank');
                         }}
-                        className="flex-1 px-4 py-3 bg-blue-500/20 text-blue-300 rounded-xl hover:bg-blue-500/30 transition-all duration-300 font-semibold text-sm flex items-center justify-center gap-2 group"
+                        className="w-full px-3 py-2.5 bg-[#FEE500] text-[#3C1E1E] rounded-lg hover:bg-[#FDD835] transition-all duration-300 font-bold text-xs flex items-center justify-center gap-2"
                       >
-                        <Eye className="w-4 h-4" />
-                        상세보기
-                        <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                        <MessageCircle className="w-3.5 h-3.5" />
+                        카카오톡 문의
                       </button>
+
+                      {/* 교육자료 요청 버튼 */}
                       <button
                         onClick={(e) => {
                           e.preventDefault();
-                          // 수익률 계산기 모달
+                          window.open('https://pf.kakao.com/_xnxaxmxj', '_blank');
                         }}
-                        className="px-4 py-3 bg-white/10 text-white rounded-xl hover:bg-white/20 transition-colors"
+                        className="w-full px-3 py-2.5 bg-blue-500/20 text-blue-400 border border-blue-500/30 rounded-lg hover:bg-blue-500/30 transition-all duration-300 font-bold text-xs flex items-center justify-center gap-2"
                       >
-                        <Calculator className="w-4 h-4" />
+                        <FileText className="w-3.5 h-3.5" />
+                        교육자료 요청
                       </button>
                     </div>
                   </div>
@@ -266,34 +289,6 @@ export const FeaturedPropertiesSection = () => {
           </Link>
         </motion.div>
 
-        {/* 통계 섹션 */}
-        <motion.div
-          className="mt-20 grid md:grid-cols-4 gap-8"
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.8, delay: 0.4 }}
-        >
-          {[
-            { label: '등록 매물', value: '2,847', unit: '개', color: 'blue' },
-            { label: '평균 수익률', value: '19.2', unit: '%', color: 'green' },
-            { label: '성공 투자', value: '1,236', unit: '건', color: 'purple' },
-            { label: '전문 컨설턴트', value: '47', unit: '명', color: 'cyan' }
-          ].map((stat, index) => (
-            <GlassCard
-              key={index}
-              className="text-center p-6"
-              hover
-              glow={false}
-            >
-              <div className={`text-3xl font-bold mb-2 bg-gradient-to-r from-${stat.color}-400 to-${stat.color}-600 bg-clip-text text-transparent`}>
-                {stat.value}
-                <span className="text-lg">{stat.unit}</span>
-              </div>
-              <div className="text-gray-400 text-sm">{stat.label}</div>
-            </GlassCard>
-          ))}
-        </motion.div>
       </div>
     </section>
   );

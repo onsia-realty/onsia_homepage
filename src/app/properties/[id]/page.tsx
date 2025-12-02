@@ -142,17 +142,23 @@ export default function PropertyDetailPage({ params }: { params: Promise<{ id: s
     }
   };
 
-  // 이미지 선택 함수
+  // 이미지 선택 함수 - DB 이미지 우선, 없으면 기본 이미지
   const getPropertyImages = () => {
-    // 실제 이미지가 없으므로 임시 이미지 배열 생성
-    const imageIndex = property?.id === 'cmgafd7w7000iupjg8xmpjku3' ? 0 :
-                       property?.id === 'cmgafd7xa000kupjgcp9y7kkr' ? 1 : 2;
-    const images = [
+    // DB에 등록된 이미지가 있으면 사용
+    if (property?.images && property.images.length > 0) {
+      return property.images
+        .sort((a, b) => a.order - b.order)
+        .map(img => img.url);
+    }
+    // 기본 이미지 (DB에 이미지 없을 때)
+    const defaultImages = [
       '/property-1-gwanggyo-cloud-new.png',
       '/property-2-yongin-honors-new.png',
       '/property-3-bubal-station.png'
     ];
-    return [images[imageIndex]];
+    const imageIndex = property?.id === 'cmgafd7w7000iupjg8xmpjku3' ? 0 :
+                       property?.id === 'cmgafd7xa000kupjgcp9y7kkr' ? 1 : 2;
+    return [defaultImages[imageIndex % defaultImages.length]];
   };
 
   const getFacilityIcon = (facility: string) => {

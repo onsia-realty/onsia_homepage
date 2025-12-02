@@ -48,7 +48,7 @@ export const VideoCard = ({
         <img
           src={thumbnail}
           alt={title}
-          className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
+          className="w-full h-full object-cover scale-150 transition-transform duration-300 group-hover:scale-[1.6]"
         />
         
         {/* 오버레이 그라디언트 */}

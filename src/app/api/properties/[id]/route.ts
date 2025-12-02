@@ -29,10 +29,10 @@ export async function GET(
     // BigInt를 문자열로 변환
     const serializedProperty = {
       ...property,
-      basePrice: property.basePrice.toString(),
-      pricePerPyeong: property.pricePerPyeong.toString(),
-      contractDeposit: property.contractDeposit?.toString(),
-      rightsFee: property.rightsFee?.toString()
+      basePrice: property.basePrice?.toString() || '0',
+      pricePerPyeong: property.pricePerPyeong?.toString() || '0',
+      contractDeposit: property.contractDeposit?.toString() || '0',
+      rightsFee: property.rightsFee?.toString() || '0'
     };
 
     return NextResponse.json(serializedProperty);

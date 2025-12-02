@@ -1,5 +1,6 @@
 import { AboutHeroSection } from '@/components/AboutHeroSection';
 import { PatentShowcaseSection } from '@/components/PatentShowcaseSection';
+import { BlockchainSection } from '@/components/BlockchainSection';
 import { TeamSection } from '@/components/TeamSection';
 import { ParticlesBackground } from '@/components/ParticlesBackground';
 import { Navigation } from '@/components/Navigation';
@@ -69,6 +70,7 @@ export default function AboutPage() {
         <ParticlesBackground />
         <AboutHeroSection />
         <PatentShowcaseSection />
+        <BlockchainSection />
         <TeamSection />
       </main>
     </>

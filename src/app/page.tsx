@@ -1,6 +1,6 @@
 import { LuxeHeroSection } from '@/components/LuxeHeroSection';
 import { FeaturedPropertiesSection } from '@/components/FeaturedPropertiesSection';
-import { BlockchainSection } from '@/components/BlockchainSection';
+import { PopularListingsSection } from '@/components/PopularListingsSection';
 import { VideoGallerySection } from '@/components/VideoGallerySection';
 import { ParticlesBackground } from '@/components/ParticlesBackground';
 import { Navigation } from '@/components/Navigation';
@@ -13,7 +13,7 @@ export default function Home() {
         <ParticlesBackground />
         <LuxeHeroSection />
         <FeaturedPropertiesSection />
-        <BlockchainSection />
+        <PopularListingsSection />
         <VideoGallerySection />
       </main>
     </>

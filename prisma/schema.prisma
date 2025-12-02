@@ -3,6 +3,7 @@
 
 generator client {
   provider = "prisma-client-js"
+  output   = "../node_modules/.prisma/client"
 }
 
 datasource db {
@@ -348,11 +349,13 @@ enum PropertyStatus {
 }
 
 enum BuildingType {
-  APARTMENT
-  OFFICETEL
-  VILLA
-  TOWNHOUSE
-  COMMERCIAL
+  APARTMENT           // 아파트
+  OFFICETEL           // 오피스텔
+  KNOWLEDGE_INDUSTRY  // 지식산업센터
+  COMMERCIAL          // 상가
+  SPECIAL             // 특수물건
+  VILLA               // 빌라 (레거시)
+  TOWNHOUSE           // 타운하우스 (레거시)
 }
 
 enum ImageType {

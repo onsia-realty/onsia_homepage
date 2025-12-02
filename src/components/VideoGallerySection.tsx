@@ -26,42 +26,43 @@ export const VideoGallerySection = () => {
   const [error, setError] = useState<string | null>(null);
 
   // 폴백 영상 데이터 (API 실패 시 또는 영상이 없을 때)
+  // TODO: 실제 유튜브 영상 ID로 교체 필요 (현재는 플레이스홀더)
   const fallbackVideos = [
     {
       id: '1',
-      youtubeId: 'dQw4w9WgXcQ',
-      title: 'AI가 분석하는 2024 부동산 시장 전망',
-      description: '최신 AI 기술을 활용하여 부동산 시장의 미래를 예측해보고, 투자자들이 알아야 할 핵심 포인트들을 설명합니다.',
-      thumbnail: 'https://img.youtube.com/vi/dQw4w9WgXcQ/maxresdefault.jpg',
-      publishedAt: '2024-03-15',
-      viewCount: 125000,
-      duration: '15:42',
-      category: '시장분석',
-      tags: ['AI', '부동산', '투자']
+      youtubeId: 'placeholder_1',
+      title: '2025 분양권 시장 완전 분석 - 손피거래 트렌드와 투자전략',
+      description: '뜨거워진 분양권 시장의 현황을 분석합니다. 손피거래 성행 현상과 청약 경쟁률 급등 원인, 그리고 투자자가 주의해야 할 점을 설명합니다.',
+      thumbnail: '/onsia__A_breathtaking_hyperrealistic_panoramic_view_of_a_luxu_5303edef-e7d5-46d0-987f-c2966382b286_0.png',
+      publishedAt: '2025-11-28',
+      viewCount: 185000,
+      duration: '18:32',
+      category: '분양권분석',
+      tags: ['분양권', '손피거래', '투자전략']
     },
     {
       id: '2',
-      youtubeId: 'dQw4w9WgXcQ',
-      title: '블록체인 부동산 투자의 모든 것',
-      description: '블록체인 기술이 어떻게 부동산 투자를 혁신하고 있는지, 그리고 우리의 특허 기술이 제공하는 차별화된 가치를 소개합니다.',
-      thumbnail: 'https://img.youtube.com/vi/dQw4w9WgXcQ/maxresdefault.jpg',
-      publishedAt: '2024-03-10',
-      viewCount: 87000,
-      duration: '12:33',
-      category: '블록체인',
-      tags: ['블록체인', '투자', '기술']
+      youtubeId: 'placeholder_2',
+      title: '서울 재개발 핫플레이스 - 노량진·영등포 고밀개발 분석',
+      description: '한강벨트 부촌으로 떠오르는 노량진 재개발과 용적률 400% 영등포 고밀개발. 어디가 유망할지 전문가 시각으로 분석합니다.',
+      thumbnail: '/onsia__An_aerial_view_architectural_rendering_of_a_modern_res_c75a69a4-6eda-4436-91b0-57b3db618551_3.png',
+      publishedAt: '2025-11-25',
+      viewCount: 142000,
+      duration: '22:15',
+      category: '재개발',
+      tags: ['재개발', '노량진', '영등포', '서울']
     },
     {
       id: '3',
-      youtubeId: 'dQw4w9WgXcQ',
-      title: '스마트 계약으로 안전한 부동산 거래하기',
-      description: '스마트 계약의 원리부터 실제 적용 사례까지, 안전하고 투명한 부동산 거래의 새로운 패러다임을 제시합니다.',
-      thumbnail: 'https://img.youtube.com/vi/dQw4w9WgXcQ/maxresdefault.jpg',
-      publishedAt: '2024-03-05',
-      viewCount: 152000,
-      duration: '18:25',
-      category: '스마트계약',
-      tags: ['스마트계약', '거래', '안전']
+      youtubeId: 'placeholder_3',
+      title: '지방 미분양 2만가구 시대 - 위기인가 기회인가?',
+      description: '역대 최대 수준의 지방 미분양 사태. 투자자 관점에서 봐야 할 지역별 차별화 전략과 저가 매수 타이밍을 분석합니다.',
+      thumbnail: '/onsia__Ultra_realistic_aerial_view_of_a_modern_apartment_comp_99d7adb1-a514-407d-92f4-d2d3198e319e_0.png',
+      publishedAt: '2025-11-20',
+      viewCount: 98000,
+      duration: '15:48',
+      category: '시장분석',
+      tags: ['미분양', '지방', '투자기회']
     }
   ];
 
@@ -132,10 +133,8 @@ export const VideoGallerySection = () => {
                 <span className="text-green-300">AI 부동산 영상</span>
               </h2>
 
-              <p className="text-xl md:text-2xl text-gray-300 leading-relaxed max-w-3xl mx-auto">
-                최신 AI 기술과 부동산 전문 지식을 바탕으로 제작된 교육 영상들을 만나보세요.
-                <br />
-                복잡한 부동산 시장을 쉽고 명확하게 분석해드립니다.
+              <p className="text-lg md:text-xl text-gray-300 leading-relaxed max-w-4xl mx-auto">
+                최신 AI 기술과 부동산 전문 지식을 바탕으로 제작된 교육 영상들을 만나보세요.<br className="hidden md:block" />복잡한 부동산 시장을 쉽고 명확하게 분석해드립니다.
               </p>
             </GlassPanel>
           </motion.div>

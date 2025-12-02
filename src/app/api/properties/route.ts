@@ -10,7 +10,10 @@ export async function GET() {
         status: 'AVAILABLE'
       },
       include: {
-        developer: true
+        developer: true,
+        images: {
+          orderBy: { order: 'asc' }
+        }
       },
       orderBy: {
         createdAt: 'desc'
