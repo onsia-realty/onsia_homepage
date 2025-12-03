@@ -31,10 +31,6 @@ export const GlassPanel = ({
       transition={{ duration: 0.6 }}
       {...props}
     >
-      {/* 배경 그라디언트 */}
-      {gradient && (
-        <div className="absolute inset-0 bg-gradient-to-br from-white/10 via-white/5 to-transparent" />
-      )}
       
       {/* 글라스 효과 */}
       <div className={cn(

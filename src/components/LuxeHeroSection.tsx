@@ -1,7 +1,7 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { ArrowRight, TrendingUp, Shield, Award, ChevronDown } from 'lucide-react';
+import { ArrowRight, Award, ChevronDown } from 'lucide-react';
 import { GlassCard } from './ui/GlassCard';
 import Link from 'next/link';
 import Image from 'next/image';
@@ -130,31 +130,40 @@ export const LuxeHeroSection = () => {
                         왜 ONSIA인가?
                       </h3>
                       <p className="text-white/70 leading-relaxed">
-                        20년간 축적된 부동산 전문 지식과<br />
-                        최첨단 기술의 결합으로<br />
-                        안전하고 경쟁력 있는 분양권 투자 기회를 제공합니다.
+                        전국 분양권, 한눈에 비교하고<br />
+                        똑똑하게 투자하세요.
                       </p>
                     </div>
 
                     {/* 특징 리스트 */}
                     <div className="space-y-4">
                       <div className="flex items-start gap-3">
-                        <div className="w-10 h-10 rounded-xl bg-gradient-to-r from-blue-500 to-cyan-500 flex items-center justify-center flex-shrink-0">
-                          <TrendingUp className="w-5 h-5 text-white" />
+                        <div className="w-10 h-10 rounded-xl bg-gradient-to-r from-blue-500 to-cyan-500 flex items-center justify-center flex-shrink-0 text-lg">
+                          📍
                         </div>
                         <div>
-                          <h4 className="text-white font-semibold mb-1">AI 수익률 예측</h4>
-                          <p className="text-white/60 text-sm">국토부 실거래가 데이터를 기반으로<br />시장 타이밍을 정밀 분석해<br />최적의 투자 수익률을 예측</p>
+                          <h4 className="text-white font-semibold mb-1">전국 분양권 매물 한곳에</h4>
+                          <p className="text-white/60 text-sm">수도권부터 지방까지, 검증된 분양권 매물<br />실시간 가격·잔여세대·프리미엄 정보 제공</p>
                         </div>
                       </div>
 
                       <div className="flex items-start gap-3">
-                        <div className="w-10 h-10 rounded-xl bg-gradient-to-r from-purple-500 to-pink-500 flex items-center justify-center flex-shrink-0">
-                          <Shield className="w-5 h-5 text-white" />
+                        <div className="w-10 h-10 rounded-xl bg-gradient-to-r from-purple-500 to-pink-500 flex items-center justify-center flex-shrink-0 text-lg">
+                          📚
                         </div>
                         <div>
-                          <h4 className="text-white font-semibold mb-1">블록체인 보안</h4>
-                          <p className="text-white/60 text-sm">모든 상담 및 거래 내역을<br />블록체인에 기록하여<br />완벽한 투명성과 안정성 보장</p>
+                          <h4 className="text-white font-semibold mb-1">투자 판단을 돕는 자료</h4>
+                          <p className="text-white/60 text-sm">단지별 홍보자료, 입지분석, 교육영상<br />복잡한 분양권, 쉽게 이해하고 결정하세요</p>
+                        </div>
+                      </div>
+
+                      <div className="flex items-start gap-3">
+                        <div className="w-10 h-10 rounded-xl bg-gradient-to-r from-green-500 to-emerald-500 flex items-center justify-center flex-shrink-0 text-lg">
+                          🏠
+                        </div>
+                        <div>
+                          <h4 className="text-white font-semibold mb-1">청약부터 전매까지 원스톱 <span className="text-xs text-cyan-400">(Coming Soon)</span></h4>
+                          <p className="text-white/60 text-sm">청약홈 연동으로 청약 일정·경쟁률 확인<br />청약 → 당첨 → 전매까지 한 플랫폼에서</p>
                         </div>
                       </div>
 

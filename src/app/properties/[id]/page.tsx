@@ -97,10 +97,21 @@ export default function PropertyDetailPage({ params }: { params: Promise<{ id: s
     fetchProperty();
   }, [id]);
 
-  const formatPrice = (price: string) => {
-    if (!price) return '가격문의';
-    const numPrice = parseInt(price);
-    if (isNaN(numPrice)) return '가격문의';
+  // BigInt 값 추출 (superjson 형식 처리)
+  const extractValue = (val: unknown): string => {
+    if (val === null || val === undefined) return '0';
+    if (typeof val === 'string') return val;
+    if (typeof val === 'number') return val.toString();
+    if (typeof val === 'object' && val !== null && '$type' in val && 'value' in val) {
+      return (val as { value: string }).value;
+    }
+    return '0';
+  };
+
+  const formatPrice = (price: unknown) => {
+    const priceStr = extractValue(price);
+    const numPrice = parseInt(priceStr);
+    if (isNaN(numPrice) || numPrice === 0) return '가격문의';
     const eok = Math.floor(numPrice / 100000000);
     const man = Math.floor((numPrice % 100000000) / 10000);
 
@@ -109,9 +120,18 @@ export default function PropertyDetailPage({ params }: { params: Promise<{ id: s
     return `${eok}억 ${man}만`;
   };
 
-  const formatDate = (date: Date) => {
+  const formatDate = (date: unknown) => {
     if (!date) return '-';
-    const d = new Date(date);
+    // superjson DateTime 형식 처리
+    let dateStr: string;
+    if (typeof date === 'object' && date !== null && '$type' in date && 'value' in date) {
+      dateStr = (date as { value: string }).value;
+    } else if (typeof date === 'string') {
+      dateStr = date;
+    } else {
+      return '-';
+    }
+    const d = new Date(dateStr);
     if (isNaN(d.getTime())) return '-';
     return `${d.getFullYear()}년 ${d.getMonth() + 1}월`;
   };
@@ -780,7 +800,7 @@ export default function PropertyDetailPage({ params }: { params: Promise<{ id: s
                 <GlassCard className="p-6 overflow-hidden relative">
                   {/* 배경 애니메이션 */}
                   <div className="absolute -top-20 -right-20 w-40 h-40 bg-blue-500/20 rounded-full blur-3xl" />
-                  <div className="absolute -bottom-20 -left-20 w-40 h-40 bg-purple-500/20 rounded-full blur-3xl" />
+                  <div className="absolute -bottom-20 -left-20 w-40 h-40 bg-yellow-500/20 rounded-full blur-3xl" />
 
                   <h3 className="text-xl font-bold text-white mb-6 relative">
                     상담 문의
@@ -804,16 +824,19 @@ export default function PropertyDetailPage({ params }: { params: Promise<{ id: s
                       </div>
                     </motion.button>
 
-                    {/* 모델하우스 방문 문의 */}
+                    {/* 카카오톡 문의 */}
                     <motion.button
                       whileHover={{ scale: 1.02 }}
                       whileTap={{ scale: 0.98 }}
+                      onClick={() => window.open('https://open.kakao.com/o/sRJgAO4h', '_blank')}
                       className="w-full relative group"
                     >
-                      <div className="absolute -inset-0.5 bg-gradient-to-r from-purple-400 to-pink-500 rounded-xl blur opacity-0 group-hover:opacity-60 transition-opacity" />
-                      <div className="relative flex items-center justify-center gap-3 px-6 py-4 bg-gradient-to-r from-purple-500/20 to-pink-500/20 text-purple-300 rounded-xl font-bold border border-purple-500/30 hover:border-purple-400/50 transition-all">
-                        <Home className="w-5 h-5" />
-                        <span>모델하우스 방문 문의</span>
+                      <div className="absolute -inset-0.5 bg-gradient-to-r from-yellow-400 to-amber-500 rounded-xl blur opacity-0 group-hover:opacity-60 transition-opacity" />
+                      <div className="relative flex items-center justify-center gap-3 px-6 py-4 bg-[#FEE500] text-[#3C1E1E] rounded-xl font-bold shadow-lg shadow-yellow-500/20 hover:bg-[#FDD835] transition-all">
+                        <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
+                          <path d="M12 3C6.48 3 2 6.58 2 11c0 2.8 1.8 5.27 4.54 6.71-.2.74-.73 2.68-.84 3.1-.14.52.19.52.41.38.17-.11 2.72-1.84 3.83-2.59.68.09 1.38.14 2.06.14 5.52 0 10-3.58 10-8 0-4.42-4.48-8-10-8z"/>
+                        </svg>
+                        <span>카카오톡 문의</span>
                         <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
                       </div>
                     </motion.button>

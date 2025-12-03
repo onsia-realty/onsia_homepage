@@ -4,8 +4,8 @@ import { motion } from 'framer-motion';
 import { Phone, MessageCircle } from 'lucide-react';
 
 export const FloatingContact = () => {
-  const phoneNumber = '010-1234-5678'; // 실제 번호로 변경 필요
-  const kakaoChannelUrl = 'http://pf.kakao.com/_xxxxx'; // 실제 카카오톡 채널 URL로 변경 필요
+  const phoneNumber = '1668-5257';
+  const kakaoChannelUrl = 'https://open.kakao.com/o/sRJgAO4h';
 
   const handlePhoneClick = () => {
     // 모바일에서는 바로 전화, PC에서는 알림

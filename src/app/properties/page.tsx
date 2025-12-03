@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Search, Filter, Grid3x3, List, MapPin, TrendingUp, Building2, Calculator } from 'lucide-react';
+import { Search, Filter, Grid3x3, List, MapPin, TrendingUp, Building2, Calculator, ChevronLeft, ChevronRight } from 'lucide-react';
 import { Navigation } from '@/components/Navigation';
 import { GlassCard } from '@/components/ui/GlassCard';
 import { GlassPanel } from '@/components/ui/GlassPanel';
@@ -51,18 +51,27 @@ export default function PropertiesPage() {
   const [sortBy, setSortBy] = useState('latest');
   const [properties, setProperties] = useState<Property[]>([]);
   const [loading, setLoading] = useState(true);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [totalCount, setTotalCount] = useState(0);
+  const ITEMS_PER_PAGE = 9;
 
-  // API에서 매물 데이터 가져오기
+  // API에서 매물 데이터 가져오기 (페이지네이션)
   useEffect(() => {
     const fetchProperties = async () => {
+      setLoading(true);
       try {
-        const response = await fetch('/api/properties');
+        const response = await fetch(`/api/properties?page=${currentPage}&limit=${ITEMS_PER_PAGE}`);
         const data = await response.json();
-        // 배열인지 확인
-        if (Array.isArray(data)) {
+
+        if (data.properties && Array.isArray(data.properties)) {
+          setProperties(data.properties);
+          setTotalPages(data.pagination.totalPages);
+          setTotalCount(data.pagination.total);
+        } else if (Array.isArray(data)) {
+          // 이전 형식 호환
           setProperties(data);
         } else {
-          console.log('Data is not an array, using empty array');
           setProperties([]);
         }
       } catch (error) {
@@ -74,7 +83,7 @@ export default function PropertiesPage() {
     };
 
     fetchProperties();
-  }, []);
+  }, [currentPage]);
 
   const districts = ['영통구', '기흥구', '부발읍', '서초구', '마포구'];
   const buildingTypes = ['APARTMENT', 'OFFICETEL', 'VILLA'];
@@ -231,7 +240,8 @@ export default function PropertiesPage() {
             {/* 결과 요약 */}
             <div className="flex justify-between items-center mb-8">
               <p className="text-gray-300">
-                총 <span className="text-white font-semibold">{filteredProperties.length}</span>개의 매물이 있습니다
+                총 <span className="text-white font-semibold">{totalCount}</span>개의 매물 중
+                <span className="text-blue-400 font-semibold ml-1">{filteredProperties.length}</span>개 표시
               </p>
               <select
                 value={sortBy}
@@ -353,6 +363,58 @@ export default function PropertiesPage() {
                 <Building2 className="w-16 h-16 text-gray-500 mx-auto mb-4" />
                 <p className="text-gray-400 text-lg">검색 조건에 맞는 매물이 없습니다.</p>
               </div>
+            )}
+
+            {/* 페이지네이션 */}
+            {!loading && totalPages > 1 && (
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="flex justify-center items-center gap-2 mt-12"
+              >
+                {/* 이전 버튼 */}
+                <button
+                  onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
+                  disabled={currentPage === 1}
+                  className={`p-3 rounded-xl border transition-all ${
+                    currentPage === 1
+                      ? 'border-white/10 text-gray-600 cursor-not-allowed'
+                      : 'border-white/20 text-white hover:bg-white/10 hover:border-blue-400/50'
+                  }`}
+                >
+                  <ChevronLeft className="w-5 h-5" />
+                </button>
+
+                {/* 페이지 번호 */}
+                <div className="flex gap-2">
+                  {Array.from({ length: totalPages }, (_, i) => i + 1).map(pageNum => (
+                    <button
+                      key={pageNum}
+                      onClick={() => setCurrentPage(pageNum)}
+                      className={`w-10 h-10 rounded-xl font-semibold transition-all ${
+                        currentPage === pageNum
+                          ? 'bg-gradient-to-r from-blue-500 to-cyan-500 text-white shadow-lg shadow-blue-500/30'
+                          : 'border border-white/20 text-gray-400 hover:text-white hover:bg-white/10'
+                      }`}
+                    >
+                      {pageNum}
+                    </button>
+                  ))}
+                </div>
+
+                {/* 다음 버튼 */}
+                <button
+                  onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
+                  disabled={currentPage === totalPages}
+                  className={`p-3 rounded-xl border transition-all ${
+                    currentPage === totalPages
+                      ? 'border-white/10 text-gray-600 cursor-not-allowed'
+                      : 'border-white/20 text-white hover:bg-white/10 hover:border-blue-400/50'
+                  }`}
+                >
+                  <ChevronRight className="w-5 h-5" />
+                </button>
+              </motion.div>
             )}
           </div>
         </section>

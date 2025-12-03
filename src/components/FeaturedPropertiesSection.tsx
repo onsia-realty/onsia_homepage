@@ -69,20 +69,41 @@ export const FeaturedPropertiesSection = () => {
 
     fetchProperties();
   }, []);
-  const formatPrice = (price: string) => {
-    if (!price) return '0억';
-    const numPrice = parseInt(price);
-    if (isNaN(numPrice)) return '0억';
+  // BigInt 값 추출 (superjson 형식 처리)
+  const extractValue = (val: unknown): string => {
+    if (val === null || val === undefined) return '0';
+    if (typeof val === 'string') return val;
+    if (typeof val === 'number') return val.toString();
+    if (typeof val === 'object' && val !== null && '$type' in val && 'value' in val) {
+      return (val as { value: string }).value;
+    }
+    return '0';
+  };
+
+  const formatPrice = (price: unknown) => {
+    const priceStr = extractValue(price);
+    const numPrice = parseInt(priceStr);
+    if (isNaN(numPrice) || numPrice === 0) return '가격문의';
     const eok = Math.floor(numPrice / 100000000);
     const man = Math.floor((numPrice % 100000000) / 10000);
+    if (eok === 0 && man === 0) return '가격문의';
     return `${eok}억 ${man > 0 ? man + '만' : ''}`;
   };
 
-  const formatDate = (date: Date) => {
+  const formatDate = (date: unknown) => {
     if (!date) return '-';
-    const d = new Date(date);
+    // superjson DateTime 형식 처리
+    let dateStr: string;
+    if (typeof date === 'object' && date !== null && '$type' in date && 'value' in date) {
+      dateStr = (date as { value: string }).value;
+    } else if (typeof date === 'string') {
+      dateStr = date;
+    } else {
+      return '-';
+    }
+    const d = new Date(dateStr);
     if (isNaN(d.getTime())) return '-';
-    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
+    return `${d.getFullYear()}년 ${d.getMonth() + 1}월`;
   };
 
   const getBadge = (index: number) => {
@@ -250,7 +271,7 @@ export const FeaturedPropertiesSection = () => {
                       <button
                         onClick={(e) => {
                           e.preventDefault();
-                          window.open('https://pf.kakao.com/_xnxaxmxj', '_blank');
+                          window.open('https://open.kakao.com/o/sRJgAO4h', '_blank');
                         }}
                         className="w-full px-3 py-2.5 bg-[#FEE500] text-[#3C1E1E] rounded-lg hover:bg-[#FDD835] transition-all duration-300 font-bold text-xs flex items-center justify-center gap-2"
                       >
@@ -262,7 +283,7 @@ export const FeaturedPropertiesSection = () => {
                       <button
                         onClick={(e) => {
                           e.preventDefault();
-                          window.open('https://pf.kakao.com/_xnxaxmxj', '_blank');
+                          window.open('https://open.kakao.com/o/sRJgAO4h', '_blank');
                         }}
                         className="w-full px-3 py-2.5 bg-blue-500/20 text-blue-400 border border-blue-500/30 rounded-lg hover:bg-blue-500/30 transition-all duration-300 font-bold text-xs flex items-center justify-center gap-2"
                       >

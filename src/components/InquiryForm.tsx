@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Send, Check, AlertCircle, User, Mail, Phone, MessageSquare, Loader2 } from 'lucide-react';
+import { Send, Check, AlertCircle, User, Mail, Phone, MessageSquare, Loader2, MessageCircle } from 'lucide-react';
 
 interface InquiryFormProps {
   propertyId: string;
@@ -25,8 +25,8 @@ export function InquiryForm({ propertyId, propertyTitle, onSuccess }: InquiryFor
   const [errorMessage, setErrorMessage] = useState('');
 
   const inquiryTypes = [
-    { value: 'GENERAL', label: '일반 문의' },
-    { value: 'VIEWING', label: '모델하우스 방문' },
+    { value: 'GENERAL', label: '일반 문의', isKakao: false },
+    { value: 'KAKAO', label: '카카오톡 문의', isKakao: true },
   ];
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
@@ -123,18 +123,27 @@ export function InquiryForm({ propertyId, propertyTitle, onSuccess }: InquiryFor
               className="space-y-5"
             >
               {/* 문의 유형 선택 */}
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
+              <div className="grid grid-cols-2 gap-3">
                 {inquiryTypes.map((type) => (
                   <button
                     key={type.value}
                     type="button"
-                    onClick={() => setFormData(prev => ({ ...prev, inquiryType: type.value as InquiryType }))}
-                    className={`py-2 px-3 rounded-lg text-sm font-medium transition-all ${
-                      formData.inquiryType === type.value
-                        ? 'bg-gradient-to-r from-blue-500 to-cyan-500 text-white shadow-lg shadow-blue-500/30'
-                        : 'bg-white/5 text-gray-400 hover:bg-white/10 hover:text-white border border-white/10'
+                    onClick={() => {
+                      if (type.isKakao) {
+                        window.open('https://open.kakao.com/o/sRJgAO4h', '_blank');
+                      } else {
+                        setFormData(prev => ({ ...prev, inquiryType: type.value as InquiryType }));
+                      }
+                    }}
+                    className={`py-3 px-4 rounded-xl text-sm font-bold transition-all flex items-center justify-center gap-2 ${
+                      type.isKakao
+                        ? 'bg-[#FEE500] text-[#3C1E1E] hover:bg-[#FDD835] shadow-lg shadow-yellow-500/20'
+                        : formData.inquiryType === type.value
+                          ? 'bg-gradient-to-r from-blue-500 to-cyan-500 text-white shadow-lg shadow-blue-500/30'
+                          : 'bg-white/5 text-gray-400 hover:bg-white/10 hover:text-white border border-white/10'
                     }`}
                   >
+                    {type.isKakao && <MessageCircle className="w-4 h-4" />}
                     {type.label}
                   </button>
                 ))}

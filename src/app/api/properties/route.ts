@@ -19,8 +19,20 @@ function serializeBigInt(obj: unknown): unknown {
   return obj;
 }
 
-export async function GET() {
+export async function GET(request: Request) {
   try {
+    const { searchParams } = new URL(request.url);
+    const page = searchParams.get('page');
+    const limit = parseInt(searchParams.get('limit') || '12');
+    const paginated = page !== null; // 페이지네이션 모드 여부
+
+    // 전체 개수 조회 (페이지네이션 모드일 때만)
+    const total = paginated ? await prisma.property.count({
+      where: { status: 'AVAILABLE' }
+    }) : 0;
+
+    const pageNum = parseInt(page || '1');
+
     const properties = await prisma.property.findMany({
       where: {
         status: 'AVAILABLE'
@@ -35,15 +47,33 @@ export async function GET() {
         { featured: 'desc' },  // 추천 매물 우선
         { createdAt: 'desc' }
       ],
-      take: 12  // 상위 12개만
+      ...(paginated ? {
+        skip: (pageNum - 1) * limit,
+        take: limit
+      } : {
+        take: 12  // 메인화면용: 상위 12개만
+      })
     });
 
     // BigInt를 문자열로 변환
     const serializedProperties = serializeBigInt(properties);
 
-    console.log('API - Total properties:', properties.length);
-    console.log('API - Featured count:', properties.filter(p => p.featured).length);
+    // 페이지네이션 모드면 pagination 정보 포함, 아니면 배열만 반환
+    if (paginated) {
+      return new Response(JSON.stringify({
+        properties: serializedProperties,
+        pagination: {
+          page: pageNum,
+          limit,
+          total,
+          totalPages: Math.ceil(total / limit)
+        }
+      }), {
+        headers: { 'Content-Type': 'application/json' }
+      });
+    }
 
+    // 기존 방식: 배열만 반환 (메인화면 호환)
     return new Response(JSON.stringify(serializedProperties), {
       headers: { 'Content-Type': 'application/json' }
     });

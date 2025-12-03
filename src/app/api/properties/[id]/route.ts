@@ -1,7 +1,21 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 
-
+// BigInt를 재귀적으로 문자열로 변환
+function serializeBigInt(obj: unknown): unknown {
+  if (obj === null || obj === undefined) return obj;
+  if (typeof obj === 'bigint') return obj.toString();
+  if (obj instanceof Date) return obj.toISOString();
+  if (Array.isArray(obj)) return obj.map(serializeBigInt);
+  if (typeof obj === 'object') {
+    const result: Record<string, unknown> = {};
+    for (const [key, value] of Object.entries(obj)) {
+      result[key] = serializeBigInt(value);
+    }
+    return result;
+  }
+  return obj;
+}
 
 export async function GET(
   request: Request,
@@ -27,15 +41,11 @@ export async function GET(
     }
 
     // BigInt를 문자열로 변환
-    const serializedProperty = {
-      ...property,
-      basePrice: property.basePrice?.toString() || '0',
-      pricePerPyeong: property.pricePerPyeong?.toString() || '0',
-      contractDeposit: property.contractDeposit?.toString() || '0',
-      rightsFee: property.rightsFee?.toString() || '0'
-    };
+    const serializedProperty = serializeBigInt(property);
 
-    return NextResponse.json(serializedProperty);
+    return new Response(JSON.stringify(serializedProperty), {
+      headers: { 'Content-Type': 'application/json' }
+    });
   } catch (error) {
     console.error('Property fetch error:', error);
     return NextResponse.json({ error: 'Failed to fetch property' }, { status: 500 });
