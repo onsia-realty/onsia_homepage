@@ -35,7 +35,7 @@ export default function AdminPropertiesPage() {
 
   const fetchProperties = async () => {
     try {
-      const response = await fetch('/api/properties');
+      const response = await fetch('/api/admin/properties');
       const data = await response.json();
       // 배열인지 확인
       if (Array.isArray(data)) {

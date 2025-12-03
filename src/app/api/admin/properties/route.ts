@@ -1,7 +1,53 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { PrismaClient } from '@prisma/client';
+import { prisma } from '@/lib/prisma';
 
-const prisma = new PrismaClient();
+
+
+// BigInt를 문자열로 변환하는 헬퍼 함수
+function serializeBigInt(obj: unknown): unknown {
+  if (obj === null || obj === undefined) return obj;
+  if (typeof obj === 'bigint') return obj.toString();
+  if (obj instanceof Date) return obj.toISOString();
+  if (Array.isArray(obj)) return obj.map(serializeBigInt);
+  if (typeof obj === 'object') {
+    const result: Record<string, unknown> = {};
+    for (const [key, value] of Object.entries(obj)) {
+      result[key] = serializeBigInt(value);
+    }
+    return result;
+  }
+  return obj;
+}
+
+// 전체 매물 목록 조회 (관리자용 - 제한 없음)
+export async function GET() {
+  try {
+    const properties = await prisma.property.findMany({
+      include: {
+        developer: true,
+        images: {
+          orderBy: { order: 'asc' }
+        }
+      },
+      orderBy: [
+        { featured: 'desc' },
+        { createdAt: 'desc' }
+      ]
+      // take 제한 없음 - 전체 조회
+    });
+
+    const serializedProperties = serializeBigInt(properties);
+
+    return new Response(JSON.stringify(serializedProperties), {
+      headers: { 'Content-Type': 'application/json' }
+    });
+  } catch (error) {
+    console.error('Admin properties fetch error:', error);
+    return new Response(JSON.stringify([]), {
+      headers: { 'Content-Type': 'application/json' }
+    });
+  }
+}
 
 // 매물 등록
 export async function POST(request: NextRequest) {

@@ -2,11 +2,9 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   eslint: {
-    // Warning을 에러로 처리하지 않음 (빌드 시)
     ignoreDuringBuilds: true,
   },
   typescript: {
-    // 타입 에러도 빌드 시 무시 (개발 중에만 경고)
     ignoreBuildErrors: true,
   },
   images: {
@@ -31,11 +29,47 @@ const nextConfig: NextConfig = {
       },
       {
         protocol: 'https',
+        hostname: 'e-model.co.kr',
+      },
+      {
+        protocol: 'https',
         hostname: 'flexible.img.hani.co.kr',
       },
       {
         protocol: 'https',
         hostname: '*.amazonaws.com',
+      },
+      {
+        protocol: 'https',
+        hostname: 'wimg.heraldcorp.com',
+      },
+      {
+        protocol: 'https',
+        hostname: 'i3n.news1.kr',
+      },
+      {
+        protocol: 'https',
+        hostname: 'image.ajunews.com',
+      },
+      {
+        protocol: 'https',
+        hostname: 'cfnimage.commutil.kr',
+      },
+      {
+        protocol: 'https',
+        hostname: 'img1.newsis.com',
+      },
+      {
+        protocol: 'https',
+        hostname: '*.prugio.com',
+      },
+      {
+        protocol: 'https',
+        hostname: 'lottecastle.co.kr',
+      },
+      {
+        protocol: 'https',
+        hostname: '*.lottecastle.co.kr',
       },
     ]
   }

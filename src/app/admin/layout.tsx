@@ -21,6 +21,14 @@ export default function AdminLayout({
 
   useEffect(() => {
     setMounted(true);
+
+    // 개발 환경에서는 자동 로그인 (테스트용)
+    const isDev = process.env.NODE_ENV === 'development';
+    if (isDev) {
+      localStorage.setItem('admin_logged_in', 'true');
+      setIsLoggedIn(true);
+      return;
+    }
     const loggedIn = localStorage.getItem('admin_logged_in') === 'true';
     setIsLoggedIn(loggedIn);
 
