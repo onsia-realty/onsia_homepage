@@ -65,11 +65,12 @@ export const FeaturedPropertiesSection = () => {
     fetchProperties();
   }, []);
 
-  // 추천 매물 (featured=true) 상위 4개
+  // 추천 매물: featured=true 중 상위 4개
   const featuredProperties = properties.filter((p: Property) => p.featured).slice(0, 4);
+  const featuredIds = new Set(featuredProperties.map(p => p.id));
 
-  // 일반 매물 (featured=false) 8개
-  const regularProperties = properties.filter((p: Property) => !p.featured).slice(0, 8);
+  // 일반 매물: 추천 4개 제외한 나머지 중 8개
+  const regularProperties = properties.filter((p: Property) => !featuredIds.has(p.id)).slice(0, 8);
 
   // BigInt 값 추출 (superjson 형식 처리)
   const extractValue = (val: unknown): string => {

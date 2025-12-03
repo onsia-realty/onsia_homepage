@@ -38,7 +38,12 @@
       "Bash(node -e:*)",
       "Bash(cmd //c \"taskkill /F /IM node.exe\")",
       "Bash(timeout /t 2 /nobreak)",
-      "Bash(npx next build --turbopack)"
+      "Bash(npx next build --turbopack)",
+      "WebFetch(domain:www.data.go.kr)",
+      "WebFetch(domain:www.reb.or.kr)",
+      "WebFetch(domain:www.dooinauction.com)",
+      "Bash(tasklist:*)",
+      "Bash(findstr:*)"
     ],
     "deny": [],
     "ask": []

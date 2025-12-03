@@ -51,7 +51,7 @@ export async function GET(request: Request) {
         skip: (pageNum - 1) * limit,
         take: limit
       } : {
-        take: 12  // 메인화면용: 상위 12개만
+        take: 20  // 메인화면용: 추천 + 일반 매물 포함
       })
     });
 

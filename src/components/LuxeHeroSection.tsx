@@ -102,15 +102,18 @@ export const LuxeHeroSection = () => {
                     className="group relative px-8 py-3 bg-white text-black rounded-full font-bold text-base overflow-hidden transition-all duration-300 hover:shadow-2xl hover:shadow-white/20"
                   >
                     <span className="relative z-10 flex items-center justify-center gap-3">
-                      매물 상담 신청
+                      분양권 매물 보기
                       <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
                     </span>
                     <div className="absolute inset-0 bg-gradient-to-r from-blue-400 to-cyan-400 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                   </Link>
 
-                  <button className="px-8 py-3 backdrop-blur-xl bg-white/10 border-2 border-white/30 text-white rounded-full font-semibold text-base hover:bg-white/20 hover:border-white/50 transition-all duration-300">
-                    투자 상담 신청
-                  </button>
+                  <Link
+                    href="/subscriptions"
+                    className="px-8 py-3 backdrop-blur-xl bg-white/10 border-2 border-white/30 text-white rounded-full font-semibold text-base hover:bg-white/20 hover:border-white/50 transition-all duration-300 text-center"
+                  >
+                    청약홈 매물 보기
+                  </Link>
                 </motion.div>
 
               </motion.div>
