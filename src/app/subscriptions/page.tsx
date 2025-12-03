@@ -297,153 +297,205 @@ export default function SubscriptionsPage() {
           </div>
         </section>
 
-        {/* 두인경매 스타일 캘린더 + 현황 섹션 */}
-        <section className="relative pb-8">
+        {/* 대형 청약 일정 안내판 */}
+        <section className="relative pb-12">
           <div className="container mx-auto px-6">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.1 }}
             >
-              <GlassCard className="p-6 mb-8">
-                {/* 주간 캘린더 */}
-                <div className="flex items-center justify-between mb-6">
-                  <h3 className="text-lg font-bold text-white flex items-center gap-2">
-                    <Calendar className="w-5 h-5 text-cyan-400" />
-                    청약 일정
-                  </h3>
-                  <div className="text-sm text-gray-400">
-                    {new Date().getFullYear()}년 {new Date().getMonth() + 1}월
+              <GlassCard className="p-4 md:p-6 mb-8">
+                {/* 캘린더 헤더 */}
+                <div className="flex flex-col md:flex-row md:items-center justify-between mb-4 gap-3">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-cyan-500 to-blue-600 flex items-center justify-center shadow-lg shadow-cyan-500/30">
+                      <Calendar className="w-5 h-5 text-white" />
+                    </div>
+                    <div>
+                      <h2 className="text-lg md:text-xl font-bold text-white">청약 일정 안내</h2>
+                      <p className="text-gray-400 text-xs">날짜를 클릭하면 해당일 청약 정보를 확인할 수 있습니다</p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <button
+                      onClick={() => {
+                        const newDate = new Date(selectedDate);
+                        newDate.setMonth(newDate.getMonth() - 1);
+                        setSelectedDate(newDate);
+                      }}
+                      className="p-2 rounded-lg bg-white/10 hover:bg-white/20 transition-colors"
+                    >
+                      <ChevronLeft className="w-4 h-4 text-white" />
+                    </button>
+                    <div className="text-base font-bold text-white min-w-[110px] text-center">
+                      {selectedDate.getFullYear()}년 {selectedDate.getMonth() + 1}월
+                    </div>
+                    <button
+                      onClick={() => {
+                        const newDate = new Date(selectedDate);
+                        newDate.setMonth(newDate.getMonth() + 1);
+                        setSelectedDate(newDate);
+                      }}
+                      className="p-2 rounded-lg bg-white/10 hover:bg-white/20 transition-colors"
+                    >
+                      <ChevronRight className="w-4 h-4 text-white" />
+                    </button>
                   </div>
                 </div>
 
-                <div className="grid grid-cols-7 gap-2 mb-6">
-                  {weekDates.map((date, index) => {
-                    const events = getEventsForDate(date);
-                    const hasEvents = events.length > 0;
-                    const isSelected = selectedCalendarDate?.toDateString() === date.toDateString();
+                {/* 요일 헤더 */}
+                <div className="grid grid-cols-7 gap-1 mb-1">
+                  {['일', '월', '화', '수', '목', '금', '토'].map((day, i) => (
+                    <div key={day} className={`text-center py-1.5 text-xs font-bold ${
+                      i === 0 ? 'text-red-400' : i === 6 ? 'text-blue-400' : 'text-gray-400'
+                    }`}>
+                      {day}
+                    </div>
+                  ))}
+                </div>
 
-                    return (
-                      <button
-                        key={index}
-                        onClick={() => {
-                          if (hasEvents) {
-                            setSelectedCalendarDate(isSelected ? null : date);
-                          }
-                        }}
-                        className={`p-3 rounded-xl text-center transition-all ${
-                          isSelected
-                            ? 'bg-orange-500 border-2 border-orange-300 shadow-lg shadow-orange-500/50'
-                            : isToday(date)
-                            ? 'bg-cyan-500/30 border-2 border-cyan-400'
-                            : hasEvents
-                            ? 'bg-white/10 border border-white/20 hover:bg-white/20 cursor-pointer'
-                            : 'bg-white/5 border border-white/10'
-                        }`}
-                      >
-                        <div className={`text-xs mb-1 ${isSelected ? 'text-white' : isToday(date) ? 'text-cyan-300' : 'text-gray-400'}`}>
-                          {getDayName(date)}
-                        </div>
-                        <div className={`text-lg font-bold ${isSelected ? 'text-white' : isToday(date) ? 'text-white' : 'text-gray-300'}`}>
-                          {date.getDate()}
-                        </div>
-                        {/* 이벤트 표시 */}
-                        {hasEvents && (
-                          <div className="flex gap-0.5 mt-1 justify-center">
-                            {events.slice(0, 3).map((event, idx) => (
-                              <div
-                                key={idx}
-                                className={`w-1.5 h-1.5 rounded-full ${
-                                  isSelected ? 'bg-white' :
-                                  event.type === 'announcement' ? 'bg-blue-400' :
-                                  event.type === 'special' ? 'bg-purple-400' :
-                                  event.type === 'rank1' ? 'bg-green-400' :
-                                  event.type === 'rank2' ? 'bg-cyan-400' : 'bg-orange-400'
-                                }`}
-                              />
-                            ))}
-                          </div>
-                        )}
-                        {isToday(date) && !isSelected && (
-                          <div className="text-xs text-cyan-400 mt-1">오늘</div>
-                        )}
-                      </button>
-                    );
-                  })}
+                {/* 월간 캘린더 그리드 - 컴팩트 버전 */}
+                <div className="grid grid-cols-7 gap-1 mb-4">
+                  {(() => {
+                    const year = selectedDate.getFullYear();
+                    const month = selectedDate.getMonth();
+                    const firstDay = new Date(year, month, 1);
+                    const lastDay = new Date(year, month + 1, 0);
+                    const daysInMonth = lastDay.getDate();
+                    const startingDay = firstDay.getDay();
+                    const today = new Date();
+
+                    const cells = [];
+
+                    // 빈 셀
+                    for (let i = 0; i < startingDay; i++) {
+                      cells.push(<div key={`empty-${i}`} className="h-12 md:h-16" />);
+                    }
+
+                    // 날짜 셀
+                    for (let day = 1; day <= daysInMonth; day++) {
+                      const currentDate = new Date(year, month, day);
+                      const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+                      const dayEvents = calendarEvents.filter(e => e.date === dateStr);
+                      const hasEvents = dayEvents.length > 0;
+                      const isTodayDate = today.getFullYear() === year && today.getMonth() === month && today.getDate() === day;
+                      const isSelected = selectedCalendarDate?.toDateString() === currentDate.toDateString();
+                      const dayOfWeek = (startingDay + day - 1) % 7;
+
+                      cells.push(
+                        <button
+                          key={day}
+                          onClick={() => hasEvents && setSelectedCalendarDate(isSelected ? null : currentDate)}
+                          className={`h-12 md:h-16 p-0.5 rounded-lg flex flex-col items-center justify-center transition-all ${
+                            isSelected
+                              ? 'bg-orange-500 border border-orange-300 shadow-md shadow-orange-500/50'
+                              : isTodayDate
+                              ? 'bg-cyan-500/30 border border-cyan-400'
+                              : hasEvents
+                              ? 'bg-white/10 border border-white/20 hover:bg-white/20 cursor-pointer'
+                              : 'bg-white/5 border border-white/5'
+                          }`}
+                        >
+                          <span className={`text-xs md:text-sm font-semibold ${
+                            isSelected ? 'text-white' :
+                            isTodayDate ? 'text-white' :
+                            dayOfWeek === 0 ? 'text-red-400' :
+                            dayOfWeek === 6 ? 'text-blue-400' : 'text-gray-300'
+                          }`}>
+                            {day}
+                          </span>
+                          {hasEvents && (
+                            <div className="flex gap-0.5 mt-0.5">
+                              {dayEvents.slice(0, 3).map((event, idx) => (
+                                <div
+                                  key={idx}
+                                  className={`w-1 h-1 rounded-full ${
+                                    isSelected ? 'bg-white' :
+                                    event.type === 'announcement' ? 'bg-blue-400' :
+                                    event.type === 'special' ? 'bg-purple-400' :
+                                    event.type === 'rank1' ? 'bg-green-400' :
+                                    event.type === 'rank2' ? 'bg-cyan-400' : 'bg-orange-400'
+                                  }`}
+                                />
+                              ))}
+                            </div>
+                          )}
+                          {isTodayDate && !isSelected && (
+                            <span className="text-[8px] text-cyan-400">오늘</span>
+                          )}
+                        </button>
+                      );
+                    }
+
+                    return cells;
+                  })()}
                 </div>
 
                 {/* 범례 */}
-                <div className="flex flex-wrap gap-3 text-xs mb-4">
-                  <div className="flex items-center gap-1.5">
+                <div className="flex flex-wrap justify-center gap-2 md:gap-3 text-xs border-t border-white/10 pt-3">
+                  <div className="flex items-center gap-1">
                     <div className="w-2 h-2 rounded-full bg-blue-400" />
                     <span className="text-gray-400">공고</span>
                   </div>
-                  <div className="flex items-center gap-1.5">
+                  <div className="flex items-center gap-1">
                     <div className="w-2 h-2 rounded-full bg-purple-400" />
-                    <span className="text-gray-400">특별</span>
+                    <span className="text-gray-400">특별공급</span>
                   </div>
-                  <div className="flex items-center gap-1.5">
+                  <div className="flex items-center gap-1">
                     <div className="w-2 h-2 rounded-full bg-green-400" />
                     <span className="text-gray-400">1순위</span>
                   </div>
-                  <div className="flex items-center gap-1.5">
+                  <div className="flex items-center gap-1">
                     <div className="w-2 h-2 rounded-full bg-cyan-400" />
                     <span className="text-gray-400">2순위</span>
                   </div>
-                  <div className="flex items-center gap-1.5">
+                  <div className="flex items-center gap-1">
                     <div className="w-2 h-2 rounded-full bg-orange-400" />
-                    <span className="text-gray-400">당첨</span>
+                    <span className="text-gray-400">당첨발표</span>
                   </div>
                 </div>
 
                 {/* 선택된 날짜 일정 */}
-                {selectedCalendarDate && selectedDateSubscriptions.length > 0 && (
-                  <div className="mb-6 p-4 bg-orange-500/10 rounded-xl border border-orange-500/30">
+                {selectedCalendarDate && (
+                  <div className="mt-4 p-4 bg-gradient-to-br from-orange-500/20 to-amber-500/10 rounded-xl border border-orange-500/30">
                     <div className="flex items-center justify-between mb-3">
-                      <h4 className="text-sm font-semibold text-white">{selectedDateStr} 청약 일정</h4>
+                      <h4 className="text-sm font-bold text-white flex items-center gap-2">
+                        <Calendar className="w-4 h-4 text-orange-400" />
+                        {selectedDateStr} 청약 일정
+                      </h4>
                       <button
                         onClick={() => setSelectedCalendarDate(null)}
-                        className="text-xs text-gray-400 hover:text-white transition-colors"
+                        className="px-2 py-0.5 text-xs text-gray-400 hover:text-white hover:bg-white/10 rounded-lg transition-colors"
                       >
                         닫기 ✕
                       </button>
                     </div>
-                    <div className="space-y-2">
-                      {getEventsForDate(selectedCalendarDate).slice(0, 5).map((event, idx) => (
-                        <div key={idx} className="flex items-center gap-2 text-xs">
-                          <div className={`w-2 h-2 rounded-full flex-shrink-0 ${
-                            event.type === 'announcement' ? 'bg-blue-400' :
-                            event.type === 'special' ? 'bg-purple-400' :
-                            event.type === 'rank1' ? 'bg-green-400' :
-                            event.type === 'rank2' ? 'bg-cyan-400' : 'bg-orange-400'
-                          }`} />
-                          <span className="text-orange-300 font-semibold">{event.title}</span>
-                          <span className="text-gray-300 line-clamp-1">{event.houseName}</span>
-                        </div>
-                      ))}
-                    </div>
+                    {getEventsForDate(selectedCalendarDate).length > 0 ? (
+                      <div className="space-y-2">
+                        {getEventsForDate(selectedCalendarDate).map((event, idx) => (
+                          <div key={idx} className="flex items-center gap-2 p-2 bg-white/5 rounded-lg text-sm">
+                            <div className={`w-2 h-2 rounded-full flex-shrink-0 ${
+                              event.type === 'announcement' ? 'bg-blue-400' :
+                              event.type === 'special' ? 'bg-purple-400' :
+                              event.type === 'rank1' ? 'bg-green-400' :
+                              event.type === 'rank2' ? 'bg-cyan-400' : 'bg-orange-400'
+                            }`} />
+                            <span className={`font-semibold min-w-[50px] text-xs ${
+                              event.type === 'announcement' ? 'text-blue-400' :
+                              event.type === 'special' ? 'text-purple-400' :
+                              event.type === 'rank1' ? 'text-green-400' :
+                              event.type === 'rank2' ? 'text-cyan-400' : 'text-orange-400'
+                            }`}>{event.title}</span>
+                            <span className="text-white text-xs truncate">{event.houseName}</span>
+                          </div>
+                        ))}
+                      </div>
+                    ) : (
+                      <p className="text-gray-400 text-center py-2 text-sm">해당 날짜에 청약 일정이 없습니다.</p>
+                    )}
                   </div>
                 )}
-
-                {/* 오늘의 현황 */}
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                  <div className="bg-white/5 rounded-xl p-4 text-center">
-                    <div className="text-3xl font-bold text-white mb-1">{stats.total}</div>
-                    <div className="text-sm text-gray-400">전체</div>
-                  </div>
-                  <div className="bg-yellow-500/10 rounded-xl p-4 text-center border border-yellow-500/20">
-                    <div className="text-3xl font-bold text-yellow-400 mb-1">{stats.upcoming}</div>
-                    <div className="text-sm text-yellow-300/70">접수예정</div>
-                  </div>
-                  <div className="bg-green-500/10 rounded-xl p-4 text-center border border-green-500/20">
-                    <div className="text-3xl font-bold text-green-400 mb-1">{stats.open}</div>
-                    <div className="text-sm text-green-300/70">접수중</div>
-                  </div>
-                  <div className="bg-gray-500/10 rounded-xl p-4 text-center border border-gray-500/20">
-                    <div className="text-3xl font-bold text-gray-400 mb-1">{stats.closed}</div>
-                    <div className="text-sm text-gray-400/70">접수마감</div>
-                  </div>
-                </div>
               </GlassCard>
             </motion.div>
           </div>
