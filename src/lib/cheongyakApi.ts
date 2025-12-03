@@ -54,7 +54,6 @@ export async function getAPTSubscriptions(params: {
   const { page = 1, perPage = 20, region } = params;
 
   const url = new URL(`${BASE_URL}/getAPTLttotPblancDetail`);
-  url.searchParams.append('serviceKey', API_KEY);
   url.searchParams.append('page', page.toString());
   url.searchParams.append('perPage', perPage.toString());
 
@@ -65,6 +64,7 @@ export async function getAPTSubscriptions(params: {
   const response = await fetch(url.toString(), {
     headers: {
       'Accept': 'application/json',
+      'Authorization': `Infuser ${API_KEY}`,
     },
     cache: 'no-store' // 캐시 비활성화 (실시간 데이터)
   });
@@ -85,7 +85,6 @@ export async function getOfficetelSubscriptions(params: {
   const { page = 1, perPage = 20, region } = params;
 
   const url = new URL(`${BASE_URL}/getUrbtyOfctlLttotPblancDetail`);
-  url.searchParams.append('serviceKey', API_KEY);
   url.searchParams.append('page', page.toString());
   url.searchParams.append('perPage', perPage.toString());
 
@@ -96,6 +95,7 @@ export async function getOfficetelSubscriptions(params: {
   const response = await fetch(url.toString(), {
     headers: {
       'Accept': 'application/json',
+      'Authorization': `Infuser ${API_KEY}`,
     },
     cache: 'no-store' // 캐시 비활성화 (실시간 데이터)
   });
@@ -116,7 +116,6 @@ export async function getRemndrSubscriptions(params: {
   const { page = 1, perPage = 20, region } = params;
 
   const url = new URL(`${BASE_URL}/getRemndrLttotPblancDetail`);
-  url.searchParams.append('serviceKey', API_KEY);
   url.searchParams.append('page', page.toString());
   url.searchParams.append('perPage', perPage.toString());
 
@@ -127,6 +126,7 @@ export async function getRemndrSubscriptions(params: {
   const response = await fetch(url.toString(), {
     headers: {
       'Accept': 'application/json',
+      'Authorization': `Infuser ${API_KEY}`,
     },
     cache: 'no-store' // 캐시 비활성화 (실시간 데이터)
   });
