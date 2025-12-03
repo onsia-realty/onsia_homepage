@@ -67,7 +67,7 @@ export default function AdminLoginPage() {
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  placeholder="admin@onsia.city"
+                  placeholder="이메일 주소"
                   className="w-full pl-12 pr-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:border-blue-400 focus:ring-1 focus:ring-blue-400 transition-all"
                   required
                 />
@@ -120,14 +120,6 @@ export default function AdminLoginPage() {
             </button>
           </form>
 
-          {/* 테스트 계정 안내 */}
-          <div className="mt-6 p-4 bg-yellow-500/10 border border-yellow-500/20 rounded-lg">
-            <p className="text-yellow-300 text-sm font-medium mb-1">테스트 계정</p>
-            <p className="text-gray-400 text-xs">
-              이메일: admin@onsia.city<br />
-              비밀번호: onsia2024!
-            </p>
-          </div>
         </div>
       </motion.div>
     </div>
