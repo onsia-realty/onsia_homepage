@@ -56,8 +56,11 @@ interface CalendarEvent {
 
 // 청약홈 URL 생성 함수
 const getSubscriptionUrl = (sub: SubscriptionProperty): string => {
-  if (sub.PBLANC_URL) return sub.PBLANC_URL;
-  if (sub.HMPG_ADRES) return sub.HMPG_ADRES;
+  // PBLANC_URL이 있고 유효한 URL인 경우 사용
+  if (sub.PBLANC_URL && sub.PBLANC_URL.startsWith('http')) {
+    return sub.PBLANC_URL;
+  }
+  // 기본 청약홈 상세 페이지 URL 생성 (가장 안정적)
   return `https://www.applyhome.co.kr/ai/aia/selectAPTLttotPblancDetail.do?houseManageNo=${sub.HOUSE_MANAGE_NO}&pblancNo=${sub.PBLANC_NO}`;
 };
 
@@ -474,7 +477,13 @@ export default function SubscriptionsPage() {
                     {getEventsForDate(selectedCalendarDate).length > 0 ? (
                       <div className="space-y-2">
                         {getEventsForDate(selectedCalendarDate).map((event, idx) => (
-                          <div key={idx} className="flex items-center gap-2 p-2 bg-white/5 rounded-lg text-sm">
+                          <a
+                            key={idx}
+                            href={getSubscriptionUrl(event.subscription)}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="flex items-center gap-2 p-2 bg-white/5 rounded-lg text-sm hover:bg-white/10 transition-colors cursor-pointer group"
+                          >
                             <div className={`w-2 h-2 rounded-full flex-shrink-0 ${
                               event.type === 'announcement' ? 'bg-blue-400' :
                               event.type === 'special' ? 'bg-purple-400' :
@@ -487,8 +496,9 @@ export default function SubscriptionsPage() {
                               event.type === 'rank1' ? 'text-green-400' :
                               event.type === 'rank2' ? 'text-cyan-400' : 'text-orange-400'
                             }`}>{event.title}</span>
-                            <span className="text-white text-xs truncate">{event.houseName}</span>
-                          </div>
+                            <span className="text-white text-xs truncate group-hover:text-cyan-300 transition-colors flex-1">{event.houseName}</span>
+                            <ExternalLink className="w-3 h-3 text-gray-500 group-hover:text-cyan-400 transition-colors flex-shrink-0" />
+                          </a>
                         ))}
                       </div>
                     ) : (
@@ -745,7 +755,7 @@ export default function SubscriptionsPage() {
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.6, delay: index * 0.05 }}
                   >
-                    <GlassCard className="overflow-hidden h-full" hover glow={sub.status === 'open'}>
+                    <GlassCard className="overflow-hidden h-full flex flex-col" hover glow={sub.status === 'open'}>
                       {/* 상단 배지 */}
                       <div className="p-4 border-b border-white/10">
                         <div className="flex items-center justify-between mb-2">
@@ -764,7 +774,7 @@ export default function SubscriptionsPage() {
                       </div>
 
                       {/* 콘텐츠 */}
-                      <div className="p-4">
+                      <div className="p-4 flex flex-col flex-1">
                         <h3 className="text-lg font-bold text-white mb-2 line-clamp-2">
                           {sub.HOUSE_NM}
                         </h3>
@@ -774,7 +784,7 @@ export default function SubscriptionsPage() {
                           <span className="text-sm line-clamp-1">{sub.SUBSCRPT_AREA_CODE_NM}</span>
                         </div>
 
-                        <div className="space-y-2 text-sm mb-4">
+                        <div className="space-y-2 text-sm mb-4 flex-1">
                           <div className="flex justify-between">
                             <span className="text-gray-400">청약접수</span>
                             <span className="text-white">
@@ -791,22 +801,20 @@ export default function SubscriptionsPage() {
                               {sub.TOT_SUPLY_HSHLDCO?.toLocaleString() || '-'}세대
                             </span>
                           </div>
-                          {sub.CNSTRCT_ENTRPS_NM && (
-                            <div className="flex justify-between">
-                              <span className="text-gray-400">시공사</span>
-                              <span className="text-blue-400 text-xs line-clamp-1">
-                                {sub.CNSTRCT_ENTRPS_NM}
-                              </span>
-                            </div>
-                          )}
+                          <div className="flex justify-between">
+                            <span className="text-gray-400">시공사</span>
+                            <span className="text-blue-400 text-xs line-clamp-1">
+                              {sub.CNSTRCT_ENTRPS_NM || '-'}
+                            </span>
+                          </div>
                         </div>
 
-                        {/* 버튼 */}
+                        {/* 버튼 - 항상 하단 고정 */}
                         <a
                           href={getSubscriptionUrl(sub)}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="w-full px-4 py-2.5 bg-gradient-to-r from-cyan-500/30 to-blue-500/30 text-cyan-300 rounded-lg hover:from-cyan-500/50 hover:to-blue-500/50 transition-all text-sm font-medium flex items-center justify-center gap-2 animate-pulse hover:animate-none border border-cyan-500/30"
+                          className="w-full px-4 py-2.5 bg-gradient-to-r from-cyan-500/30 to-blue-500/30 text-cyan-300 rounded-lg hover:from-cyan-500/50 hover:to-blue-500/50 transition-all text-sm font-medium flex items-center justify-center gap-2 animate-pulse hover:animate-none border border-cyan-500/30 mt-auto"
                         >
                           <ExternalLink className="w-4 h-4" />
                           청약홈에서 보기
