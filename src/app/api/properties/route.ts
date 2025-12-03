@@ -45,7 +45,7 @@ export async function GET(request: Request) {
       },
       orderBy: [
         { featured: 'desc' },  // 추천 매물 우선
-        { createdAt: 'desc' }
+        { createdAt: 'asc' }   // 오래된 순 (순서 조정용)
       ],
       ...(paginated ? {
         skip: (pageNum - 1) * limit,
