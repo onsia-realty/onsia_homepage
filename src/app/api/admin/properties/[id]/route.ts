@@ -57,6 +57,7 @@ export async function PUT(
         completionDate: completionDate,
         moveInDate: moveInDate,
         basePrice: BigInt(body.basePrice || 0),
+        priceDisplay: body.priceDisplay || null,
         pricePerPyeong: body.pricePerPyeong ? BigInt(body.pricePerPyeong) : null,
         contractDeposit: BigInt(body.contractDeposit || 0),
         rightsFee: body.rightsFee ? BigInt(body.rightsFee) : null,

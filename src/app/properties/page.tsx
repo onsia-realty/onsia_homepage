@@ -30,6 +30,7 @@ interface Property {
   address: string;
   district: string;
   basePrice: string; // BigInt는 문자열로 전송됨
+  priceDisplay?: string | null;
   pricePerPyeong: string;
   totalUnits: number;
   availableUnits: number;
@@ -117,6 +118,14 @@ export default function PropertiesPage() {
     const man = Math.floor((numPrice % 100000000) / 10000);
     if (eok === 0 && man === 0) return '가격문의';
     return `${eok}억 ${man > 0 ? man + '만' : ''}`;
+  };
+
+  // priceDisplay 우선 사용하는 가격 표시
+  const getDisplayPrice = (property: Property) => {
+    if (property.priceDisplay) {
+      return property.priceDisplay;
+    }
+    return formatPrice(property.basePrice);
   };
 
   const formatDate = (date: unknown) => {
@@ -316,7 +325,7 @@ export default function PropertiesPage() {
                         <div className="space-y-3 mb-6">
                           <div className="flex justify-between text-sm">
                             <span className="text-gray-400">분양가</span>
-                            <span className="text-white font-semibold">{formatPrice(property.basePrice)}</span>
+                            <span className="text-white font-semibold">{getDisplayPrice(property)}</span>
                           </div>
                           <div className="flex justify-between text-sm">
                             <span className="text-gray-400">입주예정</span>

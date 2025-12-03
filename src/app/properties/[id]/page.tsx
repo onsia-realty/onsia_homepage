@@ -42,6 +42,7 @@ interface Property {
   completionDate: Date;
   moveInDate: Date;
   basePrice: string;
+  priceDisplay: string | null;
   pricePerPyeong: string;
   contractDeposit: string | null;
   interimPayments: string | null;
@@ -116,6 +117,27 @@ export default function PropertyDetailPage({ params }: { params: Promise<{ id: s
     const man = Math.floor((numPrice % 100000000) / 10000);
 
     if (eok === 0 && man === 0) return '가격문의';
+    if (man === 0) return `${eok}억`;
+    return `${eok}억 ${man}만`;
+  };
+
+  // priceDisplay 우선 사용하는 가격 표시
+  const getDisplayPrice = () => {
+    if (property?.priceDisplay) {
+      return property.priceDisplay;
+    }
+    return formatPrice(property?.basePrice);
+  };
+
+  // 권리금 포맷
+  const formatRightsFee = (fee: unknown) => {
+    const feeStr = extractValue(fee);
+    const numFee = parseInt(feeStr);
+    if (isNaN(numFee) || numFee === 0) return null;
+    const eok = Math.floor(numFee / 100000000);
+    const man = Math.floor((numFee % 100000000) / 10000);
+    if (eok === 0 && man === 0) return null;
+    if (eok === 0) return `${man}만`;
     if (man === 0) return `${eok}억`;
     return `${eok}억 ${man}만`;
   };
@@ -441,7 +463,7 @@ export default function PropertyDetailPage({ params }: { params: Promise<{ id: s
                     <TrendingUp className="w-8 h-8 text-cyan-400 mx-auto mb-3 group-hover:scale-110 transition-transform" />
                     <div className="text-xs text-gray-400 mb-1 uppercase tracking-wider">분양가</div>
                     <div className="text-2xl font-black text-cyan-400">
-                      {formatPrice(property.basePrice)}
+                      {getDisplayPrice()}
                     </div>
                   </GlassCard>
                 </motion.div>
@@ -610,7 +632,7 @@ export default function PropertyDetailPage({ params }: { params: Promise<{ id: s
                         {/* 분양가 */}
                         <div className="bg-gradient-to-br from-white/5 to-white/10 rounded-lg p-4 text-center backdrop-blur-sm border border-white/10 hover:border-yellow-400/30 hover:from-yellow-500/10 hover:to-yellow-500/20 transition-all duration-300 group">
                           <div className="text-base font-semibold text-yellow-400 mb-1 group-hover:text-yellow-300 transition-colors">
-                            {formatPrice(property.basePrice)}
+                            {getDisplayPrice()}
                           </div>
                           <div className="text-xs text-gray-400">분양가</div>
                         </div>
@@ -634,8 +656,28 @@ export default function PropertyDetailPage({ params }: { params: Promise<{ id: s
                           </div>
                         </div>
 
+                        {/* 권리금 (값이 있을 때만 표시) */}
+                        {formatRightsFee(property.rightsFee) && (
+                          <div className="bg-white/5 rounded-lg px-4 py-3 backdrop-blur-sm border border-white/10 hover:bg-white/10 transition-colors">
+                            <div className="flex justify-between items-center">
+                              <span className="text-sm text-gray-400">권리금</span>
+                              <span className="text-orange-400 font-semibold">{formatRightsFee(property.rightsFee)}</span>
+                            </div>
+                          </div>
+                        )}
+
+                        {/* 예상 수익률 (값이 있을 때만 표시) */}
+                        {property.profitRate && property.profitRate > 0 && (
+                          <div className="bg-white/5 rounded-lg px-4 py-3 backdrop-blur-sm border border-white/10 hover:bg-white/10 transition-colors">
+                            <div className="flex justify-between items-center">
+                              <span className="text-sm text-gray-400">예상 수익률</span>
+                              <span className="text-green-400 font-semibold">{property.profitRate}%</span>
+                            </div>
+                          </div>
+                        )}
+
                         {/* 투자등급 */}
-                        <div className="bg-white/5 rounded-lg px-4 py-3 backdrop-blur-sm border border-white/10 hover:bg-white/10 transition-colors col-span-2">
+                        <div className={`bg-white/5 rounded-lg px-4 py-3 backdrop-blur-sm border border-white/10 hover:bg-white/10 transition-colors ${(!formatRightsFee(property.rightsFee) && (!property.profitRate || property.profitRate <= 0)) ? 'col-span-2' : ''}`}>
                           <div className="flex justify-between items-center">
                             <span className="text-sm text-gray-400">투자등급</span>
                             <span className="text-purple-400 font-semibold">{property.investmentGrade || '-'}</span>
@@ -769,12 +811,24 @@ export default function PropertyDetailPage({ params }: { params: Promise<{ id: s
                   <div className="space-y-4">
                     <div className="flex justify-between items-center pb-3 border-b border-white/10">
                       <span className="text-gray-400">분양가</span>
-                      <span className="text-white font-bold text-lg">{formatPrice(property.basePrice)}</span>
+                      <span className="text-white font-bold text-lg">{getDisplayPrice()}</span>
                     </div>
                     {property.contractDeposit && (
                       <div className="flex justify-between items-center pb-3 border-b border-white/10">
                         <span className="text-gray-400">계약금</span>
                         <span className="text-white font-bold">{formatPrice(property.contractDeposit)}</span>
+                      </div>
+                    )}
+                    {formatRightsFee(property.rightsFee) && (
+                      <div className="flex justify-between items-center pb-3 border-b border-white/10">
+                        <span className="text-gray-400">권리금</span>
+                        <span className="text-orange-400 font-bold">{formatRightsFee(property.rightsFee)}</span>
+                      </div>
+                    )}
+                    {property.profitRate && property.profitRate > 0 && (
+                      <div className="flex justify-between items-center pb-3 border-b border-white/10">
+                        <span className="text-gray-400">예상 수익률</span>
+                        <span className="text-green-400 font-bold">{property.profitRate}%</span>
                       </div>
                     )}
                     {property.investmentGrade && (

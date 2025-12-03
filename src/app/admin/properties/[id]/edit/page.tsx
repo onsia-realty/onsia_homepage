@@ -37,6 +37,7 @@ export default function EditPropertyPage({ params }: { params: Promise<{ id: str
     completionDate: '',
     moveInDate: '',
     basePrice: '',
+    priceDisplay: '',
     pricePerPyeong: '',
     contractDeposit: '',
     rightsFee: '',
@@ -107,6 +108,7 @@ export default function EditPropertyPage({ params }: { params: Promise<{ id: str
           completionDate: formatDateForInput(data.completionDate),
           moveInDate: formatDateForInput(data.moveInDate),
           basePrice: data.basePrice ? (parseInt(data.basePrice) / 100000000).toString() : '',
+          priceDisplay: data.priceDisplay || '',
           pricePerPyeong: data.pricePerPyeong ? (parseInt(data.pricePerPyeong) / 10000).toString() : '',
           contractDeposit: data.contractDeposit ? (parseInt(data.contractDeposit) / 100000000).toString() : '',
           rightsFee: data.rightsFee ? (parseInt(data.rightsFee) / 100000000).toString() : '',
@@ -163,6 +165,7 @@ export default function EditPropertyPage({ params }: { params: Promise<{ id: str
         totalUnits: parseInt(formData.totalUnits) || 0,
         availableUnits: parseInt(formData.availableUnits) || 0,
         basePrice: priceToWon(formData.basePrice),
+        priceDisplay: formData.priceDisplay || null,
         pricePerPyeong: formData.pricePerPyeong ? parseInt(formData.pricePerPyeong) * 10000 : null,
         contractDeposit: priceToWon(formData.contractDeposit),
         rightsFee: formData.rightsFee ? priceToWon(formData.rightsFee) : null,
@@ -394,6 +397,18 @@ export default function EditPropertyPage({ params }: { params: Promise<{ id: str
                 onChange={handleChange}
                 className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:border-blue-500"
               />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-300 mb-2">표시 가격</label>
+              <input
+                type="text"
+                name="priceDisplay"
+                value={formData.priceDisplay}
+                onChange={handleChange}
+                placeholder="예: 4억~7억, 5억대, 가격문의"
+                className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:border-blue-500"
+              />
+              <p className="text-xs text-gray-500 mt-1">입력하면 분양가 대신 이 값이 표시됩니다</p>
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-300 mb-2">평단가 (만원)</label>
