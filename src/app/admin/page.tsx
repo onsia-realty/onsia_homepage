@@ -19,12 +19,12 @@ export default function AdminLoginPage() {
     setLoading(true);
     setError('');
 
-    // 테스트용 하드코딩 계정
-    if (email === 'admin@onsia.city' && password === 'onsia2024!') {
+    // 관리자 계정
+    if (email === 'realtors7' && password === '#duseorua12') {
       localStorage.setItem('admin_logged_in', 'true');
       router.push('/admin/properties');
     } else {
-      setError('이메일 또는 비밀번호가 올바르지 않습니다.');
+      setError('아이디 또는 비밀번호가 올바르지 않습니다.');
     }
     setLoading(false);
   };
@@ -56,18 +56,18 @@ export default function AdminLoginPage() {
         {/* 로그인 폼 */}
         <div className="bg-white/10 backdrop-blur-xl rounded-2xl p-8 border border-white/20">
           <form onSubmit={handleLogin} className="space-y-6">
-            {/* 이메일 */}
+            {/* 아이디 */}
             <div>
               <label className="block text-sm font-medium text-gray-300 mb-2">
-                이메일
+                아이디
               </label>
               <div className="relative">
                 <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
                 <input
-                  type="email"
+                  type="text"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  placeholder="이메일 주소"
+                  placeholder="아이디"
                   className="w-full pl-12 pr-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:border-blue-400 focus:ring-1 focus:ring-blue-400 transition-all"
                   required
                 />

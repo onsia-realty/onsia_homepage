@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { FloatingContact } from "@/components/FloatingContact";
+import AnalyticsTracker from "@/components/analytics/AnalyticsTracker";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -34,6 +35,16 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
+        <AnalyticsTracker
+          config={{
+            apiEndpoint: process.env.NEXT_PUBLIC_TRACKER_API || 'https://tracker-1jtn6j9qy-realtors77-7871s-projects.vercel.app/api/analytics',
+            siteSlug: 'onsia-main',
+            trackClicks: true,
+            trackScroll: true,
+            trackMouse: true,
+            debugMode: process.env.NODE_ENV === 'development',
+          }}
+        />
         {children}
         <FloatingContact />
       </body>

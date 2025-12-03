@@ -15,6 +15,7 @@ interface Property {
   city: string;
   district: string;
   basePrice: string;
+  priceDisplay: string | null;
   moveInDate: string;
   status: string;
   featured: boolean;
@@ -89,9 +90,21 @@ export default function AdminPropertiesPage() {
     }
   };
 
-  const formatPrice = (price: string) => {
-    if (!price) return '가격문의';
-    const numPrice = parseInt(price);
+  // superjson 형식에서 값 추출
+  const extractValue = (val: unknown): string => {
+    if (val === null || val === undefined) return '';
+    if (typeof val === 'string') return val;
+    if (typeof val === 'number') return val.toString();
+    if (typeof val === 'object' && val !== null && '$type' in val && 'value' in val) {
+      return (val as { value: string }).value;
+    }
+    return '';
+  };
+
+  const formatPrice = (price: unknown) => {
+    const priceStr = extractValue(price);
+    if (!priceStr) return '가격문의';
+    const numPrice = parseInt(priceStr);
     if (isNaN(numPrice)) return '가격문의';
     const eok = Math.floor(numPrice / 100000000);
     const man = Math.floor((numPrice % 100000000) / 10000);
@@ -100,9 +113,20 @@ export default function AdminPropertiesPage() {
     return `${eok}억 ${man}만`;
   };
 
-  const formatDate = (date: string) => {
+  // priceDisplay 우선, 없으면 basePrice로 표시
+  const getDisplayPrice = (property: Property) => {
+    if (property.priceDisplay) {
+      return property.priceDisplay;
+    }
+    return formatPrice(property.basePrice);
+  };
+
+  const formatDate = (date: unknown) => {
     if (!date) return '-';
-    const d = new Date(date);
+    const dateStr = extractValue(date);
+    if (!dateStr) return '-';
+    const d = new Date(dateStr);
+    if (isNaN(d.getTime())) return '-';
     return `${d.getFullYear()}.${String(d.getMonth() + 1).padStart(2, '0')}`;
   };
 
@@ -263,7 +287,7 @@ export default function AdminPropertiesPage() {
               <div className="col-span-2 flex items-center">
                 <div className="flex items-center gap-2 text-cyan-400 font-medium">
                   <TrendingUp className="w-4 h-4" />
-                  {formatPrice(property.basePrice)}
+                  {getDisplayPrice(property)}
                 </div>
               </div>
 

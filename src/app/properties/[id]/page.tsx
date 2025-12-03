@@ -144,16 +144,20 @@ export default function PropertyDetailPage({ params }: { params: Promise<{ id: s
 
   const formatDate = (date: unknown) => {
     if (!date) return '-';
+
+    let d: Date;
+
     // superjson DateTime 형식 처리
-    let dateStr: string;
     if (typeof date === 'object' && date !== null && '$type' in date && 'value' in date) {
-      dateStr = (date as { value: string }).value;
+      d = new Date((date as { value: string }).value);
     } else if (typeof date === 'string') {
-      dateStr = date;
+      d = new Date(date);
+    } else if (date instanceof Date) {
+      d = date;
     } else {
       return '-';
     }
-    const d = new Date(dateStr);
+
     if (isNaN(d.getTime())) return '-';
     return `${d.getFullYear()}년 ${d.getMonth() + 1}월`;
   };

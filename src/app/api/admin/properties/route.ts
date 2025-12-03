@@ -3,15 +3,21 @@ import { prisma } from '@/lib/prisma';
 
 
 
-// BigInt를 문자열로 변환하는 헬퍼 함수
+// BigInt를 문자열로 변환하는 헬퍼 함수 (superjson 형식도 처리)
 function serializeBigInt(obj: unknown): unknown {
   if (obj === null || obj === undefined) return obj;
   if (typeof obj === 'bigint') return obj.toString();
   if (obj instanceof Date) return obj.toISOString();
   if (Array.isArray(obj)) return obj.map(serializeBigInt);
   if (typeof obj === 'object') {
+    const o = obj as Record<string, unknown>;
+    // superjson 형식 처리: {"$type":"BigInt","value":"xxx"} -> "xxx"
+    if ('$type' in o && 'value' in o) {
+      if (o.$type === 'BigInt') return o.value;
+      if (o.$type === 'DateTime') return o.value;
+    }
     const result: Record<string, unknown> = {};
-    for (const [key, value] of Object.entries(obj)) {
+    for (const [key, value] of Object.entries(o)) {
       result[key] = serializeBigInt(value);
     }
     return result;

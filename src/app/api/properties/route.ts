@@ -3,15 +3,21 @@ import { prisma } from '@/lib/prisma';
 
 
 
-// BigInt를 재귀적으로 문자열로 변환
+// BigInt를 재귀적으로 문자열로 변환 (superjson 형식도 처리)
 function serializeBigInt(obj: unknown): unknown {
   if (obj === null || obj === undefined) return obj;
   if (typeof obj === 'bigint') return obj.toString();
   if (obj instanceof Date) return obj.toISOString();
   if (Array.isArray(obj)) return obj.map(serializeBigInt);
   if (typeof obj === 'object') {
+    const o = obj as Record<string, unknown>;
+    // superjson 형식 처리: {"$type":"BigInt","value":"xxx"} -> "xxx"
+    if ('$type' in o && 'value' in o) {
+      if (o.$type === 'BigInt') return o.value;
+      if (o.$type === 'DateTime') return o.value;
+    }
     const result: Record<string, unknown> = {};
-    for (const [key, value] of Object.entries(obj)) {
+    for (const [key, value] of Object.entries(o)) {
       result[key] = serializeBigInt(value);
     }
     return result;
@@ -58,6 +64,12 @@ export async function GET(request: Request) {
     // BigInt를 문자열로 변환
     const serializedProperties = serializeBigInt(properties);
 
+    // BigInt를 문자열로 변환하는 JSON replacer
+    const jsonReplacer = (_key: string, value: unknown) => {
+      if (typeof value === 'bigint') return value.toString();
+      return value;
+    };
+
     // 페이지네이션 모드면 pagination 정보 포함, 아니면 배열만 반환
     if (paginated) {
       return new Response(JSON.stringify({
@@ -68,13 +80,13 @@ export async function GET(request: Request) {
           total,
           totalPages: Math.ceil(total / limit)
         }
-      }), {
+      }, jsonReplacer), {
         headers: { 'Content-Type': 'application/json' }
       });
     }
 
     // 기존 방식: 배열만 반환 (메인화면 호환)
-    return new Response(JSON.stringify(serializedProperties), {
+    return new Response(JSON.stringify(serializedProperties, jsonReplacer), {
       headers: { 'Content-Type': 'application/json' }
     });
   } catch (error) {
