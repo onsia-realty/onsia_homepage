@@ -66,7 +66,7 @@ export async function getAPTSubscriptions(params: {
     headers: {
       'Accept': 'application/json',
     },
-    next: { revalidate: 3600 } // 1시간 캐시
+    cache: 'no-store' // 캐시 비활성화 (실시간 데이터)
   });
 
   if (!response.ok) {
@@ -97,7 +97,7 @@ export async function getOfficetelSubscriptions(params: {
     headers: {
       'Accept': 'application/json',
     },
-    next: { revalidate: 3600 }
+    cache: 'no-store' // 캐시 비활성화 (실시간 데이터)
   });
 
   if (!response.ok) {
@@ -128,7 +128,7 @@ export async function getRemndrSubscriptions(params: {
     headers: {
       'Accept': 'application/json',
     },
-    next: { revalidate: 3600 }
+    cache: 'no-store' // 캐시 비활성화 (실시간 데이터)
   });
 
   if (!response.ok) {

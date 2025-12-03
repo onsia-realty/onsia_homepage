@@ -43,7 +43,8 @@
       "WebFetch(domain:www.reb.or.kr)",
       "WebFetch(domain:www.dooinauction.com)",
       "Bash(tasklist:*)",
-      "Bash(findstr:*)"
+      "Bash(findstr:*)",
+      "WebFetch(domain:www.applyhome.co.kr)"
     ],
     "deny": [],
     "ask": []

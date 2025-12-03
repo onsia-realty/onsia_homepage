@@ -23,6 +23,17 @@ export async function GET(request: Request) {
       processedData = processedData.filter(item => item.status === status);
     }
 
+    // 정렬: open(접수중) → upcoming(예정) → closed(마감), 같은 상태 내에서는 D-Day 빠른 순
+    const statusPriority: Record<string, number> = { open: 0, upcoming: 1, closed: 2 };
+    processedData.sort((a, b) => {
+      const priorityDiff = statusPriority[a.status] - statusPriority[b.status];
+      if (priorityDiff !== 0) return priorityDiff;
+      // 같은 상태면 D-Day 빠른 순
+      const dDayA = a.dDay ?? 999;
+      const dDayB = b.dDay ?? 999;
+      return dDayA - dDayB;
+    });
+
     // 페이지네이션 적용
     const startIndex = (page - 1) * perPage;
     const paginatedData = processedData.slice(startIndex, startIndex + perPage);

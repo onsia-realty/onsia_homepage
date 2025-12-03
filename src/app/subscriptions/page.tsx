@@ -30,6 +30,10 @@ interface SubscriptionProperty {
   CNSTRCT_ENTRPS_NM: string;
   PBLANC_URL: string;
   HMPG_ADRES: string;
+  // 세부 일정 필드
+  SPSPLY_RCEPT_BGNDE: string | null;
+  GNRL_RNK1_CRSPAREA_RCPTDE: string | null;
+  GNRL_RNK2_CRSPAREA_RCPTDE: string | null;
   status: 'upcoming' | 'open' | 'closed';
   statusText: string;
   dDay: number | null;
@@ -42,6 +46,21 @@ interface SubscriptionStats {
   closed: number;
 }
 
+interface CalendarEvent {
+  date: string;
+  type: 'announcement' | 'application' | 'result' | 'special' | 'rank1' | 'rank2';
+  title: string;
+  houseName: string;
+  subscription: SubscriptionProperty;
+}
+
+// 청약홈 URL 생성 함수
+const getSubscriptionUrl = (sub: SubscriptionProperty): string => {
+  if (sub.PBLANC_URL) return sub.PBLANC_URL;
+  if (sub.HMPG_ADRES) return sub.HMPG_ADRES;
+  return `https://www.applyhome.co.kr/ai/aia/selectAPTLttotPblancDetail.do?houseManageNo=${sub.HOUSE_MANAGE_NO}&pblancNo=${sub.PBLANC_NO}`;
+};
+
 export default function SubscriptionsPage() {
   const [subscriptions, setSubscriptions] = useState<SubscriptionProperty[]>([]);
   const [stats, setStats] = useState<SubscriptionStats>({ total: 0, upcoming: 0, open: 0, closed: 0 });
@@ -52,6 +71,8 @@ export default function SubscriptionsPage() {
   const [selectedRegion, setSelectedRegion] = useState('');
   const [selectedStatus, setSelectedStatus] = useState('');
   const [selectedType, setSelectedType] = useState('');
+  const [calendarEvents, setCalendarEvents] = useState<CalendarEvent[]>([]);
+  const [selectedCalendarDate, setSelectedCalendarDate] = useState<Date | null>(null);
 
   const ITEMS_PER_PAGE = 12;
 
@@ -93,6 +114,60 @@ export default function SubscriptionsPage() {
           setSubscriptions(data.data);
           setStats(data.stats);
           setTotalPages(data.pagination.totalPages);
+
+          // 캘린더 이벤트 생성 (세부 일정 포함)
+          const events: CalendarEvent[] = [];
+          data.data.forEach((sub: SubscriptionProperty) => {
+            if (sub.RCRIT_PBLANC_DE) {
+              events.push({
+                date: sub.RCRIT_PBLANC_DE,
+                type: 'announcement',
+                title: '공고',
+                houseName: sub.HOUSE_NM,
+                subscription: sub
+              });
+            }
+            // 특별공급 일정
+            if (sub.SPSPLY_RCEPT_BGNDE) {
+              events.push({
+                date: sub.SPSPLY_RCEPT_BGNDE,
+                type: 'special',
+                title: '특별공급',
+                houseName: sub.HOUSE_NM,
+                subscription: sub
+              });
+            }
+            // 1순위 접수일
+            if (sub.GNRL_RNK1_CRSPAREA_RCPTDE) {
+              events.push({
+                date: sub.GNRL_RNK1_CRSPAREA_RCPTDE,
+                type: 'rank1',
+                title: '1순위',
+                houseName: sub.HOUSE_NM,
+                subscription: sub
+              });
+            }
+            // 2순위 접수일
+            if (sub.GNRL_RNK2_CRSPAREA_RCPTDE) {
+              events.push({
+                date: sub.GNRL_RNK2_CRSPAREA_RCPTDE,
+                type: 'rank2',
+                title: '2순위',
+                houseName: sub.HOUSE_NM,
+                subscription: sub
+              });
+            }
+            if (sub.PRZWNER_PRESNATN_DE) {
+              events.push({
+                date: sub.PRZWNER_PRESNATN_DE,
+                type: 'result',
+                title: '당첨발표',
+                houseName: sub.HOUSE_NM,
+                subscription: sub
+              });
+            }
+          });
+          setCalendarEvents(events);
         }
       } catch (error) {
         console.error('Failed to fetch subscriptions:', error);
@@ -133,6 +208,35 @@ export default function SubscriptionsPage() {
     const today = new Date();
     return date.toDateString() === today.toDateString();
   };
+
+  // 날짜별 이벤트 확인
+  const getEventsForDate = (date: Date) => {
+    const dateStr = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
+    return calendarEvents.filter(e => e.date === dateStr);
+  };
+
+  // 선택된 날짜의 청약 매물 가져오기 (중복 제거 후 최대 4개)
+  const getSubscriptionsForSelectedDate = () => {
+    if (!selectedCalendarDate) return [];
+    const events = getEventsForDate(selectedCalendarDate);
+    const uniqueSubs = new Map<string, { sub: SubscriptionProperty; events: CalendarEvent[] }>();
+
+    events.forEach(event => {
+      const key = `${event.subscription.HOUSE_MANAGE_NO}-${event.subscription.PBLANC_NO}`;
+      if (uniqueSubs.has(key)) {
+        uniqueSubs.get(key)!.events.push(event);
+      } else {
+        uniqueSubs.set(key, { sub: event.subscription, events: [event] });
+      }
+    });
+
+    return Array.from(uniqueSubs.values()).slice(0, 4);
+  };
+
+  const selectedDateSubscriptions = getSubscriptionsForSelectedDate();
+  const selectedDateStr = selectedCalendarDate
+    ? `${selectedCalendarDate.getFullYear()}년 ${selectedCalendarDate.getMonth() + 1}월 ${selectedCalendarDate.getDate()}일`
+    : '';
 
   const getStatusIcon = (status: string) => {
     switch (status) {
@@ -214,30 +318,112 @@ export default function SubscriptionsPage() {
                 </div>
 
                 <div className="grid grid-cols-7 gap-2 mb-6">
-                  {weekDates.map((date, index) => (
-                    <button
-                      key={index}
-                      onClick={() => setSelectedDate(date)}
-                      className={`p-3 rounded-xl text-center transition-all ${
-                        isToday(date)
-                          ? 'bg-cyan-500/30 border-2 border-cyan-400'
-                          : selectedDate.toDateString() === date.toDateString()
-                          ? 'bg-blue-500/20 border border-blue-400/50'
-                          : 'bg-white/5 border border-white/10 hover:bg-white/10'
-                      }`}
-                    >
-                      <div className={`text-xs mb-1 ${isToday(date) ? 'text-cyan-300' : 'text-gray-400'}`}>
-                        {getDayName(date)}
-                      </div>
-                      <div className={`text-lg font-bold ${isToday(date) ? 'text-white' : 'text-gray-300'}`}>
-                        {date.getDate()}
-                      </div>
-                      {isToday(date) && (
-                        <div className="text-xs text-cyan-400 mt-1">오늘</div>
-                      )}
-                    </button>
-                  ))}
+                  {weekDates.map((date, index) => {
+                    const events = getEventsForDate(date);
+                    const hasEvents = events.length > 0;
+                    const isSelected = selectedCalendarDate?.toDateString() === date.toDateString();
+
+                    return (
+                      <button
+                        key={index}
+                        onClick={() => {
+                          if (hasEvents) {
+                            setSelectedCalendarDate(isSelected ? null : date);
+                          }
+                        }}
+                        className={`p-3 rounded-xl text-center transition-all ${
+                          isSelected
+                            ? 'bg-orange-500 border-2 border-orange-300 shadow-lg shadow-orange-500/50'
+                            : isToday(date)
+                            ? 'bg-cyan-500/30 border-2 border-cyan-400'
+                            : hasEvents
+                            ? 'bg-white/10 border border-white/20 hover:bg-white/20 cursor-pointer'
+                            : 'bg-white/5 border border-white/10'
+                        }`}
+                      >
+                        <div className={`text-xs mb-1 ${isSelected ? 'text-white' : isToday(date) ? 'text-cyan-300' : 'text-gray-400'}`}>
+                          {getDayName(date)}
+                        </div>
+                        <div className={`text-lg font-bold ${isSelected ? 'text-white' : isToday(date) ? 'text-white' : 'text-gray-300'}`}>
+                          {date.getDate()}
+                        </div>
+                        {/* 이벤트 표시 */}
+                        {hasEvents && (
+                          <div className="flex gap-0.5 mt-1 justify-center">
+                            {events.slice(0, 3).map((event, idx) => (
+                              <div
+                                key={idx}
+                                className={`w-1.5 h-1.5 rounded-full ${
+                                  isSelected ? 'bg-white' :
+                                  event.type === 'announcement' ? 'bg-blue-400' :
+                                  event.type === 'special' ? 'bg-purple-400' :
+                                  event.type === 'rank1' ? 'bg-green-400' :
+                                  event.type === 'rank2' ? 'bg-cyan-400' : 'bg-orange-400'
+                                }`}
+                              />
+                            ))}
+                          </div>
+                        )}
+                        {isToday(date) && !isSelected && (
+                          <div className="text-xs text-cyan-400 mt-1">오늘</div>
+                        )}
+                      </button>
+                    );
+                  })}
                 </div>
+
+                {/* 범례 */}
+                <div className="flex flex-wrap gap-3 text-xs mb-4">
+                  <div className="flex items-center gap-1.5">
+                    <div className="w-2 h-2 rounded-full bg-blue-400" />
+                    <span className="text-gray-400">공고</span>
+                  </div>
+                  <div className="flex items-center gap-1.5">
+                    <div className="w-2 h-2 rounded-full bg-purple-400" />
+                    <span className="text-gray-400">특별</span>
+                  </div>
+                  <div className="flex items-center gap-1.5">
+                    <div className="w-2 h-2 rounded-full bg-green-400" />
+                    <span className="text-gray-400">1순위</span>
+                  </div>
+                  <div className="flex items-center gap-1.5">
+                    <div className="w-2 h-2 rounded-full bg-cyan-400" />
+                    <span className="text-gray-400">2순위</span>
+                  </div>
+                  <div className="flex items-center gap-1.5">
+                    <div className="w-2 h-2 rounded-full bg-orange-400" />
+                    <span className="text-gray-400">당첨</span>
+                  </div>
+                </div>
+
+                {/* 선택된 날짜 일정 */}
+                {selectedCalendarDate && selectedDateSubscriptions.length > 0 && (
+                  <div className="mb-6 p-4 bg-orange-500/10 rounded-xl border border-orange-500/30">
+                    <div className="flex items-center justify-between mb-3">
+                      <h4 className="text-sm font-semibold text-white">{selectedDateStr} 청약 일정</h4>
+                      <button
+                        onClick={() => setSelectedCalendarDate(null)}
+                        className="text-xs text-gray-400 hover:text-white transition-colors"
+                      >
+                        닫기 ✕
+                      </button>
+                    </div>
+                    <div className="space-y-2">
+                      {getEventsForDate(selectedCalendarDate).slice(0, 5).map((event, idx) => (
+                        <div key={idx} className="flex items-center gap-2 text-xs">
+                          <div className={`w-2 h-2 rounded-full flex-shrink-0 ${
+                            event.type === 'announcement' ? 'bg-blue-400' :
+                            event.type === 'special' ? 'bg-purple-400' :
+                            event.type === 'rank1' ? 'bg-green-400' :
+                            event.type === 'rank2' ? 'bg-cyan-400' : 'bg-orange-400'
+                          }`} />
+                          <span className="text-orange-300 font-semibold">{event.title}</span>
+                          <span className="text-gray-300 line-clamp-1">{event.houseName}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
 
                 {/* 오늘의 현황 */}
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
@@ -293,12 +479,12 @@ export default function SubscriptionsPage() {
                 공공데이터 API를 통해 실시간으로 제공되는 청약 정보입니다.
               </p>
 
-              {/* 필터 버튼 */}
+              {/* 필터 버튼 - 유형별 */}
               <div className="flex flex-wrap justify-center gap-3">
                 <button
-                  onClick={() => setSelectedStatus('')}
+                  onClick={() => { setSelectedType(''); setCurrentPage(1); }}
                   className={`px-6 py-3 rounded-full font-semibold text-sm transition-all duration-300 ${
-                    selectedStatus === ''
+                    selectedType === ''
                       ? 'bg-gradient-to-r from-orange-500 to-amber-500 text-white shadow-lg shadow-orange-500/30'
                       : 'bg-white/10 text-gray-300 hover:bg-white/20 hover:text-white border border-white/10'
                   }`}
@@ -306,39 +492,118 @@ export default function SubscriptionsPage() {
                   전체
                 </button>
                 <button
-                  onClick={() => setSelectedStatus('upcoming')}
+                  onClick={() => { setSelectedType('apt'); setCurrentPage(1); }}
                   className={`px-6 py-3 rounded-full font-semibold text-sm transition-all duration-300 ${
-                    selectedStatus === 'upcoming'
-                      ? 'bg-gradient-to-r from-yellow-500 to-amber-500 text-white shadow-lg shadow-yellow-500/30'
+                    selectedType === 'apt'
+                      ? 'bg-gradient-to-r from-blue-500 to-cyan-500 text-white shadow-lg shadow-blue-500/30'
                       : 'bg-white/10 text-gray-300 hover:bg-white/20 hover:text-white border border-white/10'
                   }`}
                 >
-                  접수예정
+                  APT
                 </button>
                 <button
-                  onClick={() => setSelectedStatus('open')}
+                  onClick={() => { setSelectedType('officetel'); setCurrentPage(1); }}
                   className={`px-6 py-3 rounded-full font-semibold text-sm transition-all duration-300 ${
-                    selectedStatus === 'open'
-                      ? 'bg-gradient-to-r from-green-500 to-emerald-500 text-white shadow-lg shadow-green-500/30'
+                    selectedType === 'officetel'
+                      ? 'bg-gradient-to-r from-purple-500 to-pink-500 text-white shadow-lg shadow-purple-500/30'
                       : 'bg-white/10 text-gray-300 hover:bg-white/20 hover:text-white border border-white/10'
                   }`}
                 >
-                  접수중
+                  오피스텔
                 </button>
                 <button
-                  onClick={() => setSelectedStatus('closed')}
+                  onClick={() => { setSelectedType('remndr'); setCurrentPage(1); }}
                   className={`px-6 py-3 rounded-full font-semibold text-sm transition-all duration-300 ${
-                    selectedStatus === 'closed'
-                      ? 'bg-gradient-to-r from-gray-500 to-gray-600 text-white shadow-lg shadow-gray-500/30'
+                    selectedType === 'remndr'
+                      ? 'bg-gradient-to-r from-green-500 to-teal-500 text-white shadow-lg shadow-green-500/30'
                       : 'bg-white/10 text-gray-300 hover:bg-white/20 hover:text-white border border-white/10'
                   }`}
                 >
-                  접수마감
+                  공공지원민간임대
                 </button>
               </div>
             </motion.div>
           </div>
         </section>
+
+        {/* 선택된 날짜의 청약 매물 표시 */}
+        {selectedCalendarDate && selectedDateSubscriptions.length > 0 && (
+          <section className="relative pb-8">
+            <div className="container mx-auto px-6">
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5 }}
+              >
+                <div className="flex items-center gap-3 mb-6">
+                  <Calendar className="w-5 h-5 text-orange-400" />
+                  <h3 className="text-xl font-bold text-white">
+                    {selectedDateStr} 청약 매물
+                  </h3>
+                  <span className="px-3 py-1 bg-orange-500/20 text-orange-400 text-sm rounded-full">
+                    {selectedDateSubscriptions.length}건
+                  </span>
+                </div>
+
+                <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+                  {selectedDateSubscriptions.map(({ sub, events }, index) => (
+                    <motion.div
+                      key={`${sub.HOUSE_MANAGE_NO}-${sub.PBLANC_NO}`}
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.4, delay: index * 0.1 }}
+                    >
+                      <GlassCard className="p-4 h-full cursor-pointer group" hover>
+                        {/* 이벤트 배지들 */}
+                        <div className="flex flex-wrap gap-1 mb-3">
+                          {events.map((event, idx) => (
+                            <span
+                              key={idx}
+                              className={`px-2 py-0.5 rounded text-xs font-semibold ${
+                                event.type === 'announcement' ? 'bg-blue-500/20 text-blue-400' :
+                                event.type === 'application' ? 'bg-green-500/20 text-green-400' : 'bg-orange-500/20 text-orange-400'
+                              }`}
+                            >
+                              {event.title}
+                            </span>
+                          ))}
+                        </div>
+
+                        {/* 단지명 */}
+                        <h4 className="text-base font-bold text-white mb-2 group-hover:text-orange-300 transition-colors line-clamp-2">
+                          {sub.HOUSE_NM}
+                        </h4>
+
+                        {/* 위치 */}
+                        <div className="flex items-center gap-2 text-gray-400 text-xs mb-3">
+                          <MapPin className="w-3 h-3" />
+                          <span className="line-clamp-1">{sub.SUBSCRPT_AREA_CODE_NM}</span>
+                        </div>
+
+                        {/* 세대수 */}
+                        <div className="flex items-center gap-2 text-gray-400 text-xs mb-3">
+                          <Users className="w-3 h-3" />
+                          <span>{sub.TOT_SUPLY_HSHLDCO?.toLocaleString() || '-'}세대</span>
+                        </div>
+
+                        {/* 청약홈 링크 */}
+                        <a
+                          href={getSubscriptionUrl(sub)}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="w-full px-3 py-2 bg-gradient-to-r from-orange-500/30 to-amber-500/30 text-orange-300 rounded-lg hover:from-orange-500/50 hover:to-amber-500/50 transition-all text-xs font-medium flex items-center justify-center gap-2 animate-pulse hover:animate-none border border-orange-500/30"
+                        >
+                          <ExternalLink className="w-3 h-3" />
+                          청약홈에서 보기
+                        </a>
+                      </GlassCard>
+                    </motion.div>
+                  ))}
+                </div>
+              </motion.div>
+            </div>
+          </section>
+        )}
 
         {/* 검색 및 필터 */}
         <section className="relative pb-8">
@@ -486,10 +751,10 @@ export default function SubscriptionsPage() {
 
                         {/* 버튼 */}
                         <a
-                          href={sub.PBLANC_URL || sub.HMPG_ADRES}
+                          href={getSubscriptionUrl(sub)}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="w-full px-4 py-2.5 bg-cyan-500/20 text-cyan-300 rounded-lg hover:bg-cyan-500/30 transition-colors text-sm font-medium flex items-center justify-center gap-2"
+                          className="w-full px-4 py-2.5 bg-gradient-to-r from-cyan-500/30 to-blue-500/30 text-cyan-300 rounded-lg hover:from-cyan-500/50 hover:to-blue-500/50 transition-all text-sm font-medium flex items-center justify-center gap-2 animate-pulse hover:animate-none border border-cyan-500/30"
                         >
                           <ExternalLink className="w-4 h-4" />
                           청약홈에서 보기

@@ -45,7 +45,7 @@ export const HeroSection = () => {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.5, duration: 0.8 }}
               >
-                <span className="bg-gradient-to-r from-blue-400 via-cyan-300 to-blue-500 bg-clip-text text-transparent block">분양권 투자의 새로운 기준</span>
+                <span className="bg-gradient-to-r from-blue-400 via-cyan-300 to-blue-500 bg-clip-text text-transparent block">분양권 계약의 새로운 기준</span>
                 <span className="bg-gradient-to-r from-white to-blue-200 bg-clip-text text-transparent block">블록체인으로 더 안전하게</span>
               </motion.h1>
 
