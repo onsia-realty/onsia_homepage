@@ -16,6 +16,13 @@ interface Developer {
   name: string;
 }
 
+interface PropertyImage {
+  id: string;
+  url: string;
+  alt: string;
+  order: number;
+}
+
 interface Property {
   id: string;
   title: string;
@@ -33,6 +40,7 @@ interface Property {
   featured?: boolean;
   constructor?: string | null;
   keyFeature?: string | null;
+  images?: PropertyImage[];
 }
 
 export default function PropertiesPage() {
@@ -81,16 +89,39 @@ export default function PropertiesPage() {
     return matchesSearch && matchesDistrict && matchesType;
   });
 
-  const formatPrice = (price: string) => {
-    const numPrice = parseInt(price);
+  // BigInt 값 추출 (superjson 형식 처리)
+  const extractValue = (val: unknown): string => {
+    if (val === null || val === undefined) return '0';
+    if (typeof val === 'string') return val;
+    if (typeof val === 'number') return val.toString();
+    if (typeof val === 'object' && val !== null && '$type' in val && 'value' in val) {
+      return (val as { value: string }).value;
+    }
+    return '0';
+  };
+
+  const formatPrice = (price: unknown) => {
+    const priceStr = extractValue(price);
+    const numPrice = parseInt(priceStr);
+    if (isNaN(numPrice) || numPrice === 0) return '가격문의';
     const eok = Math.floor(numPrice / 100000000);
     const man = Math.floor((numPrice % 100000000) / 10000);
+    if (eok === 0 && man === 0) return '가격문의';
     return `${eok}억 ${man > 0 ? man + '만' : ''}`;
   };
 
-  const formatDate = (date: Date) => {
+  const formatDate = (date: unknown) => {
     if (!date) return '-';
-    const d = new Date(date);
+    // superjson DateTime 형식 처리
+    let dateStr: string;
+    if (typeof date === 'object' && date !== null && '$type' in date && 'value' in date) {
+      dateStr = (date as { value: string }).value;
+    } else if (typeof date === 'string') {
+      dateStr = date;
+    } else {
+      return '-';
+    }
+    const d = new Date(dateStr);
     if (isNaN(d.getTime())) return '-';
     return `${d.getFullYear()}년 ${d.getMonth() + 1}월`;
   };
@@ -244,9 +275,19 @@ export default function PropertiesPage() {
                             추천매물
                           </div>
                         )}
-                        <div className="absolute inset-0 flex items-center justify-center">
-                          <Building2 className="w-16 h-16 text-white/30" />
-                        </div>
+                        {property.images && property.images.length > 0 ? (
+                          <Image
+                            src={property.images[0].url}
+                            alt={property.images[0].alt || property.title}
+                            fill
+                            className="object-cover group-hover:scale-105 transition-transform duration-300"
+                            unoptimized={property.images[0].url.startsWith('http')}
+                          />
+                        ) : (
+                          <div className="absolute inset-0 flex items-center justify-center">
+                            <Building2 className="w-16 h-16 text-white/30" />
+                          </div>
+                        )}
                       </div>
 
                       {/* 콘텐츠 */}
@@ -266,14 +307,6 @@ export default function PropertiesPage() {
                           <div className="flex justify-between text-sm">
                             <span className="text-gray-400">분양가</span>
                             <span className="text-white font-semibold">{formatPrice(property.basePrice)}</span>
-                          </div>
-                          <div className="flex justify-between text-sm">
-                            <span className="text-gray-400">평단가</span>
-                            <span className="text-white font-semibold">
-                              {property.pricePerPyeong && !isNaN(parseInt(property.pricePerPyeong))
-                                ? `${(parseInt(property.pricePerPyeong) / 10000).toFixed(0)}만원/평`
-                                : '가격문의'}
-                            </span>
                           </div>
                           <div className="flex justify-between text-sm">
                             <span className="text-gray-400">입주예정</span>

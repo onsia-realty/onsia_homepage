@@ -206,11 +206,13 @@ model Property {
   interimPayments String       // JSON string for payment schedule
 
   // 분양권 특화 정보
-  rightsFee     BigInt?        // 권리금
-  profitRate    Float?         // 예상 수익률
+  rightsFee     BigInt?        // 권리금 (사용안함)
+  profitRate    Float?         // 예상 수익률 (사용안함)
   investmentGrade String?      // 투자 등급
   constructor   String?        // 시공사
-  keyFeature    String?        // 특장점
+  keyFeature    String?        // 특장점 (한 줄 요약)
+  keyFeatures   String?        // 특장점 목록 JSON (여러 개)
+  loanRatio     String?        // 중도금 대출 비율 (예: "60% 무이자")
 
   // 단지 정보
   totalBuildingCount Int?

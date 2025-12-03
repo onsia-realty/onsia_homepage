@@ -10,7 +10,7 @@ interface InquiryFormProps {
   onSuccess?: () => void;
 }
 
-type InquiryType = 'GENERAL' | 'VIEWING' | 'INVESTMENT' | 'CONSULTATION';
+type InquiryType = 'GENERAL' | 'VIEWING';
 
 export function InquiryForm({ propertyId, propertyTitle, onSuccess }: InquiryFormProps) {
   const [formData, setFormData] = useState({
@@ -26,9 +26,7 @@ export function InquiryForm({ propertyId, propertyTitle, onSuccess }: InquiryFor
 
   const inquiryTypes = [
     { value: 'GENERAL', label: '일반 문의' },
-    { value: 'VIEWING', label: '현장 방문' },
-    { value: 'INVESTMENT', label: '투자 상담' },
-    { value: 'CONSULTATION', label: '전문 상담' },
+    { value: 'VIEWING', label: '모델하우스 방문' },
   ];
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
