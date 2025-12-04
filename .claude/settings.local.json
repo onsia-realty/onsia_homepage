@@ -44,7 +44,15 @@
       "WebFetch(domain:www.dooinauction.com)",
       "Bash(tasklist:*)",
       "Bash(findstr:*)",
-      "WebFetch(domain:www.applyhome.co.kr)"
+      "WebFetch(domain:www.applyhome.co.kr)",
+      "WebFetch(domain:smlog.co.kr)",
+      "WebFetch(domain:blog.wishket.com)",
+      "WebFetch(domain:soomgo.com)",
+      "WebFetch(domain:www.autodabid.com)",
+      "WebFetch(domain:boraware.co.kr)",
+      "WebFetch(domain:prevent-fraud-click.autodabid.com)",
+      "Bash(npx create-next-app:*)",
+      "Bash(npm install:*)"
     ],
     "deny": [],
     "ask": []

@@ -755,7 +755,8 @@ export default function SubscriptionsPage() {
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.6, delay: index * 0.05 }}
                   >
-                    <GlassCard className="overflow-hidden h-full flex flex-col" hover glow={sub.status === 'open'}>
+                    <Link href={`/subscriptions/${sub.HOUSE_MANAGE_NO}`}>
+                    <GlassCard className="overflow-hidden h-full flex flex-col cursor-pointer" hover glow={sub.status === 'open'}>
                       {/* 상단 배지 */}
                       <div className="p-4 border-b border-white/10">
                         <div className="flex items-center justify-between mb-2">
@@ -810,17 +811,14 @@ export default function SubscriptionsPage() {
                         </div>
 
                         {/* 버튼 - 항상 하단 고정 */}
-                        <a
-                          href={getSubscriptionUrl(sub)}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="w-full px-4 py-2.5 bg-gradient-to-r from-cyan-500/30 to-blue-500/30 text-cyan-300 rounded-lg hover:from-cyan-500/50 hover:to-blue-500/50 transition-all text-sm font-medium flex items-center justify-center gap-2 animate-pulse hover:animate-none border border-cyan-500/30 mt-auto"
+                        <div
+                          className="w-full px-4 py-2.5 bg-gradient-to-r from-cyan-500/30 to-blue-500/30 text-cyan-300 rounded-lg hover:from-cyan-500/50 hover:to-blue-500/50 transition-all text-sm font-medium flex items-center justify-center gap-2 border border-cyan-500/30 mt-auto"
                         >
-                          <ExternalLink className="w-4 h-4" />
-                          청약홈에서 보기
-                        </a>
+                          상세보기
+                        </div>
                       </div>
                     </GlassCard>
+                    </Link>
                   </motion.div>
                 ))}
               </div>
