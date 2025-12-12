@@ -255,29 +255,39 @@ export default function PropertyForm() {
 
 ## 🔄 작업 히스토리
 
-### 최근 작업 내용
+### 최근 작업 내용 (2025-12)
 1. ✅ Next.js 15 + React 19 프로젝트 초기 설정
 2. ✅ Prisma 스키마 설계 (Property, User, Developer 등)
 3. ✅ 시드 데이터 생성
 4. ✅ 매물 상세 페이지 UI 개선
 5. ✅ 추천 매물 필터 수정
 6. ✅ .gitignore 업데이트 및 데이터베이스 포함
-
-### 진행 예정 작업
-1. ⏳ 관리자 페이지 구축
+7. ✅ 관리자 페이지 구축 완료
    - NextAuth 인증 설정
    - 관리자 레이아웃
    - 매물 목록/등록/수정 페이지
-   - 이미지 업로드 시스템
+8. ✅ 관리자-프론트엔드 데이터 연동 개선
+9. ✅ 관리자 로그인 보안 강화 (테스트 계정 정보 제거)
+10. ✅ SEO 기본 설정
+    - sitemap.xml 동적 생성
+    - robots.txt 설정
+    - RSS feed 추가
+    - Google/Naver 사이트 인증
+11. ✅ ONSIA Tracker 애널리틱스 연동
+12. ✅ 구독(청약) 상세 페이지 추가
 
-2. ⏳ 프론트엔드 DB 연동
-   - mockData 제거
-   - API 연동
+### 진행 예정 작업
+1. ⏳ SEO 최적화
+   - 네이버 서치어드바이저 등록 및 인덱싱 요청
+   - Open Graph 메타태그 추가
+   - Schema.org 구조화 데이터 추가
+   - 키워드 최적화
 
-3. ⏳ 추가 기능
-   - 검색 최적화
-   - 필터링 고도화
+2. ⏳ 추가 기능
+   - 검색 고도화
+   - 필터링 개선
    - 문의 시스템 완성
+   - 이미지 업로드 시스템
 
 ## 📚 참고 문서
 
@@ -313,8 +323,10 @@ export default function PropertyForm() {
 ## 🔗 관련 링크
 
 - **프로젝트 저장소**: (Git 저장소 URL 추가 예정)
-- **배포 URL**: (배포 후 추가)
+- **배포 URL**: https://www.onsia.city
 - **Prisma Studio**: `npx prisma studio` (http://localhost:5555)
+- **네이버 서치어드바이저**: https://searchadvisor.naver.com
+- **Google Search Console**: https://search.google.com/search-console
 
 ---
 
@@ -337,4 +349,4 @@ export default function PropertyForm() {
 
 ---
 
-*최종 수정일: 2025-10-08*
+*최종 수정일: 2025-12-12*
