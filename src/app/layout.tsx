@@ -79,16 +79,18 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <AnalyticsTracker
-          config={{
-            apiEndpoint: process.env.NEXT_PUBLIC_TRACKER_API || 'https://tracker-1jtn6j9qy-realtors77-7871s-projects.vercel.app/api/analytics',
-            siteSlug: 'onsia-main',
-            trackClicks: true,
-            trackScroll: true,
-            trackMouse: true,
-            debugMode: process.env.NODE_ENV === 'development',
-          }}
-        />
+{process.env.NODE_ENV === 'production' && (
+          <AnalyticsTracker
+            config={{
+              apiEndpoint: process.env.NEXT_PUBLIC_TRACKER_API || 'https://tracker-1jtn6j9qy-realtors77-7871s-projects.vercel.app/api/analytics',
+              siteSlug: 'onsia-main',
+              trackClicks: true,
+              trackScroll: true,
+              trackMouse: true,
+              debugMode: false,
+            }}
+          />
+        )}
         {children}
         <FloatingContact />
       </body>
