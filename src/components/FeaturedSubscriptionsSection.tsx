@@ -1,5 +1,10 @@
 'use client';
-// Force rebuild - SEO internal links update
+/**
+ * FeaturedSubscriptionsSection - SEO Internal Links Update v2
+ * Last updated: 2025-12-14T12:55:00
+ * - Category buttons now use Link components for SEO
+ * - Subscription cards wrapped with internal links
+ */
 import { useState, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { ArrowRight, MapPin, Building2, Calendar, Users, Clock, ChevronLeft, ChevronRight } from 'lucide-react';
