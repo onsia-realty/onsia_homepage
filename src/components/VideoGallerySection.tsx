@@ -154,6 +154,7 @@ export const VideoGallerySection = () => {
                 <span className="text-green-300 ml-3">Featured Videos</span>
               </h3>
 
+{/* TODO: /videos 페이지 완성 후 활성화
               <GlassCard className="px-6 py-3" hover>
                 <a
                   href="/videos"
@@ -162,6 +163,7 @@ export const VideoGallerySection = () => {
                   전체보기 →
                 </a>
               </GlassCard>
+*/}
             </div>
 
             {loading ? (

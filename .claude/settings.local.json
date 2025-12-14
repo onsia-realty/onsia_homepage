@@ -52,7 +52,10 @@
       "WebFetch(domain:boraware.co.kr)",
       "WebFetch(domain:prevent-fraud-click.autodabid.com)",
       "Bash(npx create-next-app:*)",
-      "Bash(npm install:*)"
+      "Bash(npm install:*)",
+      "Bash(npm outdated:*)",
+      "mcp__playwright__browser_snapshot",
+      "WebFetch(domain:github.com)"
     ],
     "deny": [],
     "ask": []

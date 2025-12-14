@@ -23,9 +23,10 @@ export const Navigation = () => {
     { name: '청약홈매물', href: '/subscriptions', icon: Calendar },
     { name: '분양권매물', href: '/properties', icon: Building2 },
     { name: '회사소개', href: '/about', icon: Info },
-    { name: '부동산뉴스', href: '/news', icon: FileText },
-    { name: '영상', href: '/videos', icon: Play },
-    { name: '문의', href: '/contact', icon: Mail },
+    // TODO: 페이지 완성 후 활성화
+    // { name: '부동산뉴스', href: '/news', icon: FileText },
+    // { name: '영상', href: '/videos', icon: Play },
+    // { name: '문의', href: '/contact', icon: Mail },
   ];
 
   return (
