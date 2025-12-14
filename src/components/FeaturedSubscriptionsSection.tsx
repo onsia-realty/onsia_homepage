@@ -1,5 +1,5 @@
 'use client';
-
+// Force rebuild - SEO internal links update
 import { useState, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { ArrowRight, MapPin, Building2, Calendar, Users, Clock, ChevronLeft, ChevronRight } from 'lucide-react';
