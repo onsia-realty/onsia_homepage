@@ -541,10 +541,10 @@ export default function SubscriptionsPage() {
                 공공데이터 API를 통해 실시간으로 제공되는 청약 정보입니다.
               </p>
 
-              {/* 필터 버튼 - 유형별 */}
+              {/* 카테고리 링크 버튼 */}
               <div className="flex flex-wrap justify-center gap-3">
-                <button
-                  onClick={() => { setSelectedType(''); setCurrentPage(1); }}
+                <Link
+                  href="/subscriptions"
                   className={`px-6 py-3 rounded-full font-semibold text-sm transition-all duration-300 ${
                     selectedType === ''
                       ? 'bg-gradient-to-r from-orange-500 to-amber-500 text-white shadow-lg shadow-orange-500/30'
@@ -552,9 +552,9 @@ export default function SubscriptionsPage() {
                   }`}
                 >
                   전체
-                </button>
-                <button
-                  onClick={() => { setSelectedType('apt'); setCurrentPage(1); }}
+                </Link>
+                <Link
+                  href="/subscriptions/apt"
                   className={`px-6 py-3 rounded-full font-semibold text-sm transition-all duration-300 ${
                     selectedType === 'apt'
                       ? 'bg-gradient-to-r from-blue-500 to-cyan-500 text-white shadow-lg shadow-blue-500/30'
@@ -562,9 +562,9 @@ export default function SubscriptionsPage() {
                   }`}
                 >
                   APT
-                </button>
-                <button
-                  onClick={() => { setSelectedType('officetel'); setCurrentPage(1); }}
+                </Link>
+                <Link
+                  href="/subscriptions/officetel"
                   className={`px-6 py-3 rounded-full font-semibold text-sm transition-all duration-300 ${
                     selectedType === 'officetel'
                       ? 'bg-gradient-to-r from-purple-500 to-pink-500 text-white shadow-lg shadow-purple-500/30'
@@ -572,17 +572,17 @@ export default function SubscriptionsPage() {
                   }`}
                 >
                   오피스텔
-                </button>
-                <button
-                  onClick={() => { setSelectedType('remndr'); setCurrentPage(1); }}
+                </Link>
+                <Link
+                  href="/subscriptions/remndr"
                   className={`px-6 py-3 rounded-full font-semibold text-sm transition-all duration-300 ${
                     selectedType === 'remndr'
                       ? 'bg-gradient-to-r from-green-500 to-teal-500 text-white shadow-lg shadow-green-500/30'
                       : 'bg-white/10 text-gray-300 hover:bg-white/20 hover:text-white border border-white/10'
                   }`}
                 >
-                  공공지원민간임대
-                </button>
+                  무순위/잔여
+                </Link>
               </div>
             </motion.div>
           </div>

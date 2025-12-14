@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
-import { ArrowRight, MapPin, Building2, Calendar, Users, Clock, ChevronLeft, ChevronRight, ExternalLink } from 'lucide-react';
+import { ArrowRight, MapPin, Building2, Calendar, Users, Clock, ChevronLeft, ChevronRight } from 'lucide-react';
 import { GlassCard } from './ui/GlassCard';
 import Link from 'next/link';
 
@@ -35,13 +35,6 @@ interface CalendarEvent {
   houseName: string;
   subscription: Subscription;
 }
-
-// 청약홈 URL 생성 함수
-const getSubscriptionUrl = (sub: Subscription): string => {
-  if (sub.PBLANC_URL) return sub.PBLANC_URL;
-  if (sub.HMPG_ADRES) return sub.HMPG_ADRES;
-  return `https://www.applyhome.co.kr/ai/aia/selectAPTLttotPblancDetail.do?houseManageNo=${sub.HOUSE_MANAGE_NO}&pblancNo=${sub.PBLANC_NO}`;
-};
 
 const getStatusBadge = (status: string, dDay: number | null) => {
   switch (status) {
@@ -87,63 +80,59 @@ const SubscriptionCard = ({ sub, index, isMobile = false }: {
       transition={{ duration: 0.6, delay: isMobile ? 0 : index * 0.1 }}
       className={isMobile ? "flex-shrink-0 w-[280px]" : ""}
     >
-      <GlassCard className="p-5 h-full group" hover glow>
-        {/* 상단: 상태 배지 + 타입 */}
-        <div className="flex items-center justify-between mb-4">
-          {getStatusBadge(sub.status, sub.dDay)}
-          <span className="text-xs text-gray-400 bg-white/5 px-2 py-1 rounded">
-            {sub.HOUSE_SECD_NM || 'APT'}
-          </span>
-        </div>
-
-        {/* 단지명 */}
-        <h3 className="text-lg font-bold text-white mb-2 line-clamp-1">
-          {sub.HOUSE_NM}
-        </h3>
-
-        {/* 위치 */}
-        <div className="flex items-center gap-2 text-gray-400 text-sm mb-4">
-          <MapPin className="w-4 h-4" />
-          <span className="line-clamp-1">{sub.HSSPLY_ADRES || sub.SUBSCRPT_AREA_CODE_NM}</span>
-        </div>
-
-        {/* 정보 그리드 */}
-        <div className="grid grid-cols-2 gap-3 mb-4">
-          <div className="bg-white/5 rounded-lg p-3">
-            <div className="flex items-center gap-2 text-gray-400 text-xs mb-1">
-              <Users className="w-3 h-3" />
-              <span>총 세대</span>
-            </div>
-            <div className="text-white font-bold">{sub.TOT_SUPLY_HSHLDCO?.toLocaleString() || '-'}세대</div>
+      <Link href={`/subscriptions/${sub.HOUSE_MANAGE_NO}`}>
+        <GlassCard className="p-5 h-full group" hover glow>
+          {/* 상단: 상태 배지 + 타입 */}
+          <div className="flex items-center justify-between mb-4">
+            {getStatusBadge(sub.status, sub.dDay)}
+            <span className="text-xs text-gray-400 bg-white/5 px-2 py-1 rounded">
+              {sub.HOUSE_SECD_NM || 'APT'}
+            </span>
           </div>
-          <div className="bg-white/5 rounded-lg p-3">
-            <div className="flex items-center gap-2 text-gray-400 text-xs mb-1">
-              <Calendar className="w-3 h-3" />
-              <span>청약접수</span>
+
+          {/* 단지명 */}
+          <h3 className="text-lg font-bold text-white mb-2 line-clamp-1 group-hover:text-orange-300 transition-colors">
+            {sub.HOUSE_NM}
+          </h3>
+
+          {/* 위치 */}
+          <div className="flex items-center gap-2 text-gray-400 text-sm mb-4">
+            <MapPin className="w-4 h-4" />
+            <span className="line-clamp-1">{sub.HSSPLY_ADRES || sub.SUBSCRPT_AREA_CODE_NM}</span>
+          </div>
+
+          {/* 정보 그리드 */}
+          <div className="grid grid-cols-2 gap-3 mb-4">
+            <div className="bg-white/5 rounded-lg p-3">
+              <div className="flex items-center gap-2 text-gray-400 text-xs mb-1">
+                <Users className="w-3 h-3" />
+                <span>총 세대</span>
+              </div>
+              <div className="text-white font-bold">{sub.TOT_SUPLY_HSHLDCO?.toLocaleString() || '-'}세대</div>
             </div>
-            <div className="text-white font-bold text-sm">
-              {formatDate(sub.RCEPT_BGNDE)} ~ {formatDate(sub.RCEPT_ENDDE)}
+            <div className="bg-white/5 rounded-lg p-3">
+              <div className="flex items-center gap-2 text-gray-400 text-xs mb-1">
+                <Calendar className="w-3 h-3" />
+                <span>청약접수</span>
+              </div>
+              <div className="text-white font-bold text-sm">
+                {formatDate(sub.RCEPT_BGNDE)} ~ {formatDate(sub.RCEPT_ENDDE)}
+              </div>
             </div>
           </div>
-        </div>
 
-        {/* 당첨자 발표일 */}
-        <div className="flex items-center gap-2 text-gray-400 text-xs mb-4">
-          <Clock className="w-3 h-3" />
-          <span>당첨발표: {sub.PRZWNER_PRESNATN_DE || '미정'}</span>
-        </div>
+          {/* 당첨자 발표일 */}
+          <div className="flex items-center gap-2 text-gray-400 text-xs mb-4">
+            <Clock className="w-3 h-3" />
+            <span>당첨발표: {sub.PRZWNER_PRESNATN_DE || '미정'}</span>
+          </div>
 
-        {/* 청약홈 바로가기 버튼 */}
-        <a
-          href={getSubscriptionUrl(sub)}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="w-full px-4 py-2.5 bg-gradient-to-r from-orange-500/30 to-amber-500/30 text-orange-300 rounded-lg hover:from-orange-500/50 hover:to-amber-500/50 transition-all text-sm font-medium flex items-center justify-center gap-2 animate-pulse hover:animate-none border border-orange-500/30"
-        >
-          <ExternalLink className="w-4 h-4" />
-          청약홈에서 보기
-        </a>
-      </GlassCard>
+          {/* 상세보기 버튼 */}
+          <div className="w-full px-4 py-2.5 bg-gradient-to-r from-orange-500/30 to-amber-500/30 text-orange-300 rounded-lg group-hover:from-orange-500/50 group-hover:to-amber-500/50 transition-all text-sm font-medium flex items-center justify-center gap-2 border border-orange-500/30">
+            상세보기
+          </div>
+        </GlassCard>
+      </Link>
     </motion.div>
   );
 };
@@ -354,14 +343,6 @@ export const FeaturedSubscriptionsSection = () => {
   const today = new Date();
   const isCurrentMonth = today.getFullYear() === calendarMonth.getFullYear() && today.getMonth() === calendarMonth.getMonth();
 
-  const typeFilters = [
-    { key: 'all', label: '전체' },
-    { key: 'apt', label: 'APT' },
-    { key: 'officetel', label: '오피스텔' },
-    { key: 'public', label: '공공지원' },
-    { key: 'closed', label: '마감' },
-  ];
-
   if (loading) {
     return (
       <section className="relative py-12 md:py-20">
@@ -404,21 +385,36 @@ export const FeaturedSubscriptionsSection = () => {
             온시아만의 독자적인 실시간 데이터 처리 기술로 제공되는 청약홈 정보입니다.
           </p>
 
-          {/* 타입 필터 버튼 */}
+          {/* 카테고리 링크 버튼 */}
           <div className="flex flex-wrap justify-center gap-2 md:gap-3">
-            {typeFilters.map((filter) => (
-              <button
-                key={filter.key}
-                onClick={() => setSelectedType(filter.key)}
-                className={`px-4 py-2 md:px-6 md:py-3 rounded-full font-semibold text-xs md:text-sm transition-all duration-300 ${
-                  selectedType === filter.key
-                    ? 'bg-gradient-to-r from-orange-500 to-amber-500 text-white shadow-lg shadow-orange-500/30'
-                    : 'bg-white/10 text-gray-300 hover:bg-white/20 hover:text-white border border-white/10'
-                }`}
-              >
-                {filter.label}
-              </button>
-            ))}
+            <Link
+              href="/subscriptions"
+              className={`px-4 py-2 md:px-6 md:py-3 rounded-full font-semibold text-xs md:text-sm transition-all duration-300 ${
+                selectedType === 'all'
+                  ? 'bg-gradient-to-r from-orange-500 to-amber-500 text-white shadow-lg shadow-orange-500/30'
+                  : 'bg-white/10 text-gray-300 hover:bg-white/20 hover:text-white border border-white/10'
+              }`}
+            >
+              전체
+            </Link>
+            <Link
+              href="/subscriptions/apt"
+              className="px-4 py-2 md:px-6 md:py-3 rounded-full font-semibold text-xs md:text-sm transition-all duration-300 bg-white/10 text-gray-300 hover:bg-white/20 hover:text-white border border-white/10"
+            >
+              APT
+            </Link>
+            <Link
+              href="/subscriptions/officetel"
+              className="px-4 py-2 md:px-6 md:py-3 rounded-full font-semibold text-xs md:text-sm transition-all duration-300 bg-white/10 text-gray-300 hover:bg-white/20 hover:text-white border border-white/10"
+            >
+              오피스텔
+            </Link>
+            <Link
+              href="/subscriptions/remndr"
+              className="px-4 py-2 md:px-6 md:py-3 rounded-full font-semibold text-xs md:text-sm transition-all duration-300 bg-white/10 text-gray-300 hover:bg-white/20 hover:text-white border border-white/10"
+            >
+              무순위/잔여
+            </Link>
           </div>
         </motion.div>
 
@@ -575,16 +571,18 @@ export const FeaturedSubscriptionsSection = () => {
                         }`}>{event.title}</span>
                       ))}
                     </div>
-                    <h4 className="text-base font-bold text-white mb-2 line-clamp-2">{sub.HOUSE_NM}</h4>
+                    <Link href={`/subscriptions/${sub.HOUSE_MANAGE_NO}`}>
+                      <h4 className="text-base font-bold text-white mb-2 line-clamp-2 hover:text-orange-300 transition-colors">{sub.HOUSE_NM}</h4>
+                    </Link>
                     <div className="flex items-center gap-2 text-gray-400 text-xs mb-3">
                       <MapPin className="w-3 h-3" /><span className="line-clamp-1">{sub.SUBSCRPT_AREA_CODE_NM}</span>
                     </div>
                     <div className="flex items-center gap-2 text-gray-400 text-xs mb-3">
                       <Users className="w-3 h-3" /><span>{sub.TOT_SUPLY_HSHLDCO?.toLocaleString() || '-'}세대</span>
                     </div>
-                    <a href={getSubscriptionUrl(sub)} target="_blank" rel="noopener noreferrer" className="w-full px-3 py-2 bg-gradient-to-r from-orange-500/30 to-amber-500/30 text-orange-300 rounded-lg hover:from-orange-500/50 hover:to-amber-500/50 transition-all text-xs font-medium flex items-center justify-center gap-2 animate-pulse hover:animate-none border border-orange-500/30">
-                      <ExternalLink className="w-3 h-3" />청약홈에서 보기
-                    </a>
+                    <Link href={`/subscriptions/${sub.HOUSE_MANAGE_NO}`} className="w-full px-3 py-2 bg-gradient-to-r from-orange-500/30 to-amber-500/30 text-orange-300 rounded-lg hover:from-orange-500/50 hover:to-amber-500/50 transition-all text-xs font-medium flex items-center justify-center gap-2 border border-orange-500/30">
+                      상세보기
+                    </Link>
                   </GlassCard>
                 </motion.div>
               ))}
