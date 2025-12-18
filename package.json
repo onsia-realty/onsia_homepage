@@ -23,6 +23,7 @@
     "@auth/prisma-adapter": "^2.11.1",
     "@playwright/test": "^1.57.0",
     "@prisma/client": "6.15.0",
+    "@supabase/supabase-js": "^2.88.0",
     "clsx": "^2.1.1",
     "framer-motion": "^12.23.26",
     "lucide-react": "^0.542.0",

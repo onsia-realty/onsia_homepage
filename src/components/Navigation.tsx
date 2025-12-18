@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
-import { Menu, X, Home, Info, FileText, Play, Mail, Building2, Calendar } from 'lucide-react';
+import { Menu, X, Home, Info, FileText, Play, Mail, Building2, Calendar, Gavel } from 'lucide-react';
 import { GlassCard } from './ui/GlassCard';
 
 export const Navigation = () => {
@@ -20,8 +20,9 @@ export const Navigation = () => {
   }, []);
 
   const navItems = [
-    { name: '청약홈매물', href: '/subscriptions', icon: Calendar },
-    { name: '분양권매물', href: '/properties', icon: Building2 },
+    { name: '청약홈', href: '/subscriptions', icon: Calendar },
+    { name: '분양권', href: '/properties', icon: Building2 },
+    { name: '경매', href: '/auctions', icon: Gavel },
     { name: '회사소개', href: '/about', icon: Info },
     // TODO: 페이지 완성 후 활성화
     // { name: '부동산뉴스', href: '/news', icon: FileText },

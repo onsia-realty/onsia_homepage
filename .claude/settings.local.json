@@ -55,7 +55,21 @@
       "Bash(npm install:*)",
       "Bash(npm outdated:*)",
       "mcp__playwright__browser_snapshot",
-      "WebFetch(domain:github.com)"
+      "WebFetch(domain:github.com)",
+      "WebFetch(domain:www.my-auction.co.kr)",
+      "Bash(ls -la \"D:\\claude\\홈페이지\\onsia_homepage_new\\src\\app\"\" | grep -E \"^d \")",
+      "Bash(xargs cat:*)",
+      "Bash(cat:*)",
+      "Bash(npx prisma migrate:*)",
+      "Bash(npx prisma db push:*)",
+      "mcp__playwright__browser_select_option",
+      "mcp__playwright__browser_type",
+      "mcp__playwright__browser_network_requests",
+      "Bash(npx prisma generate:*)",
+      "mcp__playwright__browser_tabs",
+      "Bash(npx tsc:*)",
+      "Bash(npx prisma db seed:*)",
+      "Bash(node test-supabase.mjs:*)"
     ],
     "deny": [],
     "ask": []

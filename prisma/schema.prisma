@@ -382,3 +382,216 @@ enum InquiryStatus {
   RESPONDED
   CLOSED
 }
+
+// ==========================================
+// 경매 관련 모델
+// ==========================================
+
+// 경매 물건
+model AuctionItem {
+  id                String   @id @default(cuid())
+
+  // 식별자
+  caseNumber        String   @unique  // 2025타경8255
+  caseNumberFull    String?           // 20250130008255
+  courtCode         String?           // 2110
+  courtName         String?           // 대구지방법원
+  pnu               String?           // 19자리 필지고유번호
+
+  // 기본정보
+  address           String
+  addressDetail     String?
+  city              String
+  district          String
+  itemType          AuctionItemType
+  landArea          Float?            // 대지면적 (㎡)
+  buildingArea      Float?            // 건물면적 (㎡)
+  floor             String?           // 층수
+  totalFloors       String?           // 총 층수 (예: "51층")
+  buildingStructure String?           // 구조 (철근콘크리트, 철골 등)
+  buildingUsage     String?           // 용도 (오피스텔, 아파트 등)
+  landUseZone       String?           // 토지이용계획 (주상혼용지역 등)
+
+  // 감정평가 정보
+  appraisalOrg      String?           // 감정기관 (대한감정원, 한국감정원 등)
+  appraisalDate     DateTime?         // 가격시점
+  preservationDate  DateTime?         // 보존등기일
+  approvalDate      DateTime?         // 사용승인일
+  landAppraisalPrice   BigInt?        // 토지 감정가
+  buildingAppraisalPrice BigInt?      // 건물 감정가
+
+  // 가격정보
+  appraisalPrice    BigInt            // 감정가 합계
+  minimumPrice      BigInt            // 최저가
+  minimumRate       Int?              // 최저가율 (%)
+  deposit           BigInt?           // 보증금 (10%)
+
+  // 일정
+  saleDate          DateTime?         // 매각기일
+  saleTime          String?           // 매각시간
+  bidCount          Int      @default(0)  // 입찰횟수 (회차)
+  bidEndDate        DateTime?         // 배당요구종기일
+
+  // 권리분석
+  referenceDate     DateTime?         // 말소기준일
+  hasRisk           Boolean  @default(false)  // 위험물건 여부
+  riskNote          String?           // 위험 사유
+
+  // 당사자
+  owner             String?           // 소유자
+  debtor            String?           // 채무자
+  creditor          String?           // 채권자
+
+  // 상태
+  status            AuctionStatus @default(SCHEDULED)
+  featured          Boolean  @default(false)
+
+  // 현황/위치 정보
+  surroundings      String?           // 주변환경 설명
+  transportation    String?           // 교통 정보
+  nearbyFacilities  String?           // 근린시설 (백화점, 학교 등)
+  heatingType       String?           // 난방방식 (도시가스, 중앙난방 등)
+  facilities        String?           // 편의시설 JSON (승강기, 에어컨, 주차장 등)
+  locationNote      String?           // 위치 특이사항
+
+  // 외부 데이터
+  realPrice         BigInt?           // 실거래가 (국토부 API)
+  buildingInfo      String?           // 건축물대장 JSON
+  naverComplexId    String?           // 네이버 단지 ID
+
+  // SEO
+  seoTitle          String?
+  seoDescription    String?
+
+  // 메타데이터
+  viewCount         Int      @default(0)
+  inquiryCount      Int      @default(0)
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  // 관계
+  bids              AuctionBid[]
+  registers         AuctionRegister[]
+  tenants           AuctionTenant[]
+  images            AuctionImage[]
+
+  @@index([status, saleDate])
+  @@index([city, district])
+  @@index([itemType])
+  @@index([pnu])
+}
+
+// 입찰 내역
+model AuctionBid {
+  id            String   @id @default(cuid())
+  itemId        String
+  item          AuctionItem @relation(fields: [itemId], references: [id], onDelete: Cascade)
+
+  round         Int               // 회차
+  bidDate       DateTime?         // 입찰일
+  minimumPrice  BigInt            // 최저가
+  result        AuctionBidResult  // 유찰/낙찰/취하
+  winningPrice  BigInt?           // 낙찰가 (낙찰 시)
+  bidderCount   Int?              // 입찰자수
+
+  createdAt     DateTime @default(now())
+
+  @@index([itemId, round])
+}
+
+// 등기 내역
+model AuctionRegister {
+  id            String   @id @default(cuid())
+  itemId        String
+  item          AuctionItem @relation(fields: [itemId], references: [id], onDelete: Cascade)
+
+  registerType  String?           // 갑/을
+  registerNo    String?           // 순위번호
+  receiptDate   DateTime?         // 접수일
+  purpose       String?           // 등기목적 (근저당권설정, 압류 등)
+  rightHolder   String?           // 권리자
+  claimAmount   BigInt?           // 채권금액
+  isReference   Boolean  @default(false)  // 말소기준등기 여부
+  willExpire    Boolean  @default(true)   // 소멸여부
+  note          String?           // 비고
+
+  createdAt     DateTime @default(now())
+
+  @@index([itemId])
+}
+
+// 임차인 현황
+model AuctionTenant {
+  id            String   @id @default(cuid())
+  itemId        String
+  item          AuctionItem @relation(fields: [itemId], references: [id], onDelete: Cascade)
+
+  tenantName    String?           // 임차인명 (마스킹)
+  hasPriority   Boolean?          // 대항력 유무
+  occupiedPart  String?           // 점유부분
+  moveInDate    DateTime?         // 전입일
+  fixedDate     DateTime?         // 확정일자
+  hasBidRequest Boolean?          // 배당요구 여부
+  deposit       BigInt?           // 보증금
+  monthlyRent   BigInt?           // 차임
+  analysis      String?           // 분석결과
+  note          String?           // 비고
+
+  createdAt     DateTime @default(now())
+
+  @@index([itemId])
+}
+
+// 경매 이미지
+model AuctionImage {
+  id          String   @id @default(cuid())
+  itemId      String
+  item        AuctionItem @relation(fields: [itemId], references: [id], onDelete: Cascade)
+
+  imageType   AuctionImageType     // 사진/현황조사서/감정평가서
+  url         String               // 저장된 URL
+  originalUrl String?              // 원본 URL
+  alt         String?
+  order       Int      @default(0)
+
+  createdAt   DateTime @default(now())
+
+  @@index([itemId, order])
+}
+
+// 경매 관련 Enums
+enum AuctionItemType {
+  APARTMENT       // 아파트
+  VILLA           // 빌라/연립
+  OFFICETEL       // 오피스텔
+  HOUSE           // 단독주택
+  COMMERCIAL      // 상가
+  LAND            // 토지
+  FACTORY         // 공장
+  BUILDING        // 건물일괄
+  OTHER           // 기타
+}
+
+enum AuctionStatus {
+  SCHEDULED       // 매각예정
+  BIDDING         // 입찰중
+  SUCCESSFUL      // 낙찰
+  FAILED          // 유찰
+  WITHDRAWN       // 취하
+  CANCELED        // 취소
+}
+
+enum AuctionBidResult {
+  FAILED          // 유찰
+  SUCCESSFUL      // 낙찰
+  WITHDRAWN       // 취하
+  POSTPONED       // 연기
+}
+
+enum AuctionImageType {
+  PHOTO           // 물건사진
+  SURVEY          // 현황조사서
+  APPRAISAL       // 감정평가서
+  REGISTER        // 등기부
+  OTHER           // 기타
+}
