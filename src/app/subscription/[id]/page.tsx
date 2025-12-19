@@ -152,7 +152,11 @@ const MOCK_SUBSCRIPTION_DETAILS: Record<string, SubscriptionDetail> = {
       { region: '기타', type: '59A', applicants: 1280, supply: 13, rate: 98.46 },
       { region: '기타', type: '84A', applicants: 1850, supply: 20, rate: 92.50 },
     ],
-    images: [],
+    images: [
+      '/images/subscription/2025000524/bird.jpg',
+      '/images/subscription/2025000524/entrance.jpg',
+      '/images/subscription/2025000524/lobby.jpg',
+    ],
     nearbyCompare: [
       { name: '역삼래미안', distance: '0.3km', pricePerPyeong: 8100, yearBuilt: 2019 },
       { name: '역삼아이파크', distance: '0.5km', pricePerPyeong: 7850, yearBuilt: 2018 },
