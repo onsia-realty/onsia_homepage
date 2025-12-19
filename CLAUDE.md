@@ -272,6 +272,111 @@ export default function PropertyForm() {
 - `POST /api/inquiries` - 문의 등록
 - `GET /api/inquiries` - 문의 목록 (관리자)
 
+### 청약 관련
+- `GET /api/subscriptions` - 청약 목록 조회
+- `GET /api/subscriptions/:id` - 청약 상세 조회
+- `GET /api/subscriptions/:id/compare` - 주변 시세 비교
+
+## 🤖 크롤링 시스템
+
+### 개요
+청약 데이터를 자동으로 수집하고 DB에 저장하는 크롤링 시스템
+
+### 크롤링 파이프라인
+```
+청약홈 API → 기본 정보 → 공식 홈페이지 → 고품질 이미지 → DB 저장
+```
+
+### 1. 청약홈 API 크롤러
+**스크립트**: `scripts/crawl-subscriptions.mjs`
+
+**기능**:
+- 청약홈 공공데이터 API에서 분양 정보 수집
+- Kakao Map API로 좌표 변환
+- 평균 분양가 자동 계산
+- Prisma로 DB 저장
+
+**사용법**:
+```bash
+node scripts/crawl-subscriptions.mjs
+```
+
+**결과**:
+- Subscription 테이블에 기본 정보 저장
+- SubscriptionHousingType 테이블에 주택형 정보 저장
+
+### 2. 공식 홈페이지 크롤러 (권장 ⭐)
+**스크립트**: `scripts/crawl-homepage.mjs`
+
+**기능**:
+- 청약 단지 공식 홈페이지에서 고품질 이미지 수집
+- 푸르지오, 자이, 힐스테이트, 래미안 등 건설사별 패턴 지원
+- Playwright 기반 동적 크롤링
+- 자동 카테고리 분류 (평면도, 단지배치도, 동호수표 등)
+
+**지원 건설사**:
+- **푸르지오** (prugio.com): 1408px 고해상도
+- **자이** (xi.co.kr): 1100px 고해상도
+
+**사용법**:
+```bash
+# 1. 이미지 다운로드
+node scripts/crawl-homepage.mjs 2025000524
+
+# 2. DB에 저장
+node scripts/save-homepage-images.mjs 2025000524
+```
+
+**장점**:
+- ✅ 고품질 공식 이미지 (1100~1408px)
+- ✅ 평면도, 배치도, 동호수표 등 전체 자료
+- ✅ 건설사 공식 인증 이미지
+- ✅ 범용 크롤러 (모든 건설사 지원 가능)
+
+**결과**:
+- `public/uploads/subscriptions/{분양번호}/` 디렉토리에 이미지 저장
+- `crawl-result-homepage.json` 메타데이터 생성
+- SubscriptionImage 테이블에 DB 저장
+
+### 3. 아실(ASIL) 이미지 크롤러 (Deprecated ⚠️)
+**스크립트**: `scripts/crawl-asil-images.mjs` (사용 중단)
+
+**문제점**:
+- ❌ 청약홈 분양번호 ≠ 아실 분양번호 (ID 매핑 필요)
+- ❌ 제한적인 이미지 (모델하우스, 위치, 갤러리만)
+- ❌ 중간 해상도 (아실 자체 이미지)
+
+**권장 사항**: 공식 홈페이지 크롤러 사용
+
+### 크롤링 워크플로우
+
+#### 신규 청약 단지 추가 시
+```bash
+# 1단계: 청약홈에서 기본 정보 수집
+node scripts/crawl-subscriptions.mjs
+
+# 2단계: 공식 홈페이지에서 이미지 수집
+node scripts/crawl-homepage.mjs 2025000524
+
+# 3단계: 이미지 DB 저장
+node scripts/save-homepage-images.mjs 2025000524
+```
+
+#### DB 스키마 관련
+**Subscription 모델 주요 필드**:
+- `houseManageNo`: 청약홈 분양번호 (고유 ID)
+- `asilId`: 아실 분양번호 (청약홈과 다를 수 있음)
+- `homepage`: 공식 홈페이지 URL (크롤링 대상)
+
+**SubscriptionImage 카테고리**:
+- `MODELHOUSE`: 모델하우스 위치
+- `LOCATION`: 입지환경
+- `LAYOUT`: 단지배치도
+- `UNIT_LAYOUT`: 동호수배치표
+- `FLOORPLAN`: 평면도
+- `GALLERY`: 사진갤러리
+- `NOTICE_PDF`: 모집공고문
+
 ## 🎨 UI/UX 가이드라인
 
 ### 디자인 원칙
@@ -309,6 +414,14 @@ export default function PropertyForm() {
     - Google/Naver 사이트 인증
 11. ✅ ONSIA Tracker 애널리틱스 연동
 12. ✅ 구독(청약) 상세 페이지 추가
+13. ✅ 청약 데이터 크롤링 시스템 구축
+    - 청약홈 공공데이터 API 연동
+    - 아실(ASIL) 이미지 크롤러 (deprecated)
+    - **공식 홈페이지 크롤러** (권장)
+14. ✅ 실거래가 API 통합
+    - 국토교통부 실거래가 API 클라이언트
+    - 주변 단지 시세 비교 기능
+    - 분양가 대비 시세차 계산
 
 ### 진행 예정 작업
 1. ⏳ SEO 최적화
@@ -383,4 +496,4 @@ export default function PropertyForm() {
 
 ---
 
-*최종 수정일: 2025-12-12*
+*최종 수정일: 2025-12-20*
