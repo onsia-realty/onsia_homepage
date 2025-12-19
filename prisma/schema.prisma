@@ -605,6 +605,7 @@ model Subscription {
   // 청약홈 식별자
   houseManageNo     String   @unique              // 주택관리번호 (HOUSE_MANAGE_NO)
   pblancNo          String                        // 공고번호 (PBLANC_NO)
+  asilId            String?                       // 아실(ASIL) 분양번호 (청약홈과 다를 수 있음)
 
   // 기본 정보
   houseName         String                        // 주택명 (HOUSE_NM)
