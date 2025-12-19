@@ -595,3 +595,145 @@ enum AuctionImageType {
   REGISTER        // 등기부
   OTHER           // 기타
 }
+
+// ==================== 청약 (Subscription) ====================
+
+// 청약 분양 정보
+model Subscription {
+  id                String   @id @default(cuid())
+
+  // 청약홈 식별자
+  houseManageNo     String   @unique              // 주택관리번호 (HOUSE_MANAGE_NO)
+  pblancNo          String                        // 공고번호 (PBLANC_NO)
+
+  // 기본 정보
+  houseName         String                        // 주택명 (HOUSE_NM)
+  houseType         String                        // 주택구분 (HOUSE_SECD_NM: APT/오피스텔)
+  houseDetailType   String                        // 주택상세구분 (HOUSE_DTL_SECD_NM: 민영/공공)
+
+  // 주소 정보
+  address           String                        // 공급위치 (HSSPLY_ADRES)
+  addressDetail     String?                       // 상세주소
+  zipCode           String?                       // 우편번호 (HSSPLY_ZIP)
+  region            String                        // 지역 (SUBSCRPT_AREA_CODE_NM)
+  regionCode        String?                       // 지역코드 (SUBSCRPT_AREA_CODE)
+
+  // 좌표 (지오코딩)
+  latitude          Float?                        // 위도
+  longitude         Float?                        // 경도
+
+  // 공급 정보
+  totalHouseholds   Int                           // 총공급세대수 (TOT_SUPLY_HSHLDCO)
+
+  // 일정
+  recruitDate       DateTime?                     // 모집공고일 (RCRIT_PBLANC_DE)
+  receptionStart    DateTime?                     // 청약접수 시작일 (RCEPT_BGNDE)
+  receptionEnd      DateTime?                     // 청약접수 종료일 (RCEPT_ENDDE)
+  specialSupplyDate DateTime?                     // 특별공급 접수일 (SPSPLY_RCEPT_BGNDE)
+  rank1Date         DateTime?                     // 일반공급 1순위 접수일 (GNRL_RNK1_CRSPAREA_RCPTDE)
+  rank2Date         DateTime?                     // 일반공급 2순위 접수일 (GNRL_RNK2_CRSPAREA_RCPTDE)
+  winnerAnnouncementDate DateTime?                // 당첨자발표일 (PRZWNER_PRESNATN_DE)
+  contractStart     DateTime?                     // 계약 시작일 (CNTRCT_CNCLS_BGNDE)
+  contractEnd       DateTime?                     // 계약 종료일 (CNTRCT_CNCLS_ENDDE)
+  moveInDate        String?                       // 입주예정년월 (MVN_PREARNGE_YM: YYYYMM)
+
+  // 건설사 정보
+  developer         String?                       // 시공사 (CNSTRCT_ENTRPS_NM)
+  contractor        String?                       // 사업주체 (BSNS_MBY_NM)
+
+  // 연락처
+  modelHousePhone   String?                       // 모델하우스 전화번호 (MDHS_TELNO)
+  homepage          String?                       // 홈페이지 (HMPG_ADRES)
+  noticeUrl         String?                       // 청약홈 URL (PBLANC_URL)
+
+  // 가격 정보 (계산된 값)
+  avgPrice          Int?                          // 평균분양가 (만원)
+  avgPricePerPyeong Int?                          // 평균평당가 (만원)
+  minPrice          Int?                          // 최저분양가 (만원)
+  maxPrice          Int?                          // 최고분양가 (만원)
+
+  // 상태
+  status            SubscriptionStatus @default(UPCOMING)
+  isHot             Boolean @default(false)       // 인기 매물 여부
+  viewCount         Int     @default(0)           // 조회수
+
+  // 메타데이터
+  rawData           Json?                         // 원본 API 응답 데이터
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  // 관계
+  images            SubscriptionImage[]
+  housingTypes      SubscriptionHousingType[]
+
+  @@index([houseManageNo])
+  @@index([status])
+  @@index([region])
+  @@index([receptionStart])
+}
+
+// 청약 이미지
+model SubscriptionImage {
+  id              String   @id @default(cuid())
+  subscriptionId  String
+  subscription    Subscription @relation(fields: [subscriptionId], references: [id], onDelete: Cascade)
+
+  category        SubscriptionImageCategory      // 이미지 카테고리
+  url             String                          // 이미지 URL
+  originalUrl     String?                         // 원본 URL (아실)
+  alt             String?
+  order           Int      @default(0)
+
+  createdAt       DateTime @default(now())
+
+  @@index([subscriptionId, category, order])
+}
+
+// 청약 주택형 정보
+model SubscriptionHousingType {
+  id              String   @id @default(cuid())
+  subscriptionId  String
+  subscription    Subscription @relation(fields: [subscriptionId], references: [id], onDelete: Cascade)
+
+  // 주택형 정보
+  houseTy         String                          // 주택형 (HOUSE_TY: 084.8950A)
+  modelNo         String?                         // 모델번호
+  supplyArea      Float                           // 공급면적 (㎡)
+  exclusiveArea   Float?                          // 전용면적 (㎡)
+
+  // 세대수
+  totalHouseholds Int                             // 총세대수
+  generalHouseholds Int                           // 일반분양세대수
+  specialHouseholds Int                           // 특별공급세대수
+
+  // 가격
+  topPrice        Int?                            // 최고분양가 (만원)
+  pricePerPyeong  Int?                            // 평당가 (만원)
+
+  // 메타데이터
+  rawData         Json?                           // 원본 API 응답 데이터
+  createdAt       DateTime @default(now())
+
+  @@index([subscriptionId])
+  @@unique([subscriptionId, houseTy])
+}
+
+// 청약 관련 Enums
+enum SubscriptionStatus {
+  UPCOMING        // 접수예정
+  OPEN            // 접수중
+  CLOSED          // 접수마감
+  ANNOUNCED       // 당첨자발표
+  CONTRACTED      // 계약진행중
+  COMPLETED       // 완료
+}
+
+enum SubscriptionImageCategory {
+  MODELHOUSE      // 모델하우스 위치 (카테고리 2)
+  LOCATION        // 입지환경 (카테고리 3)
+  LAYOUT          // 단지배치도 (카테고리 4)
+  UNIT_LAYOUT     // 동호수배치표 (카테고리 5)
+  FLOORPLAN       // 면적표/평면도 (카테고리 6)
+  GALLERY         // 사진갤러리 (카테고리 9)
+  NOTICE_PDF      // 모집공고문 PDF
+}

@@ -1,0 +1,56 @@
+{
+  "houseManageNo": "2025000581",
+  "crawledAt": "2025-12-19T13:40:56.695Z",
+  "total": 25,
+  "success": 8,
+  "failed": 17,
+  "files": [
+    {
+      "type": "pdf",
+      "name": "notice.pdf",
+      "url": "https://asil.kr/photo/buny_pdf/2025000581.pdf"
+    },
+    {
+      "type": "modelhouse",
+      "name": "1.jpg",
+      "url": "https://asil.kr/photo/buny/2025000581/2-1.jpg",
+      "localPath": "/uploads/subscriptions/2025000581/modelhouse/1.jpg"
+    },
+    {
+      "type": "location",
+      "name": "1.jpg",
+      "url": "https://asil.kr/photo/buny/2025000581/3-1.jpg",
+      "localPath": "/uploads/subscriptions/2025000581/location/1.jpg"
+    },
+    {
+      "type": "floorplan",
+      "name": "1.jpg",
+      "url": "https://asil.kr/photo/buny/2025000581/6-1.jpg",
+      "localPath": "/uploads/subscriptions/2025000581/floorplan/1.jpg"
+    },
+    {
+      "type": "floorplan",
+      "name": "2.jpg",
+      "url": "https://asil.kr/photo/buny/2025000581/6-2.jpg",
+      "localPath": "/uploads/subscriptions/2025000581/floorplan/2.jpg"
+    },
+    {
+      "type": "floorplan",
+      "name": "3.jpg",
+      "url": "https://asil.kr/photo/buny/2025000581/6-3.jpg",
+      "localPath": "/uploads/subscriptions/2025000581/floorplan/3.jpg"
+    },
+    {
+      "type": "floorplan",
+      "name": "4.jpg",
+      "url": "https://asil.kr/photo/buny/2025000581/6-4.jpg",
+      "localPath": "/uploads/subscriptions/2025000581/floorplan/4.jpg"
+    },
+    {
+      "type": "gallery",
+      "name": "1.jpg",
+      "url": "https://asil.kr/photo/buny/2025000581/9-1.jpg",
+      "localPath": "/uploads/subscriptions/2025000581/gallery/1.jpg"
+    }
+  ]
+}

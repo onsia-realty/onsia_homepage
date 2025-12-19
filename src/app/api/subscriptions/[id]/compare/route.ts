@@ -1,33 +1,23 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getRecentTransactions, RealTransaction } from '@/lib/real-estate-api';
+import {
+  getRecentRealPrices,
+  extractLawdCd,
+  parsePrice,
+  calculatePricePerPyeong,
+  RealPriceData,
+} from '@/lib/realPriceApi';
 
-// 용인시 처인구 Mock 데이터 (API 직접 사용)
-const YONGIN_MOCK_DATA: RealTransaction[] = [
-  // 용인경남아너스빌디센트3단지 (양지면 양지리)
-  { dealDate: '20250615', dealYear: '2025', dealMonth: '06', dealDay: '15', buildingName: '용인경남아너스빌디센트3단지', dong: '양지리', area: 111.42, floor: '8', price: 43834, pricePerPyeong: 1328, buildYear: '2021' },
-  { dealDate: '20250520', dealYear: '2025', dealMonth: '05', dealDay: '20', buildingName: '용인경남아너스빌디센트3단지', dong: '양지리', area: 111.42, floor: '12', price: 44500, pricePerPyeong: 1348, buildYear: '2021' },
-  { dealDate: '20250418', dealYear: '2025', dealMonth: '04', dealDay: '18', buildingName: '용인경남아너스빌디센트3단지', dong: '양지리', area: 84.98, floor: '5', price: 33500, pricePerPyeong: 1302, buildYear: '2021' },
-  // 용인경남아너스빌디센트2단지 (양지면 양지리)
-  { dealDate: '20250612', dealYear: '2025', dealMonth: '06', dealDay: '12', buildingName: '용인경남아너스빌디센트2단지', dong: '양지리', area: 111.42, floor: '10', price: 38850, pricePerPyeong: 1177, buildYear: '2019' },
-  { dealDate: '20250510', dealYear: '2025', dealMonth: '05', dealDay: '10', buildingName: '용인경남아너스빌디센트2단지', dong: '양지리', area: 84.98, floor: '7', price: 30500, pricePerPyeong: 1186, buildYear: '2019' },
-  { dealDate: '20250408', dealYear: '2025', dealMonth: '04', dealDay: '08', buildingName: '용인경남아너스빌디센트2단지', dong: '양지리', area: 111.42, floor: '15', price: 39500, pricePerPyeong: 1197, buildYear: '2019' },
-  // 용인양지세영리첼 (양지면)
-  { dealDate: '20251210', dealYear: '2025', dealMonth: '12', dealDay: '10', buildingName: '용인양지세영리첼', dong: '양지리', area: 100.56, floor: '6', price: 34800, pricePerPyeong: 1160, buildYear: '2018' },
-  { dealDate: '20251105', dealYear: '2025', dealMonth: '11', dealDay: '05', buildingName: '용인양지세영리첼', dong: '양지리', area: 84.95, floor: '9', price: 29800, pricePerPyeong: 1159, buildYear: '2018' },
-  { dealDate: '20250915', dealYear: '2025', dealMonth: '09', dealDay: '15', buildingName: '용인양지세영리첼', dong: '양지리', area: 100.56, floor: '12', price: 35200, pricePerPyeong: 1173, buildYear: '2018' },
-  // 양지리더샵 (양지면)
-  { dealDate: '20250610', dealYear: '2025', dealMonth: '06', dealDay: '10', buildingName: '양지리더샵', dong: '양지리', area: 84.95, floor: '8', price: 42800, pricePerPyeong: 1665, buildYear: '2022' },
-  { dealDate: '20250505', dealYear: '2025', dealMonth: '05', dealDay: '05', buildingName: '양지리더샵', dong: '양지리', area: 111.42, floor: '15', price: 55200, pricePerPyeong: 1672, buildYear: '2022' },
-  { dealDate: '20250320', dealYear: '2025', dealMonth: '03', dealDay: '20', buildingName: '양지리더샵', dong: '양지리', area: 84.95, floor: '11', price: 43500, pricePerPyeong: 1692, buildYear: '2022' },
-  // 양지코오롱하늘채 (양지면)
-  { dealDate: '20250601', dealYear: '2025', dealMonth: '06', dealDay: '01', buildingName: '양지코오롱하늘채', dong: '양지리', area: 84.95, floor: '10', price: 45200, pricePerPyeong: 1758, buildYear: '2020' },
-  { dealDate: '20250415', dealYear: '2025', dealMonth: '04', dealDay: '15', buildingName: '양지코오롱하늘채', dong: '양지리', area: 111.42, floor: '18', price: 58500, pricePerPyeong: 1772, buildYear: '2020' },
-  { dealDate: '20250228', dealYear: '2025', dealMonth: '02', dealDay: '28', buildingName: '양지코오롱하늘채', dong: '양지리', area: 84.95, floor: '6', price: 44800, pricePerPyeong: 1743, buildYear: '2020' },
-  // 처인롯데캐슬 (남사면)
-  { dealDate: '20250525', dealYear: '2025', dealMonth: '05', dealDay: '25', buildingName: '처인롯데캐슬', dong: '남사리', area: 84.95, floor: '12', price: 35500, pricePerPyeong: 1381, buildYear: '2019' },
-  { dealDate: '20250410', dealYear: '2025', dealMonth: '04', dealDay: '10', buildingName: '처인롯데캐슬', dong: '남사리', area: 111.42, floor: '8', price: 46200, pricePerPyeong: 1399, buildYear: '2019' },
-  { dealDate: '20250305', dealYear: '2025', dealMonth: '03', dealDay: '05', buildingName: '처인롯데캐슬', dong: '남사리', area: 84.95, floor: '15', price: 35800, pricePerPyeong: 1393, buildYear: '2019' },
-];
+// 실거래가 데이터를 통일된 형식으로 변환
+interface ProcessedTransaction {
+  buildingName: string;
+  dong: string;
+  area: number;
+  price: number;
+  pricePerPyeong: number;
+  dealDate: string;
+  buildYear: string;
+  floor: string;
+}
 
 // 주소에서 시도, 시군구 추출
 function parseAddress(address: string): { sido: string; sigungu: string } | null {
@@ -55,8 +45,22 @@ function parseAddress(address: string): { sido: string; sigungu: string } | null
   return null;
 }
 
+// RealPriceData를 ProcessedTransaction으로 변환
+function convertRealPriceData(data: RealPriceData[]): ProcessedTransaction[] {
+  return data.map(item => ({
+    buildingName: item.aptNm,
+    dong: item.umdNm,
+    area: item.excluUseAr,
+    price: parsePrice(item.dealAmount),
+    pricePerPyeong: calculatePricePerPyeong(parsePrice(item.dealAmount), item.excluUseAr),
+    dealDate: `${item.dealYear}${String(item.dealMonth).padStart(2, '0')}${String(item.dealDay).padStart(2, '0')}`,
+    buildYear: String(item.buildYear),
+    floor: String(item.floor),
+  }));
+}
+
 // 단지별로 그룹화하여 평균 시세 계산
-function groupByComplex(transactions: RealTransaction[]): {
+function groupByComplex(transactions: ProcessedTransaction[]): {
   name: string;
   dong: string;
   avgPrice: number;
@@ -158,19 +162,30 @@ export async function GET(
   }
 
   try {
-    // 최근 12개월 실거래가 조회
-    let transactions = await getRecentTransactions(
-      location.sido,
-      location.sigungu,
-      '아파트',
-      12
-    );
+    // 주소에서 법정동 코드 추출
+    const lawdCd = extractLawdCd(address);
 
-    // 용인시 처인구인 경우 직접 Mock 데이터 사용 (fallback)
-    const isYongin = location.sigungu.includes('용인') || location.sigungu.includes('처인');
-    if (transactions.length === 0 && isYongin) {
-      transactions = YONGIN_MOCK_DATA;
+    if (!lawdCd) {
+      return NextResponse.json({
+        success: false,
+        error: '지역 코드를 찾을 수 없습니다.',
+        data: {
+          id,
+          address,
+          complexes: [],
+          summary: {
+            totalCount: 0,
+            avgPricePerPyeong: 0,
+          },
+        },
+      });
     }
+
+    // 최근 6개월 실거래가 조회
+    const realPriceData = await getRecentRealPrices(lawdCd, 6);
+
+    // ProcessedTransaction 형식으로 변환
+    const transactions = convertRealPriceData(realPriceData);
 
     if (transactions.length === 0) {
       return NextResponse.json({
