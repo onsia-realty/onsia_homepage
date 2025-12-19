@@ -8,7 +8,7 @@ export default function robots(): MetadataRoute.Robots {
       {
         userAgent: '*',
         allow: '/',
-        disallow: ['/admin/', '/api/', '/_next/'],
+        disallow: ['/admin/', '/api/', '/_next/', '/private/'],
       },
       {
         userAgent: 'Googlebot',
@@ -16,7 +16,21 @@ export default function robots(): MetadataRoute.Robots {
         disallow: ['/admin/', '/api/'],
       },
       {
+        userAgent: 'Googlebot-Image',
+        allow: ['/images/', '/og-'],
+      },
+      {
         userAgent: 'Yeti',  // 네이버
+        allow: '/',
+        disallow: ['/admin/', '/api/'],
+      },
+      {
+        userAgent: 'Bingbot',
+        allow: '/',
+        disallow: ['/admin/', '/api/'],
+      },
+      {
+        userAgent: 'Daumoa',  // 다음
         allow: '/',
         disallow: ['/admin/', '/api/'],
       },

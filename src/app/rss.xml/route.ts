@@ -48,7 +48,7 @@ export async function GET() {
       <title><![CDATA[[분양권] ${property.title}]]></title>
       <link>${baseUrl}/properties/${property.id}</link>
       <guid>${baseUrl}/properties/${property.id}</guid>
-      <description><![CDATA[${property.city} ${property.district} - ${property.description?.slice(0, 200) || '분양권 투자 매물'}]]></description>
+      <description><![CDATA[${property.city} ${property.district} - ${property.description?.slice(0, 200) || '분양권 매물 정보'}]]></description>
       <pubDate>${new Date(property.createdAt).toUTCString()}</pubDate>
       <category>분양권</category>
     </item>`).join('');
@@ -67,9 +67,9 @@ export async function GET() {
   const rss = `<?xml version="1.0" encoding="UTF-8"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>ONSIA - 분양권 투자 &amp; 청약 정보</title>
+    <title>ONSIA - 부동산 AI 플랫폼</title>
     <link>${baseUrl}</link>
-    <description>프리미엄 분양권 투자 매물과 전국 청약 정보를 제공하는 ONSIA입니다.</description>
+    <description>AI 기반 부동산 정보 플랫폼. 분양권, 경매, 청약 정보를 한눈에 확인하세요.</description>
     <language>ko</language>
     <lastBuildDate>${new Date().toUTCString()}</lastBuildDate>
     <atom:link href="${baseUrl}/rss.xml" rel="self" type="application/rss+xml"/>

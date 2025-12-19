@@ -83,9 +83,10 @@ async function getAuctionItem(id: string) {
     referenceDate: auction.auction_analysis?.[0]?.reference_date || null,
     hasRisk: auction.auction_analysis?.[0]?.has_risk || false,
     riskNote: auction.auction_analysis?.[0]?.risk_note || null,
-    owner: null, // 개인정보 보호로 미표시
-    debtor: null,
-    creditor: null,
+    // 당사자 정보 - 등기내역에서 추출
+    owner: extractOwner(auction.auction_rights),
+    debtor: extractDebtor(auction.auction_rights),
+    creditor: extractCreditor(auction.auction_rights),
     status: mapStatus(auction.status),
     featured: false,
     // 현황/위치 정보
@@ -107,13 +108,25 @@ async function getAuctionItem(id: string) {
     inquiryCount: 0,
     createdAt: auction.created_at,
     updatedAt: auction.updated_at,
-    // 이미지
-    images: (auction.images || []).map((url: string, index: number) => ({
-      id: `img-${index}`,
-      imageType: 'PHOTO',
-      url: url,
-      alt: `${auction.address} 이미지 ${index + 1}`,
-    })),
+    // 이미지 - 객체 배열 또는 문자열 배열 모두 지원
+    images: (auction.images || []).map((img: string | { url: string; type?: string; alt?: string; order?: number }, index: number) => {
+      // 문자열인 경우 (URL만 저장된 경우)
+      if (typeof img === 'string') {
+        return {
+          id: `img-${index}`,
+          imageType: 'PHOTO',
+          url: img,
+          alt: `${auction.address} 이미지 ${index + 1}`,
+        };
+      }
+      // 객체인 경우 (두인경매 형식)
+      return {
+        id: `img-${index}`,
+        imageType: img.type || 'PHOTO',
+        url: img.url || '',
+        alt: img.alt || `${auction.address} 이미지 ${index + 1}`,
+      };
+    }).filter((img: { url: string }) => img.url), // 빈 URL 필터링
     // 기일 내역 (입찰 기록)
     bids: (auction.auction_schedules || [])
       .sort((a: { schedule_date: string }, b: { schedule_date: string }) =>
@@ -211,6 +224,32 @@ function mapResult(result: string | null): string {
     '변경': 'SCHEDULED',
   };
   return resultMap[result] || 'SCHEDULED';
+}
+
+// 등기내역에서 소유자 추출 (가장 최근 소유권이전)
+function extractOwner(rights: { purpose: string | null; right_holder: string | null; receipt_date: string | null }[] | null): string | null {
+  if (!rights) return null;
+  const ownershipTransfers = rights
+    .filter(r => r.purpose?.includes('소유권이전') || r.purpose?.includes('소유권보존'))
+    .sort((a, b) => new Date(b.receipt_date || 0).getTime() - new Date(a.receipt_date || 0).getTime());
+  return ownershipTransfers[0]?.right_holder || null;
+}
+
+// 등기내역에서 채무자 추출 (소유자와 동일하게 처리)
+function extractDebtor(rights: { purpose: string | null; right_holder: string | null; receipt_date: string | null }[] | null): string | null {
+  // 채무자는 보통 소유자와 동일
+  return extractOwner(rights);
+}
+
+// 등기내역에서 채권자 추출 (경매신청 채권자)
+function extractCreditor(rights: { purpose: string | null; right_holder: string | null; note: string | null }[] | null): string | null {
+  if (!rights) return null;
+  // 임의경매 신청자 찾기
+  const auctionRequest = rights.find(r => r.purpose?.includes('임의경매') || r.purpose?.includes('강제경매'));
+  if (auctionRequest) return auctionRequest.right_holder;
+  // 없으면 말소기준등기 채권자
+  const referenceRight = rights.find(r => r.note?.includes('말소기준'));
+  return referenceRight?.right_holder || null;
 }
 
 export default async function AuctionDetailPage({ params }: Props) {

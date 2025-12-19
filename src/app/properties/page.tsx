@@ -175,7 +175,7 @@ export default function PropertiesPage() {
               </h1>
 
               <p className="text-lg text-gray-300 leading-relaxed">
-                AI 분석과 블록체인 기술로 검증된 분양권 투자 기회를 찾아보세요
+                AI 분석과 블록체인 기술로 검증된 분양권 정보를 확인하세요
               </p>
             </motion.div>
 

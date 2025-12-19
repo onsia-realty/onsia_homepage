@@ -71,7 +71,7 @@ export const LuxeHeroSection = () => {
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.4, duration: 0.8 }}
                 >
-                  <span className="block text-white mb-2">부동산 분양권 투자의</span>
+                  <span className="block text-white mb-2">부동산 정보 서비스의</span>
                   <span className="block bg-gradient-to-r from-blue-400 via-cyan-400 to-blue-500 bg-clip-text text-transparent">
                     새로운 기준
                   </span>
@@ -109,7 +109,7 @@ export const LuxeHeroSection = () => {
                   </Link>
 
                   <Link
-                    href="/subscriptions"
+                    href="/subscription"
                     className="px-8 py-3 backdrop-blur-xl bg-white/10 border-2 border-white/30 text-white rounded-full font-semibold text-base hover:bg-white/20 hover:border-white/50 transition-all duration-300 text-center"
                   >
                     청약홈 매물 보기

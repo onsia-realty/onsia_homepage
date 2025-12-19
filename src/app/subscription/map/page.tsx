@@ -372,13 +372,12 @@ export default function SubscriptionMapPage() {
               {/* 목록 */}
               <div className="flex-1 overflow-y-auto">
                 {filteredSubscriptions.map((subscription) => (
-                  <motion.div
+                  <Link
                     key={subscription.id}
-                    onClick={() => handleListItemClick(subscription)}
-                    className={`p-4 border-b border-white/5 cursor-pointer hover:bg-[#12121a] transition-colors ${
+                    href={`/subscription/${subscription.id}`}
+                    className={`block p-4 border-b border-white/5 cursor-pointer hover:bg-[#12121a] transition-colors ${
                       selectedSubscription?.id === subscription.id ? 'bg-[#12121a] border-l-2 border-l-blue-500' : ''
                     }`}
-                    whileTap={{ scale: 0.98 }}
                   >
                     <div className="flex items-start justify-between mb-2">
                       <div className="flex items-center gap-2">
@@ -407,9 +406,12 @@ export default function SubscriptionMapPage() {
                           {subscription.subscriptionDate.slice(5)}
                         </span>
                       </div>
-                      <span className="font-medium text-blue-400">
-                        {formatPricePerPyeong(subscription.pricePerPyeong)}/평
-                      </span>
+                      <div className="flex items-center gap-2">
+                        <span className="font-medium text-blue-400">
+                          {formatPricePerPyeong(subscription.pricePerPyeong)}/평
+                        </span>
+                        <ChevronRight className="w-4 h-4 text-gray-500" />
+                      </div>
                     </div>
 
                     {subscription.competitionRate && (
@@ -417,7 +419,7 @@ export default function SubscriptionMapPage() {
                         <span className="text-orange-400">경쟁률 {subscription.competitionRate}:1</span>
                       </div>
                     )}
-                  </motion.div>
+                  </Link>
                 ))}
 
                 {filteredSubscriptions.length === 0 && (

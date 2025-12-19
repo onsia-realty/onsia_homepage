@@ -1,0 +1,110 @@
+{
+  "houseManageNo": "2025000524",
+  "crawledAt": "2025-12-18T15:46:52.185Z",
+  "total": 33,
+  "success": 17,
+  "failed": 16,
+  "files": [
+    {
+      "type": "pdf",
+      "name": "notice.pdf",
+      "url": "https://asil.kr/photo/buny_pdf/2025000524.pdf"
+    },
+    {
+      "type": "modelhouse",
+      "name": "1.jpg",
+      "url": "https://asil.kr/photo/buny/2025000524/2-1.jpg",
+      "localPath": "/uploads/subscriptions/2025000524/modelhouse/1.jpg"
+    },
+    {
+      "type": "location",
+      "name": "1.jpg",
+      "url": "https://asil.kr/photo/buny/2025000524/3-1.jpg",
+      "localPath": "/uploads/subscriptions/2025000524/location/1.jpg"
+    },
+    {
+      "type": "layout",
+      "name": "1.jpg",
+      "url": "https://asil.kr/photo/buny/2025000524/4-1.jpg",
+      "localPath": "/uploads/subscriptions/2025000524/layout/1.jpg"
+    },
+    {
+      "type": "unit-layout",
+      "name": "1.jpg",
+      "url": "https://asil.kr/photo/buny/2025000524/5-1.jpg",
+      "localPath": "/uploads/subscriptions/2025000524/unit-layout/1.jpg"
+    },
+    {
+      "type": "unit-layout",
+      "name": "2.jpg",
+      "url": "https://asil.kr/photo/buny/2025000524/5-2.jpg",
+      "localPath": "/uploads/subscriptions/2025000524/unit-layout/2.jpg"
+    },
+    {
+      "type": "floorplan",
+      "name": "1.jpg",
+      "url": "https://asil.kr/photo/buny/2025000524/6-1.jpg",
+      "localPath": "/uploads/subscriptions/2025000524/floorplan/1.jpg"
+    },
+    {
+      "type": "floorplan",
+      "name": "2.jpg",
+      "url": "https://asil.kr/photo/buny/2025000524/6-2.jpg",
+      "localPath": "/uploads/subscriptions/2025000524/floorplan/2.jpg"
+    },
+    {
+      "type": "floorplan",
+      "name": "3.jpg",
+      "url": "https://asil.kr/photo/buny/2025000524/6-3.jpg",
+      "localPath": "/uploads/subscriptions/2025000524/floorplan/3.jpg"
+    },
+    {
+      "type": "floorplan",
+      "name": "4.jpg",
+      "url": "https://asil.kr/photo/buny/2025000524/6-4.jpg",
+      "localPath": "/uploads/subscriptions/2025000524/floorplan/4.jpg"
+    },
+    {
+      "type": "floorplan",
+      "name": "5.jpg",
+      "url": "https://asil.kr/photo/buny/2025000524/6-5.jpg",
+      "localPath": "/uploads/subscriptions/2025000524/floorplan/5.jpg"
+    },
+    {
+      "type": "floorplan",
+      "name": "6.jpg",
+      "url": "https://asil.kr/photo/buny/2025000524/6-6.jpg",
+      "localPath": "/uploads/subscriptions/2025000524/floorplan/6.jpg"
+    },
+    {
+      "type": "floorplan",
+      "name": "7.jpg",
+      "url": "https://asil.kr/photo/buny/2025000524/6-7.jpg",
+      "localPath": "/uploads/subscriptions/2025000524/floorplan/7.jpg"
+    },
+    {
+      "type": "floorplan",
+      "name": "8.jpg",
+      "url": "https://asil.kr/photo/buny/2025000524/6-8.jpg",
+      "localPath": "/uploads/subscriptions/2025000524/floorplan/8.jpg"
+    },
+    {
+      "type": "floorplan",
+      "name": "9.jpg",
+      "url": "https://asil.kr/photo/buny/2025000524/6-9.jpg",
+      "localPath": "/uploads/subscriptions/2025000524/floorplan/9.jpg"
+    },
+    {
+      "type": "gallery",
+      "name": "1.jpg",
+      "url": "https://asil.kr/photo/buny/2025000524/9-1.jpg",
+      "localPath": "/uploads/subscriptions/2025000524/gallery/1.jpg"
+    },
+    {
+      "type": "gallery",
+      "name": "2.jpg",
+      "url": "https://asil.kr/photo/buny/2025000524/9-2.jpg",
+      "localPath": "/uploads/subscriptions/2025000524/gallery/2.jpg"
+    }
+  ]
+}

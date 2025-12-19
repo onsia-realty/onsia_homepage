@@ -10,6 +10,10 @@ const nextConfig: NextConfig = {
     remotePatterns: [
       {
         protocol: 'https',
+        hostname: 'www.dooinauction.com',
+      },
+      {
+        protocol: 'https',
         hostname: 'cdn.apnews.kr',
       },
       {

@@ -35,7 +35,7 @@ export const HeroSection = () => {
                 transition={{ delay: 0.3, duration: 0.5 }}
               >
                 <Sparkles className="w-5 h-5 text-blue-300" />
-                <span className="text-blue-200 font-semibold text-sm">분양권 투자 전문 플랫폼</span>
+                <span className="text-blue-200 font-semibold text-sm">부동산 AI 정보 플랫폼</span>
               </motion.div>
 
               {/* 메인 타이틀 */}

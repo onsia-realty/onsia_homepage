@@ -17,6 +17,7 @@ import { TenantStatus } from '@/components/auction/TenantStatus';
 import { BidHistory } from '@/components/auction/BidHistory';
 import { ExternalLinks } from '@/components/auction/ExternalLinks';
 import { AIBidAnalysis } from '@/components/auction/AIBidAnalysis';
+import RealPriceSection from '@/components/auction/RealPriceSection';
 
 interface AuctionItem {
   id: string;
@@ -186,7 +187,7 @@ export function AuctionDetailClient({ item }: Props) {
   const daysUntil = getDaysUntil(item.saleDate);
 
   const photos = item.images.filter(img => img.imageType === 'PHOTO');
-  const currentImage = photos[selectedImage]?.url || '/images/auction-placeholder.jpg';
+  const currentImage = photos[selectedImage]?.url || '/property-placeholder.png';
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900">
@@ -369,35 +370,16 @@ export function AuctionDetailClient({ item }: Props) {
                     </div>
                   </div>
 
-                  {/* CTA 버튼 - 하단 고정 스타일 */}
-                  <div className="mt-auto space-y-3">
+                  {/* 공유/저장 버튼 */}
+                  <div className="mt-auto">
                     <div className="flex gap-2">
-                      <a
-                        href="tel:031-000-0000"
-                        className="flex-1 flex items-center justify-center gap-2 px-4 py-3 bg-blue-500 hover:bg-blue-600 text-white font-medium rounded-xl transition-colors text-sm md:text-base"
-                      >
-                        <Phone className="w-4 h-4 md:w-5 md:h-5" />
-                        전화상담
-                      </a>
-                      <a
-                        href="https://pf.kakao.com/_example"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="flex items-center justify-center px-4 py-3 bg-yellow-500 hover:bg-yellow-600 text-black font-medium rounded-xl transition-colors"
-                      >
-                        <MessageCircle className="w-4 h-4 md:w-5 md:h-5" />
-                      </a>
-                    </div>
-
-                    {/* 공유/저장 */}
-                    <div className="flex gap-2">
-                      <button className="flex-1 flex items-center justify-center gap-2 px-3 py-2 bg-white/10 hover:bg-white/20 text-white rounded-xl transition-colors text-sm">
-                        <Share2 className="w-4 h-4" />
-                        공유
+                      <button className="flex-1 flex items-center justify-center gap-2 px-4 py-3 bg-white/10 hover:bg-white/20 text-white rounded-xl transition-colors text-sm md:text-base">
+                        <Share2 className="w-4 h-4 md:w-5 md:h-5" />
+                        공유하기
                       </button>
-                      <button className="flex-1 flex items-center justify-center gap-2 px-3 py-2 bg-white/10 hover:bg-white/20 text-white rounded-xl transition-colors text-sm">
-                        <Heart className="w-4 h-4" />
-                        저장
+                      <button className="flex-1 flex items-center justify-center gap-2 px-4 py-3 bg-white/10 hover:bg-white/20 text-white rounded-xl transition-colors text-sm md:text-base">
+                        <Heart className="w-4 h-4 md:w-5 md:h-5" />
+                        관심등록
                       </button>
                     </div>
                   </div>
@@ -832,6 +814,16 @@ export function AuctionDetailClient({ item }: Props) {
               tenantCount={item.tenants.length}
             />
 
+            {/* 주변 시세 비교 */}
+            <RealPriceSection
+              sido={item.city}
+              sigungu={item.district}
+              propertyType={itemTypeLabels[item.itemType] || item.itemType}
+              appraisalPrice={parseInt(item.appraisalPrice)}
+              minimumPrice={parseInt(item.minimumPrice)}
+              area={item.buildingArea || item.landArea || undefined}
+            />
+
             {/* 당사자 정보 - 모바일에서 숨김 */}
             {(item.owner || item.debtor || item.creditor) && (
               <GlassCard className="p-4 md:p-6 hidden lg:block">
@@ -867,21 +859,6 @@ export function AuctionDetailClient({ item }: Props) {
               courtName={item.courtName}
               address={item.address}
             />
-
-            {/* 상담 문의 - 모바일에서도 표시 */}
-            <GlassCard className="p-4 md:p-6 bg-gradient-to-br from-blue-500/20 to-purple-500/20">
-              <h3 className="text-base md:text-lg font-bold text-white mb-2">전문가 상담</h3>
-              <p className="text-xs md:text-sm text-gray-300 mb-3 md:mb-4">
-                권리분석, 입찰 전략, 명도 등 경매 전문가와 상담하세요.
-              </p>
-              <a
-                href="tel:031-000-0000"
-                className="flex items-center justify-center gap-2 w-full px-4 py-2.5 md:py-3 bg-blue-500 hover:bg-blue-600 text-white font-medium rounded-xl transition-colors text-sm md:text-base"
-              >
-                <Phone className="w-4 h-4 md:w-5 md:h-5" />
-                무료 상담 신청
-              </a>
-            </GlassCard>
           </div>
         </div>
       </section>

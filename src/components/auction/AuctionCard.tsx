@@ -86,7 +86,7 @@ function getDaysUntil(dateStr: string | null): number | null {
 export function AuctionCard({ item, index = 0 }: AuctionCardProps) {
   const statusInfo = statusLabels[item.status] || statusLabels.SCHEDULED;
   const daysUntil = getDaysUntil(item.saleDate);
-  const imageUrl = item.images[0]?.url || '/images/auction-placeholder.jpg';
+  const imageUrl = item.images[0]?.url || '/property-placeholder.png';
 
   return (
     <motion.div

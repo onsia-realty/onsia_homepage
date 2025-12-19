@@ -4,9 +4,9 @@ export async function GET() {
   const rss = `<?xml version="1.0" encoding="UTF-8"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>ONSIA - 분양권 투자 플랫폼</title>
+    <title>ONSIA - 부동산 AI 플랫폼</title>
     <link>${baseUrl}</link>
-    <description>온시아 공인중개사가 엄선한 프리미엄 분양권 매물 정보</description>
+    <description>AI 기반 부동산 정보 플랫폼. 분양권, 경매, 청약 정보를 한눈에 확인하세요.</description>
     <language>ko</language>
     <lastBuildDate>${new Date().toUTCString()}</lastBuildDate>
     <atom:link href="${baseUrl}/feed.xml" rel="self" type="application/rss+xml"/>

@@ -92,7 +92,7 @@ export const PatentShowcaseSection = () => {
               <p className="text-xl md:text-2xl text-gray-300 leading-relaxed max-w-3xl mx-auto">
                 블록체인 특허 기술과 청약홈 공식 데이터를 기반으로
                 <br />
-                대한민국에서 가장 투명한 분양권 투자 플랫폼을 만들어갑니다.
+                대한민국에서 가장 투명한 부동산 AI 플랫폼을 만들어갑니다.
               </p>
             </GlassPanel>
           </motion.div>

@@ -100,7 +100,13 @@ export async function GET(request: NextRequest) {
       status: auction.status,
       hasRisk: false, // 추후 auction_analysis 연동
       referenceDate: auction.dividend_end_date,
-      images: auction.images || [],
+      // 이미지 - 객체 배열 또는 문자열 배열 모두 지원
+      images: (auction.images || []).map((img: string | { url: string; type?: string; alt?: string }) => {
+        if (typeof img === 'string') {
+          return { url: img, alt: null };
+        }
+        return { url: img.url || '', alt: img.alt || null };
+      }).filter((img: { url: string }) => img.url),
     }));
 
     return NextResponse.json({

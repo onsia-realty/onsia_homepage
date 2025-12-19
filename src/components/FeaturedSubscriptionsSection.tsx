@@ -85,7 +85,7 @@ const SubscriptionCard = ({ sub, index, isMobile = false }: {
       transition={{ duration: 0.6, delay: isMobile ? 0 : index * 0.1 }}
       className={isMobile ? "flex-shrink-0 w-[280px]" : ""}
     >
-      <Link href={`/subscriptions/${sub.HOUSE_MANAGE_NO}`}>
+      <Link href={`/subscription/${sub.HOUSE_MANAGE_NO}`}>
         <GlassCard className="p-5 h-full group" hover glow>
           {/* 상단: 상태 배지 + 타입 */}
           <div className="flex items-center justify-between mb-4">
@@ -393,7 +393,7 @@ export const FeaturedSubscriptionsSection = () => {
           {/* 카테고리 링크 버튼 */}
           <div className="flex flex-wrap justify-center gap-2 md:gap-3">
             <Link
-              href="/subscriptions"
+              href="/subscription"
               className={`px-4 py-2 md:px-6 md:py-3 rounded-full font-semibold text-xs md:text-sm transition-all duration-300 ${
                 selectedType === 'all'
                   ? 'bg-gradient-to-r from-orange-500 to-amber-500 text-white shadow-lg shadow-orange-500/30'
@@ -403,19 +403,19 @@ export const FeaturedSubscriptionsSection = () => {
               전체
             </Link>
             <Link
-              href="/subscriptions/apt"
+              href="/subscription?type=apt"
               className="px-4 py-2 md:px-6 md:py-3 rounded-full font-semibold text-xs md:text-sm transition-all duration-300 bg-white/10 text-gray-300 hover:bg-white/20 hover:text-white border border-white/10"
             >
               APT
             </Link>
             <Link
-              href="/subscriptions/officetel"
+              href="/subscription?type=officetel"
               className="px-4 py-2 md:px-6 md:py-3 rounded-full font-semibold text-xs md:text-sm transition-all duration-300 bg-white/10 text-gray-300 hover:bg-white/20 hover:text-white border border-white/10"
             >
               오피스텔
             </Link>
             <Link
-              href="/subscriptions/remndr"
+              href="/subscription?type=remndr"
               className="px-4 py-2 md:px-6 md:py-3 rounded-full font-semibold text-xs md:text-sm transition-all duration-300 bg-white/10 text-gray-300 hover:bg-white/20 hover:text-white border border-white/10"
             >
               무순위/잔여
@@ -576,7 +576,7 @@ export const FeaturedSubscriptionsSection = () => {
                         }`}>{event.title}</span>
                       ))}
                     </div>
-                    <Link href={`/subscriptions/${sub.HOUSE_MANAGE_NO}`}>
+                    <Link href={`/subscription/${sub.HOUSE_MANAGE_NO}`}>
                       <h4 className="text-base font-bold text-white mb-2 line-clamp-2 hover:text-orange-300 transition-colors">{sub.HOUSE_NM}</h4>
                     </Link>
                     <div className="flex items-center gap-2 text-gray-400 text-xs mb-3">
@@ -585,7 +585,7 @@ export const FeaturedSubscriptionsSection = () => {
                     <div className="flex items-center gap-2 text-gray-400 text-xs mb-3">
                       <Users className="w-3 h-3" /><span>{sub.TOT_SUPLY_HSHLDCO?.toLocaleString() || '-'}세대</span>
                     </div>
-                    <Link href={`/subscriptions/${sub.HOUSE_MANAGE_NO}`} className="w-full px-3 py-2 bg-gradient-to-r from-orange-500/30 to-amber-500/30 text-orange-300 rounded-lg hover:from-orange-500/50 hover:to-amber-500/50 transition-all text-xs font-medium flex items-center justify-center gap-2 border border-orange-500/30">
+                    <Link href={`/subscription/${sub.HOUSE_MANAGE_NO}`} className="w-full px-3 py-2 bg-gradient-to-r from-orange-500/30 to-amber-500/30 text-orange-300 rounded-lg hover:from-orange-500/50 hover:to-amber-500/50 transition-all text-xs font-medium flex items-center justify-center gap-2 border border-orange-500/30">
                       상세보기
                     </Link>
                   </GlassCard>
@@ -597,7 +597,7 @@ export const FeaturedSubscriptionsSection = () => {
 
         {/* 더보기 버튼 */}
         <motion.div className="text-center mt-10 md:mt-12" initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.6, delay: 0.4 }}>
-          <Link href="/subscriptions" className="inline-flex items-center gap-2 md:gap-3 px-6 py-3 md:px-8 md:py-4 rounded-full bg-gradient-to-r from-orange-600/80 to-amber-600/80 border border-orange-400/30 font-semibold text-white text-sm md:text-base hover:shadow-lg hover:shadow-orange-500/30 transition-all duration-300 group">
+          <Link href="/subscription/map" className="inline-flex items-center gap-2 md:gap-3 px-6 py-3 md:px-8 md:py-4 rounded-full bg-gradient-to-r from-orange-600/80 to-amber-600/80 border border-orange-400/30 font-semibold text-white text-sm md:text-base hover:shadow-lg hover:shadow-orange-500/30 transition-all duration-300 group">
             <span>전체 청약 매물 보기</span>
             <ArrowRight className="w-4 h-4 md:w-5 md:h-5 group-hover:translate-x-1 transition-transform" />
           </Link>

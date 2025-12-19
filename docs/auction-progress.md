@@ -1,6 +1,6 @@
 # 경매 기능 개발 진행 상황
 
-> 최종 업데이트: 2025-12-18 (크롤러 구현 완료)
+> 최종 업데이트: 2025-12-18 (Prisma→Supabase 마이그레이션 완료)
 
 ## 완료된 작업
 
@@ -50,6 +50,19 @@
   - `saveAuctionData()` - 크롤링 데이터 저장
   - `crawlAndSave()` - 크롤링 + 저장 통합
 - `src/lib/crawler/index.ts` - 모듈 export
+
+### 7. Prisma → Supabase 마이그레이션 ✅
+- `scripts/migrate-prisma-to-supabase.mjs` - 마이그레이션 스크립트
+- `prisma-auction-export.json` - Prisma 데이터 export
+- 마이그레이션 완료: **2건** (이미지 포함)
+  1. 2025타경12345 - 부산 센텀스카이비즈 오피스텔 (이미지 3개)
+  2. 2025타경32633 - 광주 상무자이아파트 (이미지 3개)
+- `next.config.ts`에 dooinauction.com 도메인 추가
+
+### 8. 두인경매 크롤링 방식 문서화 ✅
+- `docs/dooin-auction-guide.md` - 크롤링 방식, URL 패턴, 데이터 구조 문서
+- 이미지 URL 패턴: `https://www.dooinauction.com/FILE/CA/{BA|BE}/{법원코드}/{년도}/{BA|BE}-{법원코드}-{사건번호전체}-{순번}.jpg`
+- 법원 코드 맵핑 포함
 
 ## 주의 사항 ⚠️
 

@@ -1,7 +1,8 @@
 // 청약홈 공공데이터 API 클라이언트
 
 const BASE_URL = 'https://api.odcloud.kr/api/ApplyhomeInfoDetailSvc/v1';
-const API_KEY = process.env.CHEONGYAK_API_KEY || '';
+const CMPET_BASE_URL = 'https://api.odcloud.kr/api/ApplyhomeInfoCmpetRtSvc/v1'; // 경쟁률/특별공급
+const API_KEY = process.env.CHEONGYAK_API_KEY || process.env.DATA_GO_KR_API_KEY || '';
 
 export interface CheongyakProperty {
   HOUSE_MANAGE_NO: string;        // 주택관리번호
@@ -245,3 +246,265 @@ export const REGION_CODES = [
   { code: '450', name: '전북' },
   { code: '500', name: '제주' },
 ];
+
+// ============================================
+// 주택형별 상세 정보 (공급대상/타입)
+// ============================================
+
+export interface HousingTypeInfo {
+  HOUSE_MANAGE_NO: string;        // 주택관리번호
+  PBLANC_NO: string;              // 공고번호
+  MODEL_NO: string;               // 모델번호
+  HOUSE_TY: string;               // 주택형 (예: "59A", "84B")
+  SUPLY_AR: number;               // 공급면적 (㎡)
+  SUPLY_HSHLDCO: number;          // 공급세대수
+  SPSPLY_HSHLDCO: number;         // 특별공급세대수
+  GNRL_RNKONE_CRSPAREA_RCPTDECO: number;  // 1순위 해당지역 접수건수
+  LTTOT_TOP_AMOUNT: number;       // 분양최고금액 (만원)
+}
+
+export interface HousingTypeApiResponse {
+  currentCount: number;
+  data: HousingTypeInfo[];
+  matchCount: number;
+  page: number;
+  perPage: number;
+  totalCount: number;
+}
+
+// APT 주택형별 상세조회
+export async function getAPTHousingTypes(params: {
+  houseManageNo: string;
+  pblancNo: string;
+}): Promise<HousingTypeApiResponse> {
+  const { houseManageNo, pblancNo } = params;
+
+  const url = new URL(`${BASE_URL}/getAPTLttotPblancMdl`);
+  url.searchParams.append('page', '1');
+  url.searchParams.append('perPage', '100');
+  url.searchParams.append('cond[HOUSE_MANAGE_NO::EQ]', houseManageNo);
+  url.searchParams.append('cond[PBLANC_NO::EQ]', pblancNo);
+
+  const response = await fetch(url.toString(), {
+    headers: {
+      'Accept': 'application/json',
+      'Authorization': `Infuser ${API_KEY}`,
+    },
+    cache: 'no-store',
+  });
+
+  if (!response.ok) {
+    throw new Error(`청약홈 주택형별 API 오류: ${response.status}`);
+  }
+
+  return response.json();
+}
+
+// ============================================
+// 경쟁률 정보
+// ============================================
+
+export interface CompetitionInfo {
+  HOUSE_MANAGE_NO: string;        // 주택관리번호
+  PBLANC_NO: string;              // 공고번호
+  MODEL_NO: string;               // 모델번호
+  HOUSE_TY: string;               // 주택형
+  RESIDE_SECD: string;            // 거주지역코드 (1: 해당지역, 2: 기타지역)
+  RESIDE_SECD_NM: string;         // 거주지역명
+  RCEPT_CNT: number;              // 접수건수
+  CMPET_RATE: number;             // 경쟁률
+  LWET_PRZWIN_POINT: number;      // 최저당첨가점
+  TOP_PRZWIN_POINT: number;       // 최고당첨가점
+  AVG_PRZWIN_POINT: number;       // 평균당첨가점
+  RANK1_RCEPT_CNT: number;        // 1순위 접수건수
+  RANK2_RCEPT_CNT: number;        // 2순위 접수건수
+  SUPLY_HSHLDCO: number;          // 공급세대수
+}
+
+export interface CompetitionApiResponse {
+  currentCount: number;
+  data: CompetitionInfo[];
+  matchCount: number;
+  page: number;
+  perPage: number;
+  totalCount: number;
+}
+
+// APT 경쟁률 조회
+export async function getAPTCompetition(params: {
+  houseManageNo: string;
+  pblancNo: string;
+}): Promise<CompetitionApiResponse> {
+  const { houseManageNo, pblancNo } = params;
+
+  const url = new URL(`${CMPET_BASE_URL}/getAPTLttotPblancCmpet`);
+  url.searchParams.append('page', '1');
+  url.searchParams.append('perPage', '100');
+  url.searchParams.append('cond[HOUSE_MANAGE_NO::EQ]', houseManageNo);
+  url.searchParams.append('cond[PBLANC_NO::EQ]', pblancNo);
+
+  const response = await fetch(url.toString(), {
+    headers: {
+      'Accept': 'application/json',
+      'Authorization': `Infuser ${API_KEY}`,
+    },
+    cache: 'no-store',
+  });
+
+  if (!response.ok) {
+    throw new Error(`청약홈 경쟁률 API 오류: ${response.status}`);
+  }
+
+  return response.json();
+}
+
+// ============================================
+// 특별공급 신청현황
+// ============================================
+
+export interface SpecialSupplyInfo {
+  HOUSE_MANAGE_NO: string;        // 주택관리번호
+  PBLANC_NO: string;              // 공고번호
+  MODEL_NO: string;               // 모델번호
+  HOUSE_TY: string;               // 주택형
+  SPSPLY_KND_CODE: string;        // 특별공급종류코드
+  SPSPLY_KND_CODE_NM: string;     // 특별공급종류명 (다자녀, 신혼부부, 생애최초 등)
+  SUPLY_HSHLDCO: number;          // 공급세대수
+  RCEPT_CNT: number;              // 접수건수
+  CMPET_RATE: number;             // 경쟁률
+}
+
+export interface SpecialSupplyApiResponse {
+  currentCount: number;
+  data: SpecialSupplyInfo[];
+  matchCount: number;
+  page: number;
+  perPage: number;
+  totalCount: number;
+}
+
+// APT 특별공급 신청현황 조회
+export async function getAPTSpecialSupply(params: {
+  houseManageNo: string;
+  pblancNo: string;
+}): Promise<SpecialSupplyApiResponse> {
+  const { houseManageNo, pblancNo } = params;
+
+  const url = new URL(`${CMPET_BASE_URL}/getAPTSpsplyReqstStus`);
+  url.searchParams.append('page', '1');
+  url.searchParams.append('perPage', '100');
+  url.searchParams.append('cond[HOUSE_MANAGE_NO::EQ]', houseManageNo);
+  url.searchParams.append('cond[PBLANC_NO::EQ]', pblancNo);
+
+  const response = await fetch(url.toString(), {
+    headers: {
+      'Accept': 'application/json',
+      'Authorization': `Infuser ${API_KEY}`,
+    },
+    cache: 'no-store',
+  });
+
+  if (!response.ok) {
+    throw new Error(`청약홈 특별공급 API 오류: ${response.status}`);
+  }
+
+  return response.json();
+}
+
+// ============================================
+// 당첨가점 정보
+// ============================================
+
+export interface WinningScoreInfo {
+  HOUSE_MANAGE_NO: string;        // 주택관리번호
+  PBLANC_NO: string;              // 공고번호
+  MODEL_NO: string;               // 모델번호
+  HOUSE_TY: string;               // 주택형
+  RESIDE_SECD_NM: string;         // 거주지역명
+  LWET_PRZWIN_POINT: number;      // 최저당첨가점
+  TOP_PRZWIN_POINT: number;       // 최고당첨가점
+  AVG_PRZWIN_POINT: number;       // 평균당첨가점
+}
+
+export interface WinningScoreApiResponse {
+  currentCount: number;
+  data: WinningScoreInfo[];
+  matchCount: number;
+  page: number;
+  perPage: number;
+  totalCount: number;
+}
+
+// APT 당첨가점 조회
+export async function getAPTWinningScore(params: {
+  houseManageNo: string;
+  pblancNo: string;
+}): Promise<WinningScoreApiResponse> {
+  const { houseManageNo, pblancNo } = params;
+
+  const url = new URL(`${CMPET_BASE_URL}/getAptLttotPblancScore`);
+  url.searchParams.append('page', '1');
+  url.searchParams.append('perPage', '100');
+  url.searchParams.append('cond[HOUSE_MANAGE_NO::EQ]', houseManageNo);
+  url.searchParams.append('cond[PBLANC_NO::EQ]', pblancNo);
+
+  const response = await fetch(url.toString(), {
+    headers: {
+      'Accept': 'application/json',
+      'Authorization': `Infuser ${API_KEY}`,
+    },
+    cache: 'no-store',
+  });
+
+  if (!response.ok) {
+    throw new Error(`청약홈 당첨가점 API 오류: ${response.status}`);
+  }
+
+  return response.json();
+}
+
+// ============================================
+// 통합 상세 정보 조회
+// ============================================
+
+export interface SubscriptionFullDetail {
+  basic: CheongyakProperty | null;
+  housingTypes: HousingTypeInfo[];
+  competition: CompetitionInfo[];
+  specialSupply: SpecialSupplyInfo[];
+  winningScore: WinningScoreInfo[];
+}
+
+// 분양 상세 정보 통합 조회
+export async function getSubscriptionFullDetail(params: {
+  houseManageNo: string;
+  pblancNo: string;
+}): Promise<SubscriptionFullDetail> {
+  const { houseManageNo, pblancNo } = params;
+
+  try {
+    const [housingTypesRes, competitionRes, specialSupplyRes, winningScoreRes] = await Promise.all([
+      getAPTHousingTypes({ houseManageNo, pblancNo }).catch(() => ({ data: [] })),
+      getAPTCompetition({ houseManageNo, pblancNo }).catch(() => ({ data: [] })),
+      getAPTSpecialSupply({ houseManageNo, pblancNo }).catch(() => ({ data: [] })),
+      getAPTWinningScore({ houseManageNo, pblancNo }).catch(() => ({ data: [] })),
+    ]);
+
+    return {
+      basic: null, // 기본 정보는 별도 조회 필요
+      housingTypes: housingTypesRes.data || [],
+      competition: competitionRes.data || [],
+      specialSupply: specialSupplyRes.data || [],
+      winningScore: winningScoreRes.data || [],
+    };
+  } catch (error) {
+    console.error('분양 상세 정보 조회 실패:', error);
+    return {
+      basic: null,
+      housingTypes: [],
+      competition: [],
+      specialSupply: [],
+      winningScore: [],
+    };
+  }
+}

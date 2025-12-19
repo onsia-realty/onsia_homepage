@@ -23,7 +23,7 @@ export const Navigation = () => {
     { name: '분양', href: '/subscription', icon: Calendar },
     { name: '분양권', href: '/properties', icon: Building2 },
     { name: '경매', href: '/auctions', icon: Gavel },
-    { name: '시세조회', href: '/market', icon: TrendingUp },
+    { name: 'AI 부동산시세', href: '/market', icon: TrendingUp },
     { name: '회사소개', href: '/about', icon: Info },
     // TODO: 페이지 완성 후 활성화
     // { name: '부동산뉴스', href: '/news', icon: FileText },

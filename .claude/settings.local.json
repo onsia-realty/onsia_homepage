@@ -70,7 +70,12 @@
       "Bash(npx tsc:*)",
       "Bash(npx prisma db seed:*)",
       "Bash(node test-supabase.mjs:*)",
-      "Bash(git commit -m \"$\\(cat <<''EOF''\nfeat: 경매 기능 기본 구조 완성\n\n- Supabase 연동 설정 \\(supabase.ts, 타입 정의, 헬퍼 함수\\)\n- 경매 페이지 UI \\(목록, 상세, 컴포넌트\\)\n- 경매 API Routes \\(auctions, auctions-supabase, court\\)\n- 법원 크롤러 기본 구조 \\(URL 생성 함수\\)\n- 관리자 경매 페이지\n- 문서화 \\(스키마, API 가이드, 진행 상황\\)\n- 테스트 파일 \\(test-supabase.mjs, test-db.ts\\)\n\n🤖 Generated with [Claude Code]\\(https://claude.com/claude-code\\)\n\nCo-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>\nEOF\n\\)\")"
+      "Bash(git commit -m \"$\\(cat <<''EOF''\nfeat: 경매 기능 기본 구조 완성\n\n- Supabase 연동 설정 \\(supabase.ts, 타입 정의, 헬퍼 함수\\)\n- 경매 페이지 UI \\(목록, 상세, 컴포넌트\\)\n- 경매 API Routes \\(auctions, auctions-supabase, court\\)\n- 법원 크롤러 기본 구조 \\(URL 생성 함수\\)\n- 관리자 경매 페이지\n- 문서화 \\(스키마, API 가이드, 진행 상황\\)\n- 테스트 파일 \\(test-supabase.mjs, test-db.ts\\)\n\n🤖 Generated with [Claude Code]\\(https://claude.com/claude-code\\)\n\nCo-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>\nEOF\n\\)\")",
+      "Bash(node:*)",
+      "Bash(npx next build)",
+      "mcp__playwright__browser_resize",
+      "mcp__playwright__browser_press_key",
+      "WebFetch(domain:infuser.odcloud.kr)"
     ],
     "deny": [],
     "ask": []
