@@ -1,15 +1,19 @@
 import { NextRequest, NextResponse } from 'next/server';
-import fs from 'fs';
+import { PrismaClient } from '@prisma/client';
 import path from 'path';
+
+const prisma = new PrismaClient();
 
 // 이미지 카테고리 정의
 const IMAGE_CATEGORIES = {
-  gallery: { label: '사진갤러리', order: 1 },
-  location: { label: '입지환경', order: 2 },
-  layout: { label: '단지배치도', order: 3 },
-  'unit-layout': { label: '동호수배치표', order: 4 },
-  floorplan: { label: '면적표', order: 5 },
-  modelhouse: { label: '모델하우스', order: 6 },
+  GALLERY: { key: 'gallery', label: '사진갤러리', order: 1 },
+  LOCATION: { key: 'location', label: '입지환경', order: 2 },
+  LAYOUT: { key: 'layout', label: '단지배치도', order: 3 },
+  UNIT_LAYOUT: { key: 'unit-layout', label: '동호수배치표', order: 4 },
+  FLOORPLAN: { key: 'floorplan', label: '면적표', order: 5 },
+  MODELHOUSE: { key: 'modelhouse', label: '모델하우스', order: 6 },
+  PREMIUM: { key: 'premium', label: '프리미엄', order: 7 },
+  COMMUNITY: { key: 'community', label: '커뮤니티', order: 8 },
 } as const;
 
 type CategoryKey = keyof typeof IMAGE_CATEGORIES;
@@ -20,7 +24,7 @@ interface ImageItem {
 }
 
 interface CategoryImages {
-  category: CategoryKey;
+  category: string;
   label: string;
   images: ImageItem[];
 }
@@ -31,10 +35,18 @@ export async function GET(
 ) {
   try {
     const { id } = await params;
-    const subscriptionDir = path.join(process.cwd(), 'public', 'uploads', 'subscriptions', id);
 
-    // 디렉토리 존재 여부 확인
-    if (!fs.existsSync(subscriptionDir)) {
+    // DB에서 청약 정보 조회
+    const subscription = await prisma.subscription.findUnique({
+      where: { houseManageNo: id },
+      include: {
+        images: {
+          orderBy: { order: 'asc' }
+        }
+      }
+    });
+
+    if (!subscription) {
       return NextResponse.json({
         success: true,
         data: {
@@ -46,48 +58,47 @@ export async function GET(
       });
     }
 
-    const categories: CategoryImages[] = [];
-    let pdfUrl: string | null = null;
+    // 카테고리별로 이미지 그룹화
+    const categoryMap = new Map<string, ImageItem[]>();
 
-    // PDF 확인
-    const pdfPath = path.join(subscriptionDir, 'notice.pdf');
-    if (fs.existsSync(pdfPath)) {
-      pdfUrl = `/uploads/subscriptions/${id}/notice.pdf`;
+    for (const image of subscription.images) {
+      const categoryInfo = IMAGE_CATEGORIES[image.category as CategoryKey];
+      if (!categoryInfo) continue;
+
+      const catKey = categoryInfo.key;
+      if (!categoryMap.has(catKey)) {
+        categoryMap.set(catKey, []);
+      }
+
+      categoryMap.get(catKey)!.push({
+        url: image.url,
+        name: path.basename(image.url),
+      });
     }
 
-    // 카테고리별 이미지 수집
-    for (const [catKey, catInfo] of Object.entries(IMAGE_CATEGORIES)) {
-      const catDir = path.join(subscriptionDir, catKey);
-
-      if (fs.existsSync(catDir)) {
-        const files = fs.readdirSync(catDir)
-          .filter(file => /\.(jpg|jpeg|png|gif|webp)$/i.test(file))
-          .sort((a, b) => {
-            // 숫자 순서로 정렬
-            const numA = parseInt(a.match(/\d+/)?.[0] || '0');
-            const numB = parseInt(b.match(/\d+/)?.[0] || '0');
-            return numA - numB;
-          });
-
-        if (files.length > 0) {
-          categories.push({
-            category: catKey as CategoryKey,
-            label: catInfo.label,
-            images: files.map(file => ({
-              url: `/uploads/subscriptions/${id}/${catKey}/${file}`,
-              name: file,
-            })),
-          });
-        }
+    // 카테고리 배열로 변환
+    const categories: CategoryImages[] = [];
+    for (const [catKey, images] of categoryMap.entries()) {
+      const categoryInfo = Object.values(IMAGE_CATEGORIES).find(c => c.key === catKey);
+      if (categoryInfo) {
+        categories.push({
+          category: catKey,
+          label: categoryInfo.label,
+          images,
+        });
       }
     }
 
     // 순서대로 정렬
     categories.sort((a, b) => {
-      const orderA = IMAGE_CATEGORIES[a.category]?.order || 99;
-      const orderB = IMAGE_CATEGORIES[b.category]?.order || 99;
+      const orderA = Object.values(IMAGE_CATEGORIES).find(c => c.key === a.category)?.order || 99;
+      const orderB = Object.values(IMAGE_CATEGORIES).find(c => c.key === b.category)?.order || 99;
       return orderA - orderB;
     });
+
+    // PDF 확인 (NOTICE_PDF 카테고리)
+    const pdfImage = subscription.images.find(img => img.category === 'NOTICE_PDF');
+    const pdfUrl = pdfImage?.url || null;
 
     return NextResponse.json({
       success: true,
@@ -96,7 +107,7 @@ export async function GET(
         hasImages: categories.length > 0 || pdfUrl !== null,
         categories,
         pdfUrl,
-        totalImages: categories.reduce((sum, cat) => sum + cat.images.length, 0),
+        totalImages: subscription.images.filter(img => img.category !== 'NOTICE_PDF').length,
       }
     });
 
@@ -106,5 +117,7 @@ export async function GET(
       { success: false, error: 'Failed to fetch images' },
       { status: 500 }
     );
+  } finally {
+    await prisma.$disconnect();
   }
 }

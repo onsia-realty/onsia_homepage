@@ -51,3 +51,12 @@ next-env.d.ts
 
 .vercel
 
+# 이미지 제외 (용량 크고 배포 시 자동 생성됨)
+/public/uploads/subscriptions/
+/public/uploads/subscriptions.zip
+/public/images/subscriptions/
+
+# 크롤링 임시 파일
+*.log
+crawl-*.log
+.playwright-mcp/

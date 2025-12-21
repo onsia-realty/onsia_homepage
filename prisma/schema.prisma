@@ -737,4 +737,6 @@ enum SubscriptionImageCategory {
   FLOORPLAN       // 면적표/평면도 (카테고리 6)
   GALLERY         // 사진갤러리 (카테고리 9)
   NOTICE_PDF      // 모집공고문 PDF
+  PREMIUM         // 프리미엄/특장점
+  COMMUNITY       // 커뮤니티/편의시설
 }

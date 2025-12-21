@@ -55,15 +55,30 @@ function detectBuilder(homepage) {
 }
 
 /**
- * 이미지 다운로드
+ * 이미지 다운로드 (Playwright 브라우저 컨텍스트 사용)
  */
-async function downloadImage(url, savePath) {
+async function downloadImage(page, url, savePath) {
   try {
-    const response = await fetch(url);
-    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+    // Playwright 브라우저 컨텍스트로 이미지 다운로드
+    const imageBuffer = await page.evaluate(async (imageUrl) => {
+      const response = await fetch(imageUrl);
+      if (!response.ok) throw new Error(`HTTP ${response.status}`);
 
-    const buffer = await response.arrayBuffer();
-    await fs.promises.writeFile(savePath, Buffer.from(buffer));
+      const blob = await response.blob();
+      const arrayBuffer = await blob.arrayBuffer();
+
+      // ArrayBuffer를 Base64로 변환 (브라우저 → Node.js 전달용)
+      const bytes = new Uint8Array(arrayBuffer);
+      let binary = '';
+      for (let i = 0; i < bytes.length; i++) {
+        binary += String.fromCharCode(bytes[i]);
+      }
+      return btoa(binary);
+    }, url);
+
+    // Base64 → Buffer 변환 후 저장
+    const buffer = Buffer.from(imageBuffer, 'base64');
+    await fs.promises.writeFile(savePath, buffer);
 
     return true;
   } catch (error) {
@@ -214,7 +229,7 @@ async function crawlHomepage(houseManageNo) {
 
         console.log(`    💾 ${filename} (${img.width}x${img.height})`);
 
-        const success = await downloadImage(img.src, savePath);
+        const success = await downloadImage(page, img.src, savePath);
 
         if (success) {
           allImages.push({
