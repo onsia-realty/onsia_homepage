@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { FloatingContact } from "@/components/FloatingContact";
 import AnalyticsTracker from "@/components/analytics/AnalyticsTracker";
+import SessionProvider from "@/components/auth/SessionProvider";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -167,8 +168,10 @@ export default function RootLayout({
             }}
           />
         )}
-        {children}
-        <FloatingContact />
+        <SessionProvider>
+          {children}
+          <FloatingContact />
+        </SessionProvider>
       </body>
     </html>
   );
