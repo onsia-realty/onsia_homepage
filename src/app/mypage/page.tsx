@@ -62,10 +62,10 @@ export default function MyPage() {
   }, [status, router]);
 
   useEffect(() => {
-    if (session?.user) {
+    if (status === "authenticated" && session?.user) {
       fetchData();
     }
-  }, [session, activeTab]);
+  }, [status, activeTab]);
 
   const fetchData = async () => {
     setLoading(true);

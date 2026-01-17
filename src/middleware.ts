@@ -4,7 +4,6 @@ import type { NextRequest } from 'next/server';
 
 // 로그인 필요한 상세 페이지 경로 패턴
 const protectedPaths = [
-  '/mypage',               // 마이페이지
   '/subscription/[^/]+$',  // /subscription/123 (상세) - /subscription, /subscription/map 제외
   '/properties/[^/]+$',    // /properties/123 (상세)
   '/auctions/[^/]+$',      // /auctions/123 (상세)
@@ -59,7 +58,6 @@ export async function middleware(request: NextRequest) {
 
 export const config = {
   matcher: [
-    '/mypage/:path*',
     '/subscription/:path*',
     '/properties/:path*',
     '/auctions/:path*',
