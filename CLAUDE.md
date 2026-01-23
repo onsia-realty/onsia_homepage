@@ -493,10 +493,19 @@ node scripts/save-homepage-images.mjs 2025000524
    - `prisma/schema.prisma` 수정 후 재생성 필요
    - TypeScript 서버 재시작
 
+## 🌐 도메인 & 호스팅
+
+| 항목 | 정보 |
+|------|------|
+| **도메인** | onsia.city |
+| **구매처** | 호스팅KR (https://www.hosting.kr) |
+| **관리** | 호스팅KR 마이페이지에서 갱신/DNS 설정 |
+
 ## 🔗 관련 링크
 
 - **프로젝트 저장소**: (Git 저장소 URL 추가 예정)
 - **배포 URL**: https://www.onsia.city
+- **도메인 관리**: https://www.hosting.kr (호스팅KR)
 - **Prisma Studio**: `npx prisma studio` (http://localhost:5555)
 - **네이버 서치어드바이저**: https://searchadvisor.naver.com
 - **Google Search Console**: https://search.google.com/search-console
