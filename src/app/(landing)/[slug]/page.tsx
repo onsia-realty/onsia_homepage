@@ -44,7 +44,7 @@ export default async function LandingPage({ params }: Props) {
 
   return (
     <div
-      className={`min-h-screen bg-white ${page.show_bottom_bar ? 'pb-16' : ''}`}
+      className={`min-h-screen bg-white ${page.show_bottom_bar ? 'pb-14' : ''}`}
       style={{ '--primary': primaryColor, '--accent': accentColor } as React.CSSProperties}
     >
       {/* Hero Section */}
@@ -57,27 +57,27 @@ export default async function LandingPage({ params }: Props) {
             className="w-full block"
           />
           {page.subtitle && (
-            <div className="absolute inset-0 flex items-end justify-center pb-8 md:pb-12 bg-gradient-to-t from-black/60 via-transparent to-transparent">
+            <div className="absolute inset-0 flex items-end justify-center pb-6 sm:pb-8 md:pb-12 bg-gradient-to-t from-black/70 via-black/20 to-transparent">
               <div className="text-center text-white px-4">
-                <h1 className="text-2xl md:text-5xl font-bold mb-2 drop-shadow-lg">{page.project_name}</h1>
-                <p className="text-lg md:text-2xl font-medium drop-shadow-md">{page.subtitle}</p>
+                <h1 className="text-xl sm:text-3xl md:text-5xl font-bold mb-1 md:mb-2 drop-shadow-lg">{page.project_name}</h1>
+                <p className="text-sm sm:text-lg md:text-2xl font-medium drop-shadow-md opacity-90">{page.subtitle}</p>
               </div>
             </div>
           )}
         </section>
       ) : (
         <section
-          className="py-20 px-4 text-center text-white"
+          className="py-12 sm:py-16 md:py-20 px-4 text-center text-white"
           style={{ background: `linear-gradient(135deg, ${primaryColor}, ${primaryColor}dd)` }}
         >
           {page.logo_image && (
-            <div className="mb-6">
+            <div className="mb-4 md:mb-6">
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={page.logo_image} alt="로고" className="mx-auto h-16" />
+              <img src={page.logo_image} alt="로고" className="mx-auto h-10 md:h-16" />
             </div>
           )}
-          <h1 className="text-3xl md:text-5xl font-bold mb-3">{page.project_name}</h1>
-          {page.subtitle && <p className="text-xl md:text-2xl opacity-90">{page.subtitle}</p>}
+          <h1 className="text-2xl sm:text-3xl md:text-5xl font-bold mb-2 md:mb-3">{page.project_name}</h1>
+          {page.subtitle && <p className="text-base sm:text-xl md:text-2xl opacity-90">{page.subtitle}</p>}
         </section>
       )}
 
@@ -99,30 +99,30 @@ export default async function LandingPage({ params }: Props) {
       )}
 
       {/* Top Inquiry Form */}
-      <section id="inquiry-top" className="py-10 px-4" style={{ backgroundColor: primaryColor }}>
+      <section id="inquiry-top" className="py-8 sm:py-10 px-4" style={{ backgroundColor: primaryColor }}>
         <div className="max-w-lg mx-auto">
-          <h2 className="text-2xl font-bold text-center text-white mb-6">관심고객 등록</h2>
+          <h2 className="text-xl sm:text-2xl font-bold text-center text-white mb-4 sm:mb-6">관심고객 등록</h2>
           <InquiryForm pageId={page.id} accentColor={accentColor} />
         </div>
       </section>
 
       {/* Custom Sections (optional) */}
       {page.sections && page.sections.length > 0 && page.sections.map((section, i) => (
-        <section key={section.id || i} className={`py-12 px-4 ${i % 2 === 0 ? 'bg-white' : 'bg-gray-50'}`}>
+        <section key={section.id || i} className={`py-8 sm:py-12 px-4 ${i % 2 === 0 ? 'bg-white' : 'bg-gray-50'}`}>
           <div className="max-w-4xl mx-auto">
             {section.title && (
-              <h2 className="text-2xl font-bold text-center mb-6" style={{ color: primaryColor }}>
+              <h2 className="text-xl sm:text-2xl font-bold text-center mb-4 sm:mb-6" style={{ color: primaryColor }}>
                 {section.title}
               </h2>
             )}
             {section.content && (
               <div
-                className="prose prose-lg max-w-none text-gray-700 text-center"
+                className="prose prose-sm sm:prose-lg max-w-none text-gray-700 text-center"
                 dangerouslySetInnerHTML={{ __html: section.content }}
               />
             )}
             {section.images && section.images.length > 0 && (
-              <div className="mt-6 space-y-2">
+              <div className="mt-4 sm:mt-6 space-y-1">
                 {section.images.map((img, j) => (
                   // eslint-disable-next-line @next/next/no-img-element
                   <img
@@ -141,7 +141,7 @@ export default async function LandingPage({ params }: Props) {
 
       {/* Full-width Gallery Images (vertical scroll) */}
       {page.gallery && page.gallery.length > 0 && (
-        <section>
+        <section className="max-w-5xl mx-auto">
           {page.gallery.map((img, i) => (
             // eslint-disable-next-line @next/next/no-img-element
             <img
@@ -156,28 +156,23 @@ export default async function LandingPage({ params }: Props) {
       )}
 
       {/* Bottom Inquiry Form */}
-      <section id="inquiry-bottom" className="py-10 px-4" style={{ backgroundColor: primaryColor }}>
+      <section id="inquiry-bottom" className="py-8 sm:py-10 px-4" style={{ backgroundColor: primaryColor }}>
         <div className="max-w-lg mx-auto">
-          <h2 className="text-2xl font-bold text-center text-white mb-6">관심고객 등록</h2>
+          <h2 className="text-xl sm:text-2xl font-bold text-center text-white mb-4 sm:mb-6">관심고객 등록</h2>
           <InquiryForm pageId={page.id} accentColor={accentColor} />
         </div>
       </section>
 
       {/* Footer */}
-      <footer className="py-8 px-4 bg-gray-900 text-gray-400 text-center text-sm leading-relaxed">
+      <footer className="py-6 sm:py-8 px-4 bg-gray-900 text-gray-400 text-center text-xs sm:text-sm leading-relaxed">
         {page.business_info && (
-          <div className="mb-4 space-y-0.5">
+          <div className="mb-3 sm:mb-4">
             {page.business_info.company_name && (
               <p className="font-medium text-gray-300">{page.business_info.company_name}</p>
             )}
-            {page.business_info.ceo && <p>대표: {page.business_info.ceo}</p>}
-            {page.business_info.registration_number && (
-              <p>사업자등록번호: {page.business_info.registration_number}</p>
-            )}
-            {page.business_info.address && <p>{page.business_info.address}</p>}
           </div>
         )}
-        <p className="text-gray-500 max-w-2xl mx-auto">
+        <p className="text-gray-500 max-w-2xl mx-auto text-xs sm:text-sm">
           {page.business_info?.disclaimer ||
             '본 홍보물의 내용은 소비자의 이해를 돕기 위해 제작된 것으로, 개발·분양사의 사정에 따라 변경될 수 있으며 법적 효력이 없습니다. 계약 시에는 반드시 모집공고문과 계약서를 기준으로 확인하시기 바랍니다.'}
         </p>
@@ -186,12 +181,12 @@ export default async function LandingPage({ params }: Props) {
             href={page.homepage_url}
             target="_blank"
             rel="noopener noreferrer"
-            className="mt-3 inline-block text-gray-500 hover:text-gray-300 underline"
+            className="mt-2 sm:mt-3 inline-block text-gray-500 hover:text-gray-300 underline text-xs sm:text-sm"
           >
             공식 홈페이지 바로가기
           </a>
         )}
-        <p className="mt-3 text-gray-600">&copy; {new Date().getFullYear()} ONSIA. All rights reserved.</p>
+        <p className="mt-2 sm:mt-3 text-gray-600 text-xs">&copy; {new Date().getFullYear()} ONSIA. All rights reserved.</p>
       </footer>
 
       {/* Fixed Bottom Bar */}
