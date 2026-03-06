@@ -21,7 +21,7 @@ export const metadata: Metadata = {
     '부동산 테크',
     '프롭테크'
   ],
-  authors: [{ name: '온시아', url: 'https://onsia.com' }],
+  authors: [{ name: '온시아', url: 'https://www.onsia.city' }],
   creator: '온시아',
   publisher: '온시아',
   robots: {
@@ -38,7 +38,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: '회사소개 - 온시아 | AI 바이브 코딩 전문가와 블록체인 부동산 혁신',
     description: '온시아는 AI와 블록체인 기술을 융합하여 부동산 산업의 새로운 패러다임을 제시하는 스마트 테크 기업입니다.',
-    url: 'https://onsia.com/about',
+    url: 'https://www.onsia.city/about',
     siteName: '온시아',
     images: [
       {
@@ -58,7 +58,7 @@ export const metadata: Metadata = {
     images: ['/og/about.jpg'],
   },
   alternates: {
-    canonical: 'https://onsia.com/about',
+    canonical: 'https://www.onsia.city/about',
   },
 };
 
