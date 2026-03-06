@@ -4,6 +4,7 @@ import { getLandingPageBySlug, getLandingPages, getAgentByCode, type LandingPage
 import InquiryForm from './InquiryForm'
 import BottomBar from './BottomBar'
 import CallBanner from './CallBanner'
+import PopupModal from './PopupModal'
 
 interface Props {
   params: Promise<{ slug: string }>
@@ -141,14 +142,14 @@ export default async function LandingPage({ params, searchParams }: Props) {
               />
             )}
             {section.images && section.images.length > 0 && (
-              <div className="mt-4 sm:mt-6 space-y-1">
+              <div className="mt-4 sm:mt-6 space-y-4 sm:space-y-6">
                 {section.images.map((img, j) => (
                   // eslint-disable-next-line @next/next/no-img-element
                   <img
                     key={j}
                     src={img}
                     alt={`${section.title || page.project_name} ${j + 1}`}
-                    className="w-full block"
+                    className="w-full block rounded-lg"
                     loading="lazy"
                   />
                 ))}
@@ -158,9 +159,9 @@ export default async function LandingPage({ params, searchParams }: Props) {
         </section>
       ))}
 
-      {/* Full-width Gallery Images (vertical scroll) */}
+      {/* Full-width Gallery Images (seamless vertical stack) */}
       {page.gallery && page.gallery.length > 0 && (
-        <section className="max-w-5xl mx-auto">
+        <section className="gallery-seamless" style={{ backgroundColor: primaryColor, fontSize: 0, lineHeight: 0 }}>
           {page.gallery.map((img, i) => (
             // eslint-disable-next-line @next/next/no-img-element
             <img
@@ -195,22 +196,29 @@ export default async function LandingPage({ params, searchParams }: Props) {
           {page.business_info?.disclaimer ||
             '본 홍보물의 내용은 소비자의 이해를 돕기 위해 제작된 것으로, 개발·분양사의 사정에 따라 변경될 수 있으며 법적 효력이 없습니다. 계약 시에는 반드시 모집공고문과 계약서를 기준으로 확인하시기 바랍니다.'}
         </p>
-        {page.homepage_url && (
-          <a
-            href={page.homepage_url}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="mt-2 sm:mt-3 inline-block text-gray-500 hover:text-gray-300 underline text-xs sm:text-sm"
-          >
-            공식 홈페이지 바로가기
-          </a>
-        )}
+        <a
+          href="https://www.applyhome.co.kr/ai/aia/selectOtherLttotPblancListView.do"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="mt-2 sm:mt-3 inline-block text-gray-500 hover:text-gray-300 underline text-xs sm:text-sm"
+        >
+          청약홈 바로가기
+        </a>
         <p className="mt-2 sm:mt-3 text-gray-600 text-xs">&copy; {new Date().getFullYear()} ONSIA. All rights reserved.</p>
       </footer>
 
       {/* Fixed Bottom Bar */}
       {page.show_bottom_bar && (
         <BottomBar phoneNumber={effectivePhone || null} kakaoUrl={effectiveKakao || null} />
+      )}
+
+      {/* Popup Modal */}
+      {slug === 'urbanhomes' && (
+        <PopupModal
+          imageUrl="https://static.wixstatic.com/media/a5ff46_031e0795c8dc484ebfb8e3b4a1ee9541~mv2.jpg/v1/fill/w_460,h_624,al_c,lg_1,q_80,enc_avif,quality_auto/1_%ED%8C%9D%EC%97%85%EC%B0%BD.jpg"
+          linkUrl="https://www.applyhome.co.kr/ai/aia/selectOtherLttotPblancListView.do"
+          alt="청약홈 안내"
+        />
       )}
     </div>
   )
