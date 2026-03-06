@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import { FloatingContact } from "@/components/FloatingContact";
 import AnalyticsTracker from "@/components/analytics/AnalyticsTracker";
 import SessionProvider from "@/components/auth/SessionProvider";
 
@@ -170,7 +169,6 @@ export default function RootLayout({
         )}
         <SessionProvider>
           {children}
-          <FloatingContact />
         </SessionProvider>
       </body>
     </html>
