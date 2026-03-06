@@ -6,9 +6,10 @@ import { submitLandingInquiry } from '@/lib/supabase-landing'
 interface Props {
   pageId: string
   accentColor: string
+  agentCode?: string
 }
 
-export default function InquiryForm({ pageId, accentColor }: Props) {
+export default function InquiryForm({ pageId, accentColor, agentCode }: Props) {
   const [name, setName] = useState('')
   const [phone, setPhone] = useState('')
   const [agreed, setAgreed] = useState(false)
@@ -38,6 +39,7 @@ export default function InquiryForm({ pageId, accentColor }: Props) {
       page_id: pageId,
       name: name.trim(),
       phone: phone.trim(),
+      agent_code: agentCode || urlParams.get('agent') || undefined,
       utm_source: urlParams.get('utm_source') || undefined,
       utm_medium: urlParams.get('utm_medium') || undefined,
       utm_campaign: urlParams.get('utm_campaign') || undefined,

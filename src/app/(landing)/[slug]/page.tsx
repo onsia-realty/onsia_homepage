@@ -1,11 +1,13 @@
 import { Metadata } from 'next'
 import { notFound } from 'next/navigation'
-import { getLandingPageBySlug, getLandingPages, type LandingPage as LandingPageType } from '@/lib/supabase-landing'
+import { getLandingPageBySlug, getLandingPages, getAgentByCode, type LandingPage as LandingPageType } from '@/lib/supabase-landing'
 import InquiryForm from './InquiryForm'
 import BottomBar from './BottomBar'
+import CallBanner from './CallBanner'
 
 interface Props {
   params: Promise<{ slug: string }>
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
@@ -33,11 +35,20 @@ export async function generateStaticParams() {
 
 export const revalidate = 3600
 
-export default async function LandingPage({ params }: Props) {
+export default async function LandingPage({ params, searchParams }: Props) {
   const { slug } = await params
+  const { agent: agentCode } = await searchParams
   const page = await getLandingPageBySlug(slug)
 
   if (!page) notFound()
+
+  // Agent 조회 (URL ?agent=xxx)
+  const agentCodeStr = typeof agentCode === 'string' ? agentCode : undefined
+  const agent = agentCodeStr ? await getAgentByCode(page.id, agentCodeStr) : null
+
+  // 유효 전화번호/카톡 결정 (agent 우선, 없으면 대표)
+  const effectivePhone = agent?.phone || page.phone_number
+  const effectiveKakao = agent?.kakao_url || page.kakao_chat_url
 
   const primaryColor = page.primary_color || '#1E3A5F'
   const accentColor = page.accent_color || '#C9A96E'
@@ -81,6 +92,14 @@ export default async function LandingPage({ params }: Props) {
         </section>
       )}
 
+      {/* Call Banner */}
+      {effectivePhone && (
+        <CallBanner
+          phone={effectivePhone}
+          agentName={agent?.name}
+        />
+      )}
+
       {/* YouTube Video */}
       {page.youtube_id && (
         <section className="bg-black">
@@ -102,7 +121,7 @@ export default async function LandingPage({ params }: Props) {
       <section id="inquiry-top" className="py-8 sm:py-10 px-4" style={{ backgroundColor: primaryColor }}>
         <div className="max-w-lg mx-auto">
           <h2 className="text-xl sm:text-2xl font-bold text-center text-white mb-4 sm:mb-6">관심고객 등록</h2>
-          <InquiryForm pageId={page.id} accentColor={accentColor} />
+          <InquiryForm pageId={page.id} accentColor={accentColor} agentCode={agentCodeStr} />
         </div>
       </section>
 
@@ -159,7 +178,7 @@ export default async function LandingPage({ params }: Props) {
       <section id="inquiry-bottom" className="py-8 sm:py-10 px-4" style={{ backgroundColor: primaryColor }}>
         <div className="max-w-lg mx-auto">
           <h2 className="text-xl sm:text-2xl font-bold text-center text-white mb-4 sm:mb-6">관심고객 등록</h2>
-          <InquiryForm pageId={page.id} accentColor={accentColor} />
+          <InquiryForm pageId={page.id} accentColor={accentColor} agentCode={agentCodeStr} />
         </div>
       </section>
 
@@ -191,7 +210,7 @@ export default async function LandingPage({ params }: Props) {
 
       {/* Fixed Bottom Bar */}
       {page.show_bottom_bar && (
-        <BottomBar phoneNumber={page.phone_number} kakaoUrl={page.kakao_chat_url} />
+        <BottomBar phoneNumber={effectivePhone || null} kakaoUrl={effectiveKakao || null} />
       )}
     </div>
   )

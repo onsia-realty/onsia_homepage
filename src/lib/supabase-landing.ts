@@ -82,12 +82,23 @@ export interface LandingInquiry {
   name: string
   phone: string
   message: string | null
+  agent_code: string | null
   utm_source: string | null
   utm_medium: string | null
   utm_campaign: string | null
   synced_to_crm: boolean
   status: 'pending' | 'contacted' | 'completed'
   created_at: string
+}
+
+export interface LandingAgent {
+  id: string
+  page_id: string
+  code: string
+  name: string
+  phone: string
+  kakao_url: string | null
+  is_active: boolean
 }
 
 // 공개 페이지 조회 (slug로)
@@ -123,12 +134,31 @@ export async function getLandingPages(): Promise<LandingPage[]> {
   return data as LandingPage[]
 }
 
+// Agent 조회 (page_id + code)
+export async function getAgentByCode(pageId: string, code: string): Promise<LandingAgent | null> {
+  const { data, error } = await supabaseLanding
+    .from('agents')
+    .select('*')
+    .eq('page_id', pageId)
+    .eq('code', code)
+    .eq('is_active', true)
+    .single()
+
+  if (error) {
+    console.error('Error fetching agent:', error)
+    return null
+  }
+
+  return data as LandingAgent
+}
+
 // 문의 등록
 export async function submitLandingInquiry(inquiry: {
   page_id: string
   name: string
   phone: string
   message?: string
+  agent_code?: string
   utm_source?: string
   utm_medium?: string
   utm_campaign?: string

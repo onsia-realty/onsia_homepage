@@ -71,7 +71,7 @@ const PAGE_DATA = {
   location: '서울특별시 성동구 도선동 114 외 3필지',
   total_units: null,
   move_in_date: null,
-  phone_number: '1668-1252',
+  phone_number: '1668-5257',
   homepage_url: 'https://www.xn--oy2bi8bx5ijis6j0j9x343h.kr/',
   hero_image: HERO_IMAGE,
   logo_image: img('a5ff46_56caa0d0504644d8a470d30abab4b068', 'png', '자산 3로고'),
