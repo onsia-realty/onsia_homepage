@@ -16,14 +16,14 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: {
-    default: "ONSIA - 부동산 AI 플랫폼",
-    template: "%s | ONSIA",
+    default: "온시아(ONSIA) - 부동산 AI 플랫폼 | 분양 청약 경매 정보",
+    template: "%s | 온시아(ONSIA)",
   },
-  description: "AI 기반 부동산 정보 플랫폼. 분양권, 경매, 청약 정보를 한눈에 확인하세요.",
-  keywords: ["부동산", "분양권", "경매", "청약", "아파트 분양", "온시아", "부동산 AI", "법원경매"],
-  authors: [{ name: "ONSIA" }],
-  creator: "ONSIA",
-  publisher: "ONSIA",
+  description: "온시아는 AI 기반 부동산 정보 플랫폼입니다. 아파트 분양권 거래, 청약 일정, 법원경매 물건, AI 시세분석까지 한눈에 확인하세요.",
+  keywords: ["온시아", "ONSIA", "부동산", "분양권", "경매", "청약", "아파트 분양", "부동산 AI", "법원경매", "분양권 거래", "청약 일정", "아파트 시세", "부동산 플랫폼"],
+  authors: [{ name: "온시아(ONSIA)" }],
+  creator: "온시아(ONSIA)",
+  publisher: "온시아(ONSIA)",
   metadataBase: new URL("https://www.onsia.city"),
   alternates: {
     canonical: "/",
@@ -32,22 +32,22 @@ export const metadata: Metadata = {
     type: "website",
     locale: "ko_KR",
     url: "https://www.onsia.city",
-    siteName: "ONSIA",
-    title: "ONSIA - 부동산 AI 플랫폼",
-    description: "AI 기반 부동산 정보 플랫폼. 분양권, 경매, 청약 정보를 한눈에 확인하세요.",
+    siteName: "온시아(ONSIA)",
+    title: "온시아(ONSIA) - 부동산 AI 플랫폼 | 분양 청약 경매",
+    description: "온시아는 AI 기반 부동산 정보 플랫폼입니다. 아파트 분양권 거래, 청약 일정, 법원경매 물건, AI 시세분석까지 한눈에 확인하세요.",
     images: [
       {
         url: "/og-image.png",
         width: 1200,
         height: 630,
-        alt: "ONSIA - 부동산 AI 플랫폼",
+        alt: "온시아(ONSIA) - 부동산 AI 플랫폼",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "ONSIA - 부동산 AI 플랫폼",
-    description: "온시아 공인중개사가 엄선한 프리미엄 분양권 매물 정보",
+    title: "온시아(ONSIA) - 부동산 AI 플랫폼",
+    description: "온시아 - AI 기반 부동산 정보 플랫폼. 분양권, 청약, 경매 정보를 한눈에.",
     images: ["/og-image.png"],
   },
   robots: {
@@ -75,7 +75,8 @@ const jsonLd = {
     {
       "@type": "Organization",
       "@id": "https://www.onsia.city/#organization",
-      "name": "ONSIA 온시아",
+      "name": "온시아(ONSIA)",
+      "alternateName": ["온시아", "ONSIA", "onsia"],
       "url": "https://www.onsia.city",
       "logo": {
         "@type": "ImageObject",
@@ -83,11 +84,12 @@ const jsonLd = {
         "width": 512,
         "height": 512
       },
-      "description": "AI 기반 부동산 정보 플랫폼. 분양권, 경매, 청약 정보 제공",
+      "description": "온시아는 AI 기반 부동산 정보 플랫폼입니다. 분양권 거래, 청약 일정, 법원경매, AI 시세분석 서비스를 제공합니다.",
+      "foundingDate": "2024",
       "sameAs": [],
       "contactPoint": {
         "@type": "ContactPoint",
-        "telephone": "+82-2-0000-0000",
+        "telephone": "+82-1668-5257",
         "contactType": "customer service",
         "areaServed": "KR",
         "availableLanguage": "Korean"
@@ -97,8 +99,9 @@ const jsonLd = {
       "@type": "WebSite",
       "@id": "https://www.onsia.city/#website",
       "url": "https://www.onsia.city",
-      "name": "ONSIA - 부동산 AI 플랫폼",
-      "description": "AI 기반 부동산 정보 플랫폼. 분양권, 경매, 청약 정보를 한눈에 확인하세요.",
+      "name": "온시아(ONSIA) - 부동산 AI 플랫폼",
+      "alternateName": "온시아",
+      "description": "온시아는 AI 기반 부동산 정보 플랫폼입니다. 아파트 분양권 거래, 청약 일정, 법원경매 물건, AI 시세분석까지 한눈에 확인하세요.",
       "publisher": {
         "@id": "https://www.onsia.city/#organization"
       },
@@ -115,10 +118,12 @@ const jsonLd = {
     {
       "@type": "RealEstateAgent",
       "@id": "https://www.onsia.city/#business",
-      "name": "온시아 공인중개사",
+      "name": "온시아(ONSIA)",
+      "alternateName": "온시아",
       "url": "https://www.onsia.city",
       "image": "https://www.onsia.city/og-image.png",
       "priceRange": "$$",
+      "telephone": "+82-1668-5257",
       "address": {
         "@type": "PostalAddress",
         "addressLocality": "서울",
@@ -134,7 +139,43 @@ const jsonLd = {
         "@type": "Country",
         "name": "대한민국"
       },
-      "serviceType": ["분양권 거래", "부동산 경매", "청약 정보", "AI 시세분석"]
+      "serviceType": ["분양권 거래", "부동산 경매", "청약 정보", "AI 시세분석", "아파트 분양 상담"]
+    },
+    {
+      "@type": "BreadcrumbList",
+      "@id": "https://www.onsia.city/#breadcrumb",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "홈",
+          "item": "https://www.onsia.city"
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": "분양정보",
+          "item": "https://www.onsia.city/subscription"
+        },
+        {
+          "@type": "ListItem",
+          "position": 3,
+          "name": "분양권",
+          "item": "https://www.onsia.city/properties"
+        },
+        {
+          "@type": "ListItem",
+          "position": 4,
+          "name": "경매정보",
+          "item": "https://www.onsia.city/auctions"
+        },
+        {
+          "@type": "ListItem",
+          "position": 5,
+          "name": "AI 부동산시세",
+          "item": "https://www.onsia.city/market"
+        }
+      ]
     }
   ]
 };

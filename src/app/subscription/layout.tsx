@@ -48,14 +48,14 @@ const subscriptionJsonLd = {
 };
 
 export const metadata: Metadata = {
-  title: '분양정보 - 전국 아파트 청약 일정 | ONSIA',
+  title: '분양정보 - 전국 아파트 청약 일정 | 온시아(ONSIA)',
   description: '전국 아파트 분양 청약 일정, 모집공고, 당첨자 발표를 한눈에! 서울, 경기, 인천 등 수도권 및 전국 분양정보를 지도와 목록으로 확인하세요. 실시간 청약 경쟁률, 분양가, 입주 예정일까지.',
-  keywords: ['아파트 분양', '청약', '분양 일정', '모집공고', '당첨자 발표', '서울 분양', '경기 분양', '수도권 분양', '분양권', '신축 아파트'],
+  keywords: ['온시아', '아파트 분양', '청약', '분양 일정', '모집공고', '당첨자 발표', '서울 분양', '경기 분양', '수도권 분양', '분양권', '신축 아파트'],
   openGraph: {
-    title: '분양정보 - 전국 아파트 청약 일정 | ONSIA',
+    title: '분양정보 - 전국 아파트 청약 일정 | 온시아(ONSIA)',
     description: '전국 아파트 분양 청약 일정, 모집공고, 당첨자 발표를 한눈에! 실시간 청약 경쟁률과 분양가 정보.',
     url: 'https://www.onsia.city/subscription',
-    siteName: 'ONSIA - 온시아 부동산',
+    siteName: '온시아(ONSIA)',
     images: [
       {
         url: 'https://www.onsia.city/og-subscription.png',
@@ -69,7 +69,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: '분양정보 - 전국 아파트 청약 일정 | ONSIA',
+    title: '분양정보 - 전국 아파트 청약 일정 | 온시아(ONSIA)',
     description: '전국 아파트 분양 청약 일정, 모집공고, 당첨자 발표를 한눈에!',
     images: ['https://www.onsia.city/og-subscription.png'],
   },

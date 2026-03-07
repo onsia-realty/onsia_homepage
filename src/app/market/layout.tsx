@@ -53,14 +53,14 @@ const marketJsonLd = {
 };
 
 export const metadata: Metadata = {
-  title: 'AI 부동산시세 - 서울 아파트 실거래가 조회 | ONSIA',
+  title: 'AI 부동산시세 - 서울 아파트 실거래가 조회 | 온시아(ONSIA)',
   description: '서울 아파트 실거래가를 AI가 분석! 강남, 송파, 서초 등 구별 실시간 시세 조회. 매매, 전세 거래 내역과 가격 변동 추이를 지도에서 한눈에 확인하세요. 국토교통부 실거래가 기반.',
-  keywords: ['아파트 실거래가', '부동산 시세', '서울 아파트 시세', '강남 아파트', '송파 아파트', 'AI 시세분석', '실거래 조회', '아파트 가격', '부동산 시세 조회'],
+  keywords: ['온시아', '아파트 실거래가', '부동산 시세', '서울 아파트 시세', '강남 아파트', '송파 아파트', 'AI 시세분석', '실거래 조회', '아파트 가격', '부동산 시세 조회'],
   openGraph: {
-    title: 'AI 부동산시세 - 서울 아파트 실거래가 조회 | ONSIA',
+    title: 'AI 부동산시세 - 서울 아파트 실거래가 조회 | 온시아(ONSIA)',
     description: '서울 아파트 실거래가를 AI가 분석! 구별 실시간 시세 조회, 매매/전세 거래 내역과 가격 변동 추이.',
     url: 'https://www.onsia.city/market',
-    siteName: 'ONSIA - 온시아 부동산',
+    siteName: '온시아(ONSIA)',
     images: [
       {
         url: 'https://www.onsia.city/og-market.png',
@@ -74,7 +74,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'AI 부동산시세 - 서울 아파트 실거래가 조회 | ONSIA',
+    title: 'AI 부동산시세 - 서울 아파트 실거래가 조회 | 온시아(ONSIA)',
     description: '서울 아파트 실거래가를 AI가 분석! 실시간 시세 조회.',
     images: ['https://www.onsia.city/og-market.png'],
   },
