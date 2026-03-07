@@ -30,22 +30,9 @@ export default function BottomBar({ phoneNumber, kakaoUrl }: Props) {
             <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
               <path d="M12 3C6.48 3 2 6.58 2 10.94c0 2.82 1.87 5.3 4.69 6.69-.17.6-.62 2.17-.71 2.51-.11.4.15.39.31.28.13-.08 2.05-1.38 2.88-1.94.91.14 1.85.21 2.83.21 5.52 0 10-3.58 10-7.94S17.52 3 12 3z" />
             </svg>
-            카톡문의
+            카카오톡 문의
           </a>
         )}
-        <a
-          href="#inquiry-bottom"
-          onClick={(e) => {
-            e.preventDefault()
-            document.getElementById('inquiry-bottom')?.scrollIntoView({ behavior: 'smooth' })
-          }}
-          className="flex-1 flex items-center justify-center gap-1.5 h-10 text-sm font-bold text-white bg-green-600 rounded-lg active:opacity-80"
-        >
-          <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
-            <path d="M19 4h-1V2h-2v2H8V2H6v2H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V9h14v11zM7 11h5v5H7v-5z" />
-          </svg>
-          방문예약
-        </a>
       </div>
     </div>
   )
