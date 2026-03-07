@@ -122,7 +122,7 @@ export default async function LandingPage({ params, searchParams }: Props) {
       <section id="inquiry-top" className="py-8 sm:py-10 px-4" style={{ backgroundColor: primaryColor }}>
         <div className="max-w-lg mx-auto">
           <h2 className="text-xl sm:text-2xl font-bold text-center text-white mb-4 sm:mb-6">관심고객 등록</h2>
-          <InquiryForm pageId={page.id} accentColor={accentColor} agentCode={agentCodeStr} />
+          <InquiryForm pageId={page.id} slug={slug} accentColor={accentColor} agentCode={agentCodeStr} agentName={agent?.name} />
         </div>
       </section>
 
@@ -179,7 +179,7 @@ export default async function LandingPage({ params, searchParams }: Props) {
       <section id="inquiry-bottom" className="py-8 sm:py-10 px-4" style={{ backgroundColor: primaryColor }}>
         <div className="max-w-lg mx-auto">
           <h2 className="text-xl sm:text-2xl font-bold text-center text-white mb-4 sm:mb-6">관심고객 등록</h2>
-          <InquiryForm pageId={page.id} accentColor={accentColor} agentCode={agentCodeStr} />
+          <InquiryForm pageId={page.id} slug={slug} accentColor={accentColor} agentCode={agentCodeStr} agentName={agent?.name} />
         </div>
       </section>
 

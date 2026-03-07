@@ -1,15 +1,16 @@
 'use client'
 
 import { useState } from 'react'
-import { submitLandingInquiry } from '@/lib/supabase-landing'
 
 interface Props {
   pageId: string
+  slug: string
   accentColor: string
   agentCode?: string
+  agentName?: string
 }
 
-export default function InquiryForm({ pageId, accentColor, agentCode }: Props) {
+export default function InquiryForm({ pageId, slug, accentColor, agentCode, agentName }: Props) {
   const [name, setName] = useState('')
   const [phone, setPhone] = useState('')
   const [agreed, setAgreed] = useState(false)
@@ -35,23 +36,34 @@ export default function InquiryForm({ pageId, accentColor, agentCode }: Props) {
 
     const urlParams = new URLSearchParams(window.location.search)
 
-    const result = await submitLandingInquiry({
-      page_id: pageId,
-      name: name.trim(),
-      phone: phone.trim(),
-      agent_code: agentCode || urlParams.get('agent') || undefined,
-      utm_source: urlParams.get('utm_source') || undefined,
-      utm_medium: urlParams.get('utm_medium') || undefined,
-      utm_campaign: urlParams.get('utm_campaign') || undefined,
-    })
+    try {
+      const res = await fetch('/api/landing-inquiry', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          page_id: pageId,
+          slug,
+          name: name.trim(),
+          phone: phone.trim(),
+          agent_code: agentCode || urlParams.get('agent') || undefined,
+          agent_name: agentName,
+          utm_source: urlParams.get('utm_source') || undefined,
+          utm_medium: urlParams.get('utm_medium') || undefined,
+          utm_campaign: urlParams.get('utm_campaign') || undefined,
+        }),
+      })
+      const result = await res.json()
 
-    setIsSubmitting(false)
-
-    if (result.success) {
-      setSubmitted(true)
-    } else {
+      if (result.success) {
+        setSubmitted(true)
+      } else {
+        setError('전송 중 오류가 발생했습니다. 다시 시도해주세요.')
+      }
+    } catch {
       setError('전송 중 오류가 발생했습니다. 다시 시도해주세요.')
     }
+
+    setIsSubmitting(false)
   }
 
   if (submitted) {
