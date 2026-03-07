@@ -27,7 +27,11 @@ export async function POST(request: NextRequest) {
     }
 
     // SMS 알림 (비동기, 실패해도 문의 등록은 성공)
-    const projectName = slug || '랜딩페이지'
+    let projectName = '랜딩페이지'
+    if (slug) {
+      const page = await getLandingPageBySlug(slug)
+      projectName = page?.project_name || slug
+    }
     notifyAdmin({ name, phone, projectName, agentName: agent_name }).catch(() => {})
 
     return NextResponse.json({ success: true })
