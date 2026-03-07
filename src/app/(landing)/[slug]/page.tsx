@@ -122,7 +122,7 @@ export default async function LandingPage({ params, searchParams }: Props) {
       {agent ? (
         <section className="bg-black">
           <video
-            src="/왕십리 정원오 성동구청장.mp4"
+            src="https://uwddeseqwdsryvuoulsm.supabase.co/storage/v1/object/public/landing/videos/wangsimni-jeongwono-seongdong.mp4"
             controls
             playsInline
             preload="metadata"
@@ -191,7 +191,7 @@ export default async function LandingPage({ params, searchParams }: Props) {
       {agent ? (
         <section className="bg-black">
           <video
-            src="/정원오 서울시장.mp4"
+            src="https://uwddeseqwdsryvuoulsm.supabase.co/storage/v1/object/public/landing/videos/jeongwono-seoul.mp4"
             controls
             playsInline
             preload="metadata"
