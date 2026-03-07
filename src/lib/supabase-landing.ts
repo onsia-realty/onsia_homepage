@@ -134,9 +134,10 @@ export async function getLandingPages(): Promise<LandingPage[]> {
   return data as LandingPage[]
 }
 
-// Agent 조회 (page_id + code)
+// Agent 조회 (page_id + code) - 서버사이드 전용 (service_role)
 export async function getAgentByCode(pageId: string, code: string): Promise<LandingAgent | null> {
-  const { data, error } = await supabaseLanding
+  const admin = createLandingAdminClient()
+  const { data, error } = await admin
     .from('agents')
     .select('*')
     .eq('page_id', pageId)

@@ -38,12 +38,12 @@ export const revalidate = 3600
 
 export default async function LandingPage({ params, searchParams }: Props) {
   const { slug } = await params
-  const { agent: agentCode } = await searchParams
+  const { a: agentCode } = await searchParams
   const page = await getLandingPageBySlug(slug)
 
   if (!page) notFound()
 
-  // Agent 조회 (URL ?agent=xxx)
+  // Agent 조회 (URL ?a=xxx)
   const agentCodeStr = typeof agentCode === 'string' ? agentCode : undefined
   const agent = agentCodeStr ? await getAgentByCode(page.id, agentCodeStr) : null
 
@@ -118,13 +118,25 @@ export default async function LandingPage({ params, searchParams }: Props) {
         </section>
       )}
 
-      {/* Top Inquiry Form */}
-      <section id="inquiry-top" className="py-8 sm:py-10 px-4" style={{ backgroundColor: primaryColor }}>
-        <div className="max-w-lg mx-auto">
-          <h2 className="text-xl sm:text-2xl font-bold text-center text-white mb-4 sm:mb-6">관심고객 등록</h2>
-          <InquiryForm pageId={page.id} slug={slug} accentColor={accentColor} agentCode={agentCodeStr} agentName={agent?.name} />
-        </div>
-      </section>
+      {/* Top: Inquiry Form (main) or Video 1 (agent) */}
+      {agent ? (
+        <section className="bg-black">
+          <video
+            src="/왕십리 정원오 성동구청장.mp4"
+            controls
+            playsInline
+            preload="metadata"
+            className="w-full block min-h-[30vh] object-contain"
+          />
+        </section>
+      ) : (
+        <section id="inquiry-top" className="py-8 sm:py-10 px-4" style={{ backgroundColor: primaryColor }}>
+          <div className="max-w-lg mx-auto">
+            <h2 className="text-xl sm:text-2xl font-bold text-center text-white mb-4 sm:mb-6">관심고객 등록</h2>
+            <InquiryForm pageId={page.id} slug={slug} accentColor={accentColor} agentCode={agentCodeStr} agentName={agent?.name} />
+          </div>
+        </section>
+      )}
 
       {/* Custom Sections (optional) */}
       {page.sections && page.sections.length > 0 && page.sections.map((section, i) => (
@@ -175,13 +187,25 @@ export default async function LandingPage({ params, searchParams }: Props) {
         </section>
       )}
 
-      {/* Bottom Inquiry Form */}
-      <section id="inquiry-bottom" className="py-8 sm:py-10 px-4" style={{ backgroundColor: primaryColor }}>
-        <div className="max-w-lg mx-auto">
-          <h2 className="text-xl sm:text-2xl font-bold text-center text-white mb-4 sm:mb-6">관심고객 등록</h2>
-          <InquiryForm pageId={page.id} slug={slug} accentColor={accentColor} agentCode={agentCodeStr} agentName={agent?.name} />
-        </div>
-      </section>
+      {/* Bottom: Inquiry Form (main) or Video 2 (agent) */}
+      {agent ? (
+        <section className="bg-black">
+          <video
+            src="/정원오 서울시장.mp4"
+            controls
+            playsInline
+            preload="metadata"
+            className="w-full block min-h-[30vh] object-contain"
+          />
+        </section>
+      ) : (
+        <section id="inquiry-bottom" className="py-8 sm:py-10 px-4" style={{ backgroundColor: primaryColor }}>
+          <div className="max-w-lg mx-auto">
+            <h2 className="text-xl sm:text-2xl font-bold text-center text-white mb-4 sm:mb-6">관심고객 등록</h2>
+            <InquiryForm pageId={page.id} slug={slug} accentColor={accentColor} agentCode={agentCodeStr} agentName={agent?.name} />
+          </div>
+        </section>
+      )}
 
       {/* Footer */}
       <footer className="py-6 sm:py-8 px-4 bg-gray-900 text-gray-400 text-center text-xs sm:text-sm leading-relaxed">
@@ -209,7 +233,7 @@ export default async function LandingPage({ params, searchParams }: Props) {
 
       {/* Fixed Bottom Bar */}
       {page.show_bottom_bar && (
-        <BottomBar phoneNumber={effectivePhone || null} kakaoUrl={effectiveKakao || null} />
+        <BottomBar phoneNumber={effectivePhone || null} kakaoUrl={effectiveKakao || null} isAgent={!!agent} />
       )}
 
       {/* Popup Modal */}

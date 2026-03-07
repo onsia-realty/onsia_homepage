@@ -6,17 +6,33 @@ interface Props {
 }
 
 export default function CallBanner({ phone, agentName }: Props) {
-  const label = agentName ? `${agentName} 직통번호` : '대표번호'
+  // agent 있으면: "010" + "3992-1510" / 없으면: "대표번호" + "1668-5257"
+  const isAgent = !!agentName
+  const prefix = isAgent ? '010' : '대표번호'
+  const displayNumber = isAgent ? phone.replace(/^010-?/, '') : phone
 
   return (
     <a href={`tel:${phone}`} className="call-banner block w-full">
       <div className="py-4 sm:py-5 px-4 text-center">
-        <span className="text-white font-extrabold text-xl sm:text-2xl md:text-3xl tracking-wide block mb-1">
-          {label}
-        </span>
-        <span className="call-banner-number font-black text-[15vw] sm:text-[12vw] md:text-[9vw] leading-none tracking-tight block">
-          {phone}
-        </span>
+        {isAgent ? (
+          <>
+            <span className="call-banner-number font-black text-[15vw] sm:text-[12vw] md:text-[9vw] leading-none tracking-tight block">
+              010
+            </span>
+            <span className="call-banner-number font-black text-[15vw] sm:text-[12vw] md:text-[9vw] leading-none tracking-tight block">
+              {displayNumber}
+            </span>
+          </>
+        ) : (
+          <>
+            <span className="text-white font-extrabold text-xl sm:text-2xl md:text-3xl tracking-wide block mb-1">
+              대표번호
+            </span>
+            <span className="call-banner-number font-black text-[15vw] sm:text-[12vw] md:text-[9vw] leading-none tracking-tight block">
+              {phone}
+            </span>
+          </>
+        )}
       </div>
       {/* Sparkle particles */}
       <div className="call-sparkles" aria-hidden="true">
