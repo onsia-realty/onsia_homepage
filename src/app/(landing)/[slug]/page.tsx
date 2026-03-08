@@ -11,18 +11,28 @@ interface Props {
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>
 }
 
-export async function generateMetadata({ params }: Props): Promise<Metadata> {
+export async function generateMetadata({ params, searchParams }: Props): Promise<Metadata> {
   const { slug } = await params
+  const { a: agentCode } = await searchParams
   const page = await getLandingPageBySlug(slug)
 
   if (!page) return { title: '페이지를 찾을 수 없습니다' }
 
+  // Agent별 OG 타이틀: "왕십리역 어반홈스 ㅣ교통의 중심 왕십리역 박찬효"
+  const agentCodeStr = typeof agentCode === 'string' ? agentCode : undefined
+  const agent = agentCodeStr ? await getAgentByCode(page.id, agentCodeStr) : null
+
+  const baseOgTitle = page.seo_title || page.project_name
+  const ogTitle = agent
+    ? baseOgTitle.replace(/초역세권\s*$/, '').trimEnd() + ' ' + agent.name
+    : baseOgTitle
+
   return {
-    title: page.seo_title || `${page.project_name} - 분양 안내`,
+    title: agent ? `${page.project_name} - ${agent.name}` : (page.seo_title || `${page.project_name} - 분양 안내`),
     description: page.seo_description || `${page.project_name} ${page.location || ''} 분양 정보`,
     keywords: page.seo_keywords || undefined,
     openGraph: {
-      title: page.seo_title || page.project_name,
+      title: ogTitle,
       description: page.seo_description || `${page.project_name} 분양 안내`,
       images: page.og_image ? [page.og_image] : page.hero_image ? [page.hero_image] : [],
     },
