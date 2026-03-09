@@ -100,7 +100,11 @@
       "Bash(node scripts/test-applyhome-crawl.mjs:*)",
       "Bash(node scripts/crawl-homepage-universal.mjs:*)",
       "Bash(node scripts/crawl-all-subscriptions.mjs:*)",
-      "Bash(node scripts/copy-selected-images.mjs:*)"
+      "Bash(node scripts/copy-selected-images.mjs:*)",
+      "Bash(cp /tmp/check-old-supabase.mjs \"D:/claude/홈페이지/onsia_homepage_new/check-old-supabase.mjs\" && cd \"D:/claude/홈페이지/onsia_homepage_new\" && node check-old-supabase.mjs 2>&1)",
+      "Bash(cp /tmp/check-neon-schema.mjs \"D:/claude/홈페이지/onsia_homepage_new/check-neon-schema.mjs\" && cd \"D:/claude/홈페이지/onsia_homepage_new\" && node check-neon-schema.mjs 2>&1)",
+      "Bash(cd \"D:/claude/홈페이지/onsia_homepage_new\" && echo \"010-9331-0967\" | npx vercel env add ADMIN_PHONE production 2>&1)",
+      "Bash(head:*)"
     ],
     "deny": [],
     "ask": []
