@@ -38,7 +38,7 @@ export const authOptions: NextAuthOptions = {
     error: "/auth/error",
   },
   secret: process.env.NEXTAUTH_SECRET,
-  debug: true,
+  debug: false,
 };
 
 const handler = NextAuth(authOptions);
