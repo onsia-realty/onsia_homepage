@@ -305,7 +305,7 @@ export default async function LandingPage({ params, searchParams }: Props) {
 
         {/* Footer */}
         <footer className="py-6 sm:py-8 px-4 bg-gray-900 text-gray-400 text-center text-xs sm:text-sm leading-relaxed">
-          {page.business_info && (
+          {!agent && page.business_info && (
             <div className="mb-3 sm:mb-4">
               {page.business_info.company_name && (
                 <p className="font-medium text-gray-300">{page.business_info.company_name}</p>
@@ -313,8 +313,12 @@ export default async function LandingPage({ params, searchParams }: Props) {
             </div>
           )}
           <p className="text-gray-500 max-w-2xl mx-auto text-xs sm:text-sm whitespace-pre-line">
-            {page.business_info?.disclaimer ||
-              '본 홍보물의 내용은 소비자의 이해를 돕기 위해 제작된 것으로, 개발·분양사의 사정에 따라 변경될 수 있으며 법적 효력이 없습니다. 계약 시에는 반드시 모집공고문과 계약서를 기준으로 확인하시기 바랍니다.'}
+            {agent
+              ? (page.business_info?.disclaimer || '본 홍보물의 내용은 소비자의 이해를 돕기 위해 제작된 것으로, 개발·분양사의 사정에 따라 변경될 수 있으며 법적 효력이 없습니다.')
+                .replace(/분양대행사\s*[:：].*?((?=시행)|$)/gs, '')
+                .trim()
+              : (page.business_info?.disclaimer ||
+                '본 홍보물의 내용은 소비자의 이해를 돕기 위해 제작된 것으로, 개발·분양사의 사정에 따라 변경될 수 있으며 법적 효력이 없습니다. 계약 시에는 반드시 모집공고문과 계약서를 기준으로 확인하시기 바랍니다.')}
           </p>
           <a
             href="https://www.applyhome.co.kr/ai/aia/selectOtherLttotPblancListView.do"

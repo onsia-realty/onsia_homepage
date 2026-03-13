@@ -391,14 +391,18 @@ export default function PCLanding({
             <p className="text-xl font-bold mb-6" style={{ color: primaryColor }}>{page.project_name}</p>
           )}
 
-          {/* Disclaimer */}
+          {/* Disclaimer - agent는 분양대행사 정보 숨김 */}
           <p className="text-[13px] text-gray-500 leading-relaxed mb-5">
-            {page.business_info?.disclaimer ||
-              '※ 본 사이트의 이미지는 소비자의 이해를 돕기 위해 제작된 것으로 실제 시공 시 다를 수 있습니다.'}
+            {isAgent
+              ? (page.business_info?.disclaimer || '※ 본 사이트의 이미지는 소비자의 이해를 돕기 위해 제작된 것으로 실제 시공 시 다를 수 있습니다.')
+                .replace(/분양대행사\s*[:：].*?((?=시행)|$)/gs, '')
+                .trim()
+              : (page.business_info?.disclaimer ||
+                '※ 본 사이트의 이미지는 소비자의 이해를 돕기 위해 제작된 것으로 실제 시공 시 다를 수 있습니다.')}
           </p>
 
-          {/* Company Info */}
-          {page.business_info?.company_name && (
+          {/* Company Info - agent는 숨김 */}
+          {!isAgent && page.business_info?.company_name && (
             <p className="text-[13px] text-gray-400 leading-loose">
               {page.business_info.company_name}
             </p>
