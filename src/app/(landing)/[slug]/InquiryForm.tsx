@@ -77,23 +77,25 @@ export default function InquiryForm({ pageId, slug, accentColor, agentCode, agen
   }
 
   return (
-    <form onSubmit={handleSubmit} className="bg-white rounded-2xl p-6 space-y-3">
-      <input
-        type="text"
-        placeholder="이름"
-        value={name}
-        onChange={(e) => setName(e.target.value)}
-        className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 text-gray-900 placeholder-gray-400"
-        style={{ '--tw-ring-color': accentColor } as React.CSSProperties}
-      />
-      <input
-        type="tel"
-        placeholder="연락처 (010-0000-0000)"
-        value={phone}
-        onChange={(e) => setPhone(e.target.value)}
-        className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 text-gray-900 placeholder-gray-400"
-        style={{ '--tw-ring-color': accentColor } as React.CSSProperties}
-      />
+    <form onSubmit={handleSubmit} className="bg-white rounded-2xl p-6 lg:p-8 space-y-3 lg:space-y-4">
+      <div className="lg:flex lg:gap-4">
+        <input
+          type="text"
+          placeholder="이름"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          className="w-full px-4 py-3 lg:py-3.5 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 text-gray-900 placeholder-gray-400 text-base"
+          style={{ '--tw-ring-color': accentColor } as React.CSSProperties}
+        />
+        <input
+          type="tel"
+          placeholder="연락처 (010-0000-0000)"
+          value={phone}
+          onChange={(e) => setPhone(e.target.value)}
+          className="w-full mt-3 lg:mt-0 px-4 py-3 lg:py-3.5 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 text-gray-900 placeholder-gray-400 text-base"
+          style={{ '--tw-ring-color': accentColor } as React.CSSProperties}
+        />
+      </div>
       <label className="flex items-start gap-2.5 cursor-pointer py-1">
         <input
           type="checkbox"
@@ -113,7 +115,7 @@ export default function InquiryForm({ pageId, slug, accentColor, agentCode, agen
       <button
         type="submit"
         disabled={isSubmitting}
-        className="w-full py-4 rounded-lg text-white font-bold text-lg transition-opacity disabled:opacity-50 active:opacity-80"
+        className="w-full py-4 rounded-lg text-white font-bold text-lg transition-opacity disabled:opacity-50 active:opacity-80 hover:opacity-90"
         style={{ backgroundColor: accentColor }}
       >
         {isSubmitting ? '등록 중...' : '관심고객 등록'}

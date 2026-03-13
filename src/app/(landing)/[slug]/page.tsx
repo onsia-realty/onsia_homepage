@@ -5,6 +5,7 @@ import InquiryForm from './InquiryForm'
 import BottomBar from './BottomBar'
 import CallBanner from './CallBanner'
 import PopupModal from './PopupModal'
+import PCLanding from './PCLanding'
 
 interface Props {
   params: Promise<{ slug: string }>
@@ -64,196 +65,282 @@ export default async function LandingPage({ params, searchParams }: Props) {
   const primaryColor = page.primary_color || '#1E3A5F'
   const accentColor = page.accent_color || '#C9A96E'
 
+  // 현장별 PC 네비게이션 & VR 링크
+  const siteConfig: Record<string, {
+    navLinks?: { label: string; href?: string; id?: string; children?: { label: string; href: string }[] }[]
+    vrLinks?: { label: string; href: string }[]
+  }> = {
+    urbanhomes: {
+      navLinks: [
+        {
+          label: '사업안내',
+          href: 'https://urbanhomes.co.kr/bbs/content.php?co_id=business',
+          children: [
+            { label: '사업개요', href: 'https://urbanhomes.co.kr/bbs/content.php?co_id=business' },
+            { label: '오시는길', href: 'https://urbanhomes.co.kr/bbs/content.php?co_id=location' },
+          ],
+        },
+        {
+          label: '단지안내',
+          href: 'https://urbanhomes.co.kr/bbs/content.php?co_id=community',
+          children: [
+            { label: '커뮤니티', href: 'https://urbanhomes.co.kr/bbs/content.php?co_id=community' },
+            { label: '동호수배치도', href: 'https://urbanhomes.co.kr/bbs/content.php?co_id=layout' },
+          ],
+        },
+        {
+          label: '프리미엄',
+          href: 'https://urbanhomes.co.kr/bbs/content.php?co_id=premium',
+          children: [
+            { label: '프리미엄', href: 'https://urbanhomes.co.kr/bbs/content.php?co_id=premium' },
+            { label: '입지환경', href: 'https://urbanhomes.co.kr/bbs/content.php?co_id=environment' },
+            { label: '스마트싱스', href: 'https://urbanhomes.co.kr/bbs/content.php?co_id=smart' },
+          ],
+        },
+        {
+          label: '세대안내',
+          href: 'https://urbanhomes.co.kr/bbs/content.php?co_id=unit',
+          children: [
+            { label: 'UNIT', href: 'https://urbanhomes.co.kr/bbs/content.php?co_id=unit' },
+          ],
+        },
+        {
+          label: '홍보센터',
+          href: 'https://urbanhomes.co.kr/bbs/board.php?bo_table=news',
+          children: [
+            { label: '언론보도', href: 'https://urbanhomes.co.kr/bbs/board.php?bo_table=news' },
+            { label: '관심고객등록', href: 'https://urbanhomes.co.kr/bbs/write.php?bo_table=interest' },
+          ],
+        },
+      ],
+      vrLinks: [
+        { label: 'SKY VR', href: 'https://urbanhomes.co.kr/vr3/index.html' },
+        { label: 'UNIT VR', href: 'https://urbanhomes.co.kr/wangsimni_urban_homes/index.html' },
+      ],
+    },
+  }
+  const currentSiteConfig = siteConfig[slug]
+
   return (
-    <div
-      className={`min-h-screen bg-white ${page.show_bottom_bar ? 'pb-14' : ''}`}
-      style={{ '--primary': primaryColor, '--accent': accentColor } as React.CSSProperties}
-    >
-      {/* Hero Section */}
-      {page.hero_image ? (
-        <section className="relative">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src={page.hero_image}
-            alt={page.project_name}
-            className="w-full block"
-          />
-          {page.subtitle && (
-            <div className="absolute inset-0 flex items-end justify-center pb-6 sm:pb-8 md:pb-12 bg-gradient-to-t from-black/70 via-black/20 to-transparent">
-              <div className="text-center text-white px-4">
-                <h1 className="text-xl sm:text-3xl md:text-5xl font-bold mb-1 md:mb-2 drop-shadow-lg">{page.project_name}</h1>
-                <p className="text-sm sm:text-lg md:text-2xl font-medium drop-shadow-md opacity-90">{page.subtitle}</p>
-              </div>
-            </div>
-          )}
-        </section>
-      ) : (
-        <section
-          className="py-12 sm:py-16 md:py-20 px-4 text-center text-white"
-          style={{ background: `linear-gradient(135deg, ${primaryColor}, ${primaryColor}dd)` }}
-        >
-          {page.logo_image && (
-            <div className="mb-4 md:mb-6">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={page.logo_image} alt="로고" className="mx-auto h-10 md:h-16" />
-            </div>
-          )}
-          <h1 className="text-2xl sm:text-3xl md:text-5xl font-bold mb-2 md:mb-3">{page.project_name}</h1>
-          {page.subtitle && <p className="text-base sm:text-xl md:text-2xl opacity-90">{page.subtitle}</p>}
-        </section>
-      )}
-
-      {/* Call Banner */}
-      {effectivePhone && (
-        <CallBanner
-          phone={effectivePhone}
-          agentName={agent?.name}
+    <>
+      {/* ===== PC 전용 (lg+) ===== */}
+      <div className="hidden lg:block">
+        <PCLanding
+          page={page}
+          agent={agent}
+          effectivePhone={effectivePhone || undefined}
+          effectiveKakao={effectiveKakao || undefined}
+          primaryColor={primaryColor}
+          accentColor={accentColor}
+          slug={slug}
+          agentCode={agentCodeStr}
+          navLinks={currentSiteConfig?.navLinks}
+          vrLinks={currentSiteConfig?.vrLinks}
         />
-      )}
-
-      {/* YouTube Video */}
-      {page.youtube_id && (
-        <section className="bg-black">
-          <div className="max-w-4xl mx-auto">
-            <div className="relative pb-[56.25%] h-0">
-              <iframe
-                src={`https://www.youtube.com/embed/${page.youtube_id}?rel=0`}
-                title="홍보 영상"
-                className="absolute top-0 left-0 w-full h-full"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                allowFullScreen
-              />
-            </div>
-          </div>
-        </section>
-      )}
-
-      {/* Top: Inquiry Form (main) or Video 1 (agent) */}
-      {agent ? (
-        <section className="bg-black">
-          <video
-            src="https://uwddeseqwdsryvuoulsm.supabase.co/storage/v1/object/public/landing/videos/wangsimni-jeongwono-seongdong.mp4"
-            controls
-            playsInline
-            preload="metadata"
-            className="w-full block min-h-[30vh] object-contain"
+        {slug === 'urbanhomes' && (
+          <PopupModal
+            imageUrl="https://static.wixstatic.com/media/a5ff46_031e0795c8dc484ebfb8e3b4a1ee9541~mv2.jpg/v1/fill/w_460,h_624,al_c,lg_1,q_80,enc_avif,quality_auto/1_%ED%8C%9D%EC%97%85%EC%B0%BD.jpg"
+            linkUrl="https://www.applyhome.co.kr/ai/aia/selectOtherLttotPblancListView.do"
+            alt="청약홈 안내"
           />
-        </section>
-      ) : (
-        <section id="inquiry-top" className="py-8 sm:py-10 px-4" style={{ backgroundColor: primaryColor }}>
-          <div className="max-w-lg mx-auto">
-            <h2 className="text-xl sm:text-2xl font-bold text-center text-white mb-4 sm:mb-6">관심고객 등록</h2>
-            <InquiryForm pageId={page.id} slug={slug} accentColor={accentColor} agentCode={agentCodeStr} agentName={agent?.name} />
-          </div>
-        </section>
-      )}
-
-      {/* Custom Sections (optional) */}
-      {page.sections && page.sections.length > 0 && page.sections.map((section, i) => (
-        <section key={section.id || i} className={`py-8 sm:py-12 px-4 ${i % 2 === 0 ? 'bg-white' : 'bg-gray-50'}`}>
-          <div className="max-w-4xl mx-auto">
-            {section.title && (
-              <h2 className="text-xl sm:text-2xl font-bold text-center mb-4 sm:mb-6" style={{ color: primaryColor }}>
-                {section.title}
-              </h2>
-            )}
-            {section.content && (
-              <div
-                className="prose prose-sm sm:prose-lg max-w-none text-gray-700 text-center"
-                dangerouslySetInnerHTML={{ __html: section.content }}
-              />
-            )}
-            {section.images && section.images.length > 0 && (
-              <div className="mt-4 sm:mt-6 space-y-4 sm:space-y-6">
-                {section.images.map((img, j) => (
-                  // eslint-disable-next-line @next/next/no-img-element
-                  <img
-                    key={j}
-                    src={img}
-                    alt={`${section.title || page.project_name} ${j + 1}`}
-                    className="w-full block rounded-lg"
-                    loading="lazy"
-                  />
-                ))}
-              </div>
-            )}
-          </div>
-        </section>
-      ))}
-
-      {/* Full-width Gallery Images (seamless vertical stack) */}
-      {page.gallery && page.gallery.length > 0 && (
-        <section className="gallery-seamless" style={{ backgroundColor: primaryColor, fontSize: 0, lineHeight: 0 }}>
-          {page.gallery.map((img, i) => (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img
-              key={i}
-              src={img}
-              alt={`${page.project_name} ${i + 1}`}
-              className="w-full block"
-              loading="lazy"
-            />
-          ))}
-        </section>
-      )}
-
-      {/* Bottom: Inquiry Form (main) or Video 2 (agent) */}
-      {agent ? (
-        <section className="bg-black">
-          <video
-            src="https://uwddeseqwdsryvuoulsm.supabase.co/storage/v1/object/public/landing/videos/jeongwono-seoul.mp4"
-            controls
-            playsInline
-            preload="metadata"
-            className="w-full block min-h-[30vh] object-contain"
-          />
-        </section>
-      ) : (
-        <section id="inquiry-bottom" className="py-8 sm:py-10 px-4" style={{ backgroundColor: primaryColor }}>
-          <div className="max-w-lg mx-auto">
-            <h2 className="text-xl sm:text-2xl font-bold text-center text-white mb-4 sm:mb-6">관심고객 등록</h2>
-            <InquiryForm pageId={page.id} slug={slug} accentColor={accentColor} agentCode={agentCodeStr} agentName={agent?.name} />
-          </div>
-        </section>
-      )}
-
-      {/* Footer */}
-      <footer className="py-6 sm:py-8 px-4 bg-gray-900 text-gray-400 text-center text-xs sm:text-sm leading-relaxed">
-        {page.business_info && (
-          <div className="mb-3 sm:mb-4">
-            {page.business_info.company_name && (
-              <p className="font-medium text-gray-300">{page.business_info.company_name}</p>
-            )}
-          </div>
         )}
-        <p className="text-gray-500 max-w-2xl mx-auto text-xs sm:text-sm">
-          {page.business_info?.disclaimer ||
-            '본 홍보물의 내용은 소비자의 이해를 돕기 위해 제작된 것으로, 개발·분양사의 사정에 따라 변경될 수 있으며 법적 효력이 없습니다. 계약 시에는 반드시 모집공고문과 계약서를 기준으로 확인하시기 바랍니다.'}
-        </p>
-        <a
-          href="https://www.applyhome.co.kr/ai/aia/selectOtherLttotPblancListView.do"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="mt-2 sm:mt-3 inline-block text-gray-500 hover:text-gray-300 underline text-xs sm:text-sm"
-        >
-          청약홈 바로가기
-        </a>
-        <p className="mt-2 sm:mt-3 text-gray-600 text-xs">&copy; {new Date().getFullYear()} ONSIA. All rights reserved.</p>
-      </footer>
+      </div>
 
-      {/* Fixed Bottom Bar */}
-      {page.show_bottom_bar && (
-        <BottomBar phoneNumber={effectivePhone || null} kakaoUrl={effectiveKakao || null} isAgent={!!agent} />
-      )}
+      {/* ===== 모바일 전용 (<lg) ===== */}
+      <div
+        className={`lg:hidden min-h-screen bg-white ${page.show_bottom_bar ? 'pb-14' : ''}`}
+        style={{ '--primary': primaryColor, '--accent': accentColor } as React.CSSProperties}
+      >
+        {/* Hero Section */}
+        {page.hero_image ? (
+          <section className="relative">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={page.hero_image}
+              alt={page.project_name}
+              className="w-full block"
+            />
+            {page.subtitle && (
+              <div className="absolute inset-0 flex items-end justify-center pb-6 sm:pb-8 md:pb-12 bg-gradient-to-t from-black/70 via-black/20 to-transparent">
+                <div className="text-center text-white px-4">
+                  <h1 className="text-xl sm:text-3xl md:text-5xl font-bold mb-1 md:mb-2 drop-shadow-lg">{page.project_name}</h1>
+                  <p className="text-sm sm:text-lg md:text-2xl font-medium drop-shadow-md opacity-90">{page.subtitle}</p>
+                </div>
+              </div>
+            )}
+          </section>
+        ) : (
+          <section
+            className="py-12 sm:py-16 md:py-20 px-4 text-center text-white"
+            style={{ background: `linear-gradient(135deg, ${primaryColor}, ${primaryColor}dd)` }}
+          >
+            {page.logo_image && (
+              <div className="mb-4 md:mb-6">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src={page.logo_image} alt="로고" className="mx-auto h-10 md:h-16" />
+              </div>
+            )}
+            <h1 className="text-2xl sm:text-3xl md:text-5xl font-bold mb-2 md:mb-3">{page.project_name}</h1>
+            {page.subtitle && <p className="text-base sm:text-xl md:text-2xl opacity-90">{page.subtitle}</p>}
+          </section>
+        )}
 
-      {/* Popup Modal */}
-      {slug === 'urbanhomes' && (
-        <PopupModal
-          imageUrl="https://static.wixstatic.com/media/a5ff46_031e0795c8dc484ebfb8e3b4a1ee9541~mv2.jpg/v1/fill/w_460,h_624,al_c,lg_1,q_80,enc_avif,quality_auto/1_%ED%8C%9D%EC%97%85%EC%B0%BD.jpg"
-          linkUrl="https://www.applyhome.co.kr/ai/aia/selectOtherLttotPblancListView.do"
-          alt="청약홈 안내"
-        />
-      )}
-    </div>
+        {/* Call Banner */}
+        {effectivePhone && (
+          <CallBanner
+            phone={effectivePhone}
+            agentName={agent?.name}
+          />
+        )}
+
+        {/* YouTube Video */}
+        {page.youtube_id && (
+          <section className="bg-black">
+            <div className="max-w-4xl mx-auto">
+              <div className="relative pb-[56.25%] h-0">
+                <iframe
+                  src={`https://www.youtube.com/embed/${page.youtube_id}?rel=0`}
+                  title="홍보 영상"
+                  className="absolute top-0 left-0 w-full h-full"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen
+                />
+              </div>
+            </div>
+          </section>
+        )}
+
+        {/* Top: Inquiry Form (main) or Video 1 (agent) */}
+        {agent ? (
+          <section className="bg-black">
+            <video
+              src="https://uwddeseqwdsryvuoulsm.supabase.co/storage/v1/object/public/landing/videos/wangsimni-jeongwono-seongdong.mp4"
+              controls
+              playsInline
+              preload="metadata"
+              className="w-full block min-h-[30vh] object-contain"
+            />
+          </section>
+        ) : (
+          <section id="inquiry-top" className="py-8 sm:py-10 px-4" style={{ backgroundColor: primaryColor }}>
+            <div className="max-w-lg mx-auto">
+              <h2 className="text-xl sm:text-2xl font-bold text-center text-white mb-4 sm:mb-6">관심고객 등록</h2>
+              <InquiryForm pageId={page.id} slug={slug} accentColor={accentColor} agentCode={agentCodeStr} agentName={agent?.name} />
+            </div>
+          </section>
+        )}
+
+        {/* Custom Sections */}
+        {page.sections && page.sections.length > 0 && page.sections.map((section, i) => (
+          <section
+            key={section.id || i}
+            id={i === 0 ? 'section-info' : i === 1 ? 'section-premium' : undefined}
+            className={`py-8 sm:py-12 px-4 ${i % 2 === 0 ? 'bg-white' : 'bg-gray-50'}`}
+          >
+            <div className="max-w-4xl mx-auto">
+              {section.title && (
+                <h2 className="text-xl sm:text-2xl font-bold text-center mb-4 sm:mb-6" style={{ color: primaryColor }}>
+                  {section.title}
+                </h2>
+              )}
+              {section.content && (
+                <div
+                  className="prose prose-sm sm:prose-lg max-w-none text-gray-700 text-center"
+                  dangerouslySetInnerHTML={{ __html: section.content }}
+                />
+              )}
+              {section.images && section.images.length > 0 && (
+                <div className="mt-4 sm:mt-6 space-y-4 sm:space-y-6">
+                  {section.images.map((img, j) => (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img
+                      key={j}
+                      src={img}
+                      alt={`${section.title || page.project_name} ${j + 1}`}
+                      className="w-full block rounded-lg"
+                      loading="lazy"
+                    />
+                  ))}
+                </div>
+              )}
+            </div>
+          </section>
+        ))}
+
+        {/* Gallery (seamless vertical stack) */}
+        {page.gallery && page.gallery.length > 0 && (
+          <section id="section-gallery" style={{ backgroundColor: primaryColor, fontSize: 0, lineHeight: 0 }}>
+            {page.gallery.map((img, i) => (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img
+                key={i}
+                src={img}
+                alt={`${page.project_name} ${i + 1}`}
+                className="w-full block"
+                loading="lazy"
+              />
+            ))}
+          </section>
+        )}
+
+        {/* Bottom: Inquiry Form (main) or Video 2 (agent) */}
+        {agent ? (
+          <section className="bg-black">
+            <video
+              src="https://uwddeseqwdsryvuoulsm.supabase.co/storage/v1/object/public/landing/videos/jeongwono-seoul.mp4"
+              controls
+              playsInline
+              preload="metadata"
+              className="w-full block min-h-[30vh] object-contain"
+            />
+          </section>
+        ) : (
+          <section id="inquiry-bottom" className="py-8 sm:py-10 px-4" style={{ backgroundColor: primaryColor }}>
+            <div className="max-w-lg mx-auto">
+              <h2 className="text-xl sm:text-2xl font-bold text-center text-white mb-4 sm:mb-6">관심고객 등록</h2>
+              <InquiryForm pageId={page.id} slug={slug} accentColor={accentColor} agentCode={agentCodeStr} agentName={agent?.name} />
+            </div>
+          </section>
+        )}
+
+        {/* Footer */}
+        <footer className="py-6 sm:py-8 px-4 bg-gray-900 text-gray-400 text-center text-xs sm:text-sm leading-relaxed">
+          {page.business_info && (
+            <div className="mb-3 sm:mb-4">
+              {page.business_info.company_name && (
+                <p className="font-medium text-gray-300">{page.business_info.company_name}</p>
+              )}
+            </div>
+          )}
+          <p className="text-gray-500 max-w-2xl mx-auto text-xs sm:text-sm whitespace-pre-line">
+            {page.business_info?.disclaimer ||
+              '본 홍보물의 내용은 소비자의 이해를 돕기 위해 제작된 것으로, 개발·분양사의 사정에 따라 변경될 수 있으며 법적 효력이 없습니다. 계약 시에는 반드시 모집공고문과 계약서를 기준으로 확인하시기 바랍니다.'}
+          </p>
+          <a
+            href="https://www.applyhome.co.kr/ai/aia/selectOtherLttotPblancListView.do"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="mt-2 sm:mt-3 inline-block text-gray-500 hover:text-gray-300 underline text-xs sm:text-sm"
+          >
+            청약홈 바로가기
+          </a>
+          <p className="mt-2 sm:mt-3 text-gray-600 text-xs">&copy; {new Date().getFullYear()} ONSIA. All rights reserved.</p>
+        </footer>
+
+        {/* Fixed Bottom Bar (mobile only) */}
+        {page.show_bottom_bar && (
+          <BottomBar phoneNumber={effectivePhone || null} kakaoUrl={effectiveKakao || null} isAgent={!!agent} />
+        )}
+
+        {/* Popup Modal */}
+        {slug === 'urbanhomes' && (
+          <PopupModal
+            imageUrl="https://static.wixstatic.com/media/a5ff46_031e0795c8dc484ebfb8e3b4a1ee9541~mv2.jpg/v1/fill/w_460,h_624,al_c,lg_1,q_80,enc_avif,quality_auto/1_%ED%8C%9D%EC%97%85%EC%B0%BD.jpg"
+            linkUrl="https://www.applyhome.co.kr/ai/aia/selectOtherLttotPblancListView.do"
+            alt="청약홈 안내"
+          />
+        )}
+      </div>
+    </>
   )
 }

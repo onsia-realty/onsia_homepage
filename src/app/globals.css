@@ -178,3 +178,11 @@ body {
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
+
+/* ===== Landing Page PC Optimization ===== */
+@media (min-width: 1024px) {
+  .gallery-pc-container {
+    background-color: #f3f4f6 !important;
+    padding: 0 1rem;
+  }
+}
