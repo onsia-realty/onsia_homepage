@@ -6,20 +6,44 @@ interface Props {
   imageUrl: string
   linkUrl: string
   alt?: string
+  storageKey?: string
+  /** 이 키가 sessionStorage에 설정될 때까지 대기 (순차 팝업용) */
+  waitForKey?: string
 }
 
-export default function PopupModal({ imageUrl, linkUrl, alt = '팝업' }: Props) {
+export default function PopupModal({ imageUrl, linkUrl, alt = '팝업', storageKey = 'popup-dismissed', waitForKey }: Props) {
   const [open, setOpen] = useState(false)
 
   useEffect(() => {
-    // 세션 내 1회만 표시
-    const dismissed = sessionStorage.getItem('popup-dismissed')
-    if (!dismissed) setOpen(true)
-  }, [])
+    const dismissed = sessionStorage.getItem(storageKey)
+    if (dismissed) return
+
+    if (!waitForKey) {
+      setOpen(true)
+      return
+    }
+
+    // waitForKey가 설정될 때까지 폴링
+    const check = () => {
+      if (sessionStorage.getItem(waitForKey)) {
+        setOpen(true)
+        return true
+      }
+      return false
+    }
+
+    if (check()) return
+
+    const interval = setInterval(() => {
+      if (check()) clearInterval(interval)
+    }, 300)
+
+    return () => clearInterval(interval)
+  }, [storageKey, waitForKey])
 
   const handleClose = () => {
     setOpen(false)
-    sessionStorage.setItem('popup-dismissed', '1')
+    sessionStorage.setItem(storageKey, '1')
   }
 
   if (!open) return null

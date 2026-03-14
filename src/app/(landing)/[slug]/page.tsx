@@ -142,6 +142,7 @@ export default async function LandingPage({ params, searchParams }: Props) {
             imageUrl="https://static.wixstatic.com/media/a5ff46_031e0795c8dc484ebfb8e3b4a1ee9541~mv2.jpg/v1/fill/w_460,h_624,al_c,lg_1,q_80,enc_avif,quality_auto/1_%ED%8C%9D%EC%97%85%EC%B0%BD.jpg"
             linkUrl="https://www.applyhome.co.kr/ai/aia/selectOtherLttotPblancListView.do"
             alt="청약홈 안내"
+            storageKey="popup-dismissed-1"
           />
         )}
       </div>
@@ -336,12 +337,23 @@ export default async function LandingPage({ params, searchParams }: Props) {
           <BottomBar phoneNumber={effectivePhone || null} kakaoUrl={effectiveKakao || null} isAgent={!!agent} />
         )}
 
-        {/* Popup Modal */}
+        {/* Popup Modal 1 - 청약홈 */}
         {slug === 'urbanhomes' && (
           <PopupModal
             imageUrl="https://static.wixstatic.com/media/a5ff46_031e0795c8dc484ebfb8e3b4a1ee9541~mv2.jpg/v1/fill/w_460,h_624,al_c,lg_1,q_80,enc_avif,quality_auto/1_%ED%8C%9D%EC%97%85%EC%B0%BD.jpg"
             linkUrl="https://www.applyhome.co.kr/ai/aia/selectOtherLttotPblancListView.do"
             alt="청약홈 안내"
+            storageKey="popup-dismissed-1"
+          />
+        )}
+        {/* Popup Modal 2 - UNIT VR (1번 닫은 후 표시) */}
+        {slug === 'urbanhomes' && (
+          <PopupModal
+            imageUrl="/images/unit-vr-thumb.jpeg"
+            linkUrl="https://urbanhomes.co.kr/wangsimni_urban_homes/index.html"
+            alt="UNIT VR 모델하우스"
+            storageKey="popup-dismissed-2"
+            waitForKey="popup-dismissed-1"
           />
         )}
       </div>

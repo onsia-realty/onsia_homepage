@@ -15,11 +15,14 @@ export default function CallBanner({ phone, agentName }: Props) {
       <div className="py-4 sm:py-5 px-4 text-center max-w-4xl lg:mx-auto">
         {isAgent ? (
           <>
-            <span className="call-banner-number font-black text-[15vw] sm:text-[12vw] md:text-[9vw] lg:text-7xl leading-none tracking-tight block">
+            <span className="call-banner-number font-black text-[15vw] sm:text-[12vw] md:text-[9vw] leading-none tracking-tight block lg:hidden">
               010
             </span>
-            <span className="call-banner-number font-black text-[15vw] sm:text-[12vw] md:text-[9vw] lg:text-7xl leading-none tracking-tight block">
+            <span className="call-banner-number font-black text-[15vw] sm:text-[12vw] md:text-[9vw] leading-none tracking-tight block lg:hidden">
               {displayNumber}
+            </span>
+            <span className="call-banner-number font-black text-8xl leading-none tracking-tight hidden lg:block">
+              {phone}
             </span>
           </>
         ) : (

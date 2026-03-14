@@ -198,11 +198,8 @@ export default function PCLanding({
           <div className="py-8 text-center">
             {isAgent ? (
               <>
-                <span className="call-banner-number font-black text-7xl leading-none tracking-tight block">
-                  010
-                </span>
-                <span className="call-banner-number font-black text-7xl leading-none tracking-tight block mt-1">
-                  {effectivePhone.replace(/^010-?/, '')}
+                <span className="call-banner-number font-black text-8xl leading-none tracking-tight block">
+                  {effectivePhone}
                 </span>
               </>
             ) : (
@@ -428,47 +425,47 @@ export default function PCLanding({
       </footer>
 
       {/* ===== FLOATING SIDEBAR (urbanhomes style - always visible) ===== */}
-      {!isAgent && (
-        <div className="fixed right-5 top-1/2 -translate-y-1/2 z-40 flex flex-col items-center gap-3">
-          {/* 관심고객 등록 */}
+      <div className="fixed right-5 top-1/2 -translate-y-1/2 z-40 flex flex-col items-center gap-4">
+        {/* 관심고객 등록 - 메인만 */}
+        {!isAgent && (
           <button
             onClick={() => scrollTo('pc-inquiry')}
-            className="flex flex-col items-center justify-center w-[110px] py-6 bg-white/90 backdrop-blur-sm text-gray-800 rounded-xl shadow-lg border border-gray-200 transition-all hover:bg-white hover:shadow-xl cursor-pointer"
+            className="flex flex-col items-center justify-center w-[130px] py-6 bg-white/90 backdrop-blur-sm text-gray-800 rounded-xl shadow-lg border border-gray-200 transition-all hover:bg-white hover:shadow-xl cursor-pointer"
           >
-            <svg xmlns="http://www.w3.org/2000/svg" className="w-9 h-9 mb-2 text-gray-700" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+            <svg xmlns="http://www.w3.org/2000/svg" className="w-10 h-10 mb-2 text-gray-700" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
               <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
               <circle cx="9" cy="7" r="4" />
               <line x1="19" y1="8" x2="19" y2="14" />
               <line x1="22" y1="11" x2="16" y2="11" />
             </svg>
-            <span className="text-[13px] font-bold leading-tight text-center">관심고객<br />등록하기</span>
+            <span className="text-[15px] font-bold leading-tight text-center">관심고객<br />등록하기</span>
           </button>
+        )}
 
-          {/* VR Links */}
-          {vrLinks && vrLinks.map((vr, idx) => (
-            <a
-              key={idx}
-              href={vr.href}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center justify-center w-[110px] py-4 bg-[#2c3e50] text-white text-[14px] font-bold rounded-xl shadow-lg border border-[#2c3e50] transition-all hover:bg-[#34495e] hover:shadow-xl"
-            >
-              {vr.label}
-            </a>
-          ))}
+        {/* VR Links - 메인 + agent 모두 */}
+        {vrLinks && vrLinks.map((vr, idx) => (
+          <a
+            key={idx}
+            href={vr.href}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center justify-center w-[130px] py-5 bg-[#2c3e50] text-white text-[17px] font-bold rounded-xl shadow-lg border border-[#2c3e50] transition-all hover:bg-[#34495e] hover:shadow-xl"
+          >
+            {vr.label}
+          </a>
+        ))}
 
-          {/* 분양문의 */}
-          {effectivePhone && (
-            <a
-              href={`tel:${effectivePhone}`}
-              className="flex flex-col items-center justify-center w-[110px] py-4 bg-[#2c3e50] text-white rounded-xl shadow-lg border border-[#2c3e50] transition-all hover:bg-[#34495e] hover:shadow-xl"
-            >
-              <span className="text-[12px] font-medium mb-0.5">분양문의</span>
-              <span className="text-[15px] font-extrabold tracking-tight">{effectivePhone}</span>
-            </a>
-          )}
-        </div>
-      )}
+        {/* 분양문의 - 메인 + agent 모두 */}
+        {effectivePhone && (
+          <a
+            href={`tel:${effectivePhone}`}
+            className="flex flex-col items-center justify-center w-[130px] py-5 bg-[#2c3e50] text-white rounded-xl shadow-lg border border-[#2c3e50] transition-all hover:bg-[#34495e] hover:shadow-xl"
+          >
+            <span className="text-[13px] font-medium mb-0.5">분양문의</span>
+            <span className="text-[17px] font-extrabold tracking-tight text-center">{effectivePhone}</span>
+          </a>
+        )}
+      </div>
 
       {/* ===== SCROLL TO TOP ===== */}
       <button
