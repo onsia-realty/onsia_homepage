@@ -66,6 +66,7 @@ export default async function LandingPage({ params, searchParams }: Props) {
   const accentColor = page.accent_color || '#C9A96E'
 
   // 현장별 PC 네비게이션 & VR 링크
+  // 세부 카테고리는 우리 사이트 내 서브페이지로 이동
   const siteConfig: Record<string, {
     navLinks?: { label: string; href?: string; id?: string; children?: { label: string; href: string }[] }[]
     vrLinks?: { label: string; href: string }[]
@@ -74,42 +75,41 @@ export default async function LandingPage({ params, searchParams }: Props) {
       navLinks: [
         {
           label: '사업안내',
-          href: 'https://urbanhomes.co.kr/bbs/content.php?co_id=business',
+          href: '/urbanhomes/business',
           children: [
-            { label: '사업개요', href: 'https://urbanhomes.co.kr/bbs/content.php?co_id=business' },
-            { label: '오시는길', href: 'https://urbanhomes.co.kr/bbs/content.php?co_id=location' },
+            { label: '사업개요', href: '/urbanhomes/business' },
+            { label: '오시는길', href: '/urbanhomes/location' },
           ],
         },
         {
           label: '단지안내',
-          href: 'https://urbanhomes.co.kr/bbs/content.php?co_id=community',
+          href: '/urbanhomes/community',
           children: [
-            { label: '커뮤니티', href: 'https://urbanhomes.co.kr/bbs/content.php?co_id=community' },
-            { label: '동호수배치도', href: 'https://urbanhomes.co.kr/bbs/content.php?co_id=layout' },
+            { label: '커뮤니티', href: '/urbanhomes/community' },
+            { label: '동호수배치도', href: '/urbanhomes/layout' },
           ],
         },
         {
           label: '프리미엄',
-          href: 'https://urbanhomes.co.kr/bbs/content.php?co_id=premium',
+          href: '/urbanhomes/premium',
           children: [
-            { label: '프리미엄', href: 'https://urbanhomes.co.kr/bbs/content.php?co_id=premium' },
-            { label: '입지환경', href: 'https://urbanhomes.co.kr/bbs/content.php?co_id=environment' },
-            { label: '스마트싱스', href: 'https://urbanhomes.co.kr/bbs/content.php?co_id=smart' },
+            { label: '프리미엄', href: '/urbanhomes/premium' },
+            { label: '입지환경', href: '/urbanhomes/environment' },
+            { label: '스마트싱스', href: '/urbanhomes/smart' },
           ],
         },
         {
           label: '세대안내',
-          href: 'https://urbanhomes.co.kr/bbs/content.php?co_id=unit',
+          href: '/urbanhomes/unit',
           children: [
-            { label: 'UNIT', href: 'https://urbanhomes.co.kr/bbs/content.php?co_id=unit' },
+            { label: 'UNIT', href: '/urbanhomes/unit' },
           ],
         },
         {
           label: '홍보센터',
-          href: 'https://urbanhomes.co.kr/bbs/board.php?bo_table=news',
+          href: '/urbanhomes/inquiry',
           children: [
-            { label: '언론보도', href: 'https://urbanhomes.co.kr/bbs/board.php?bo_table=news' },
-            { label: '관심고객등록', href: 'https://urbanhomes.co.kr/bbs/write.php?bo_table=interest' },
+            { label: '관심고객등록', href: '/urbanhomes/inquiry' },
           ],
         },
       ],

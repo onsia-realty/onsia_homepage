@@ -23,7 +23,8 @@ interface BusinessInfo {
 
 interface NavSubLink {
   label: string
-  href: string
+  href?: string
+  id?: string
 }
 
 interface NavLink {
@@ -122,8 +123,6 @@ export default function PCLanding({
                 {item.href ? (
                   <a
                     href={item.href}
-                    target="_blank"
-                    rel="noopener noreferrer"
                     className="block px-8 py-3 text-[20px] font-semibold text-gray-800 hover:text-black transition-colors"
                   >
                     {item.label}
@@ -145,8 +144,6 @@ export default function PCLanding({
                         <li key={si}>
                           <a
                             href={sub.href}
-                            target="_blank"
-                            rel="noopener noreferrer"
                             className="block px-6 py-3 text-[16px] text-gray-600 hover:text-black hover:bg-gray-50 transition-colors whitespace-nowrap"
                           >
                             {sub.label}
