@@ -6,6 +6,7 @@ import BottomBar from './BottomBar'
 import CallBanner from './CallBanner'
 import PopupModal from './PopupModal'
 import PCLanding from './PCLanding'
+import AnalyticsTracker from '@/components/analytics/AnalyticsTracker'
 
 interface Props {
   params: Promise<{ slug: string }>
@@ -123,6 +124,16 @@ export default async function LandingPage({ params, searchParams }: Props) {
 
   return (
     <>
+      <AnalyticsTracker
+        config={{
+          apiEndpoint: 'https://tracker.onsia.city/api/analytics',
+          siteSlug: slug,
+          trackClicks: true,
+          trackScroll: true,
+          trackMouse: true,
+        }}
+      />
+
       {/* ===== PC 전용 (lg+) ===== */}
       <div className="hidden lg:block">
         <PCLanding
