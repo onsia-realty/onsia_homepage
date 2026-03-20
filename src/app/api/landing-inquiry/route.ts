@@ -26,13 +26,18 @@ export async function POST(request: NextRequest) {
       return NextResponse.json(result, { status: 500 })
     }
 
-    // SMS 알림 (비동기, 실패해도 문의 등록은 성공)
+    // SMS 알림
     let projectName = '랜딩페이지'
     if (slug) {
       const page = await getLandingPageBySlug(slug)
       projectName = page?.project_name || slug
     }
-    notifyAdmin({ name, phone, projectName, agentName: agent_name }).catch((err) => console.error('SMS 발송 실패:', err))
+    try {
+      const smsResult = await notifyAdmin({ name, phone, projectName, agentName: agent_name })
+      console.log('SMS 발송 결과:', smsResult)
+    } catch (err) {
+      console.error('SMS 발송 실패:', err)
+    }
 
     return NextResponse.json({ success: true })
   } catch {
