@@ -153,7 +153,7 @@ export async function getAgentByCode(pageId: string, code: string): Promise<Land
   return data as LandingAgent
 }
 
-// 문의 등록
+// 문의 등록 (service_role 사용 - RLS 우회)
 export async function submitLandingInquiry(inquiry: {
   page_id: string
   name: string
@@ -164,7 +164,8 @@ export async function submitLandingInquiry(inquiry: {
   utm_medium?: string
   utm_campaign?: string
 }): Promise<{ success: boolean; error?: string }> {
-  const { error } = await supabaseLanding
+  const admin = createLandingAdminClient()
+  const { error } = await admin
     .from('inquiries')
     .insert(inquiry)
 

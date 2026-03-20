@@ -18,12 +18,30 @@ export default function InquiryForm({ pageId, slug, accentColor, agentCode, agen
   const [submitted, setSubmitted] = useState(false)
   const [error, setError] = useState('')
 
+  // 010-XXXX-XXXX 자동 포맷팅
+  const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const digits = e.target.value.replace(/\D/g, '').slice(0, 11)
+    let formatted = digits
+    if (digits.length > 3 && digits.length <= 7) {
+      formatted = `${digits.slice(0, 3)}-${digits.slice(3)}`
+    } else if (digits.length > 7) {
+      formatted = `${digits.slice(0, 3)}-${digits.slice(3, 7)}-${digits.slice(7)}`
+    }
+    setPhone(formatted)
+  }
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setError('')
 
     if (!name.trim() || !phone.trim()) {
       setError('이름과 연락처를 입력해주세요.')
+      return
+    }
+
+    const phoneDigits = phone.replace(/\D/g, '')
+    if (phoneDigits.length !== 11 || !phoneDigits.startsWith('010')) {
+      setError('올바른 연락처를 입력해주세요. (010-XXXX-XXXX)')
       return
     }
 
@@ -91,7 +109,8 @@ export default function InquiryForm({ pageId, slug, accentColor, agentCode, agen
           type="tel"
           placeholder="연락처 (010-0000-0000)"
           value={phone}
-          onChange={(e) => setPhone(e.target.value)}
+          onChange={handlePhoneChange}
+          maxLength={13}
           className="w-full mt-3 lg:mt-0 px-4 py-3 lg:py-3.5 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 text-gray-900 placeholder-gray-400 text-base"
           style={{ '--tw-ring-color': accentColor } as React.CSSProperties}
         />
