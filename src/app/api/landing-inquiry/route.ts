@@ -32,7 +32,7 @@ export async function POST(request: NextRequest) {
       const page = await getLandingPageBySlug(slug)
       projectName = page?.project_name || slug
     }
-    notifyAdmin({ name, phone, projectName, agentName: agent_name }).catch(() => {})
+    notifyAdmin({ name, phone, projectName, agentName: agent_name }).catch((err) => console.error('SMS 발송 실패:', err))
 
     return NextResponse.json({ success: true })
   } catch {
