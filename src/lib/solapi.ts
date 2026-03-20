@@ -1,12 +1,12 @@
 import { SolapiMessageService } from 'solapi'
 
 const messageService = new SolapiMessageService(
-  process.env.SOLAPI_API_KEY!,
-  process.env.SOLAPI_API_SECRET!
+  (process.env.SOLAPI_API_KEY || '').trim().replace(/[\r\n]/g, ''),
+  (process.env.SOLAPI_API_SECRET || '').trim().replace(/[\r\n]/g, '')
 )
 
-const SENDER = process.env.SMS_SENDER_NUMBER!
-const ADMIN = process.env.ADMIN_PHONE!
+const SENDER = (process.env.SMS_SENDER_NUMBER || '').trim().replace(/[\r\n]/g, '')
+const ADMIN = (process.env.ADMIN_PHONE || '').trim().replace(/[\r\n]/g, '')
 
 export async function notifyAdmin(inquiry: {
   name: string
