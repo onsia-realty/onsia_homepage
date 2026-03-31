@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import AnalyticsTracker from "@/components/analytics/AnalyticsTracker";
+import DynamicTracker from "@/components/analytics/DynamicTracker";
 import SessionProvider from "@/components/auth/SessionProvider";
 
 const geistSans = Geist({
@@ -192,20 +192,20 @@ export default function RootLayout({
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
+        <script type="text/javascript" src="//wcs.pstatic.net/wcslog.js" />
+        <script
+          type="text/javascript"
+          dangerouslySetInnerHTML={{
+            __html: `if(!wcs_add) var wcs_add = {};wcs_add["wa"] = "1885a8e5838f3f0";if(window.wcs){wcs_do();}`,
+          }}
+        />
       </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
 {process.env.NODE_ENV === 'production' && (
-          <AnalyticsTracker
-            config={{
-              apiEndpoint: process.env.NEXT_PUBLIC_TRACKER_API || 'https://tracker-1jtn6j9qy-realtors77-7871s-projects.vercel.app/api/analytics',
-              siteSlug: 'onsia-main',
-              trackClicks: true,
-              trackScroll: true,
-              trackMouse: true,
-              debugMode: false,
-            }}
+          <DynamicTracker
+            apiEndpoint={process.env.NEXT_PUBLIC_TRACKER_API || 'https://tracker-1jtn6j9qy-realtors77-7871s-projects.vercel.app/api/analytics'}
           />
         )}
         <SessionProvider>
