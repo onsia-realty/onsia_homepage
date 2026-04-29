@@ -21,48 +21,111 @@ interface Props {
   accentColor: string
 }
 
-// 네비게이션 구조
-const NAV_LINKS = [
-  {
-    label: '사업안내',
-    href: '/urbanhomes/business',
-    children: [
-      { label: '사업개요', href: '/urbanhomes/business' },
-      { label: '오시는길', href: '/urbanhomes/location' },
-    ],
-  },
-  {
-    label: '단지안내',
-    href: '/urbanhomes/community',
-    children: [
-      { label: '커뮤니티', href: '/urbanhomes/community' },
-      { label: '동호수배치도', href: '/urbanhomes/layout' },
-    ],
-  },
-  {
-    label: '프리미엄',
-    href: '/urbanhomes/premium',
-    children: [
-      { label: '프리미엄', href: '/urbanhomes/premium' },
-      { label: '입지환경', href: '/urbanhomes/environment' },
-      { label: '스마트싱스', href: '/urbanhomes/smart' },
-    ],
-  },
-  {
-    label: '세대안내',
-    href: '/urbanhomes/unit',
-    children: [
-      { label: 'UNIT', href: '/urbanhomes/unit' },
-    ],
-  },
-  {
-    label: '홍보센터',
-    href: '/urbanhomes/inquiry',
-    children: [
-      { label: '관심고객등록', href: '/urbanhomes/inquiry' },
-    ],
-  },
-]
+// 네비게이션 구조 (slug별 분기)
+type NavLink = {
+  label: string
+  href: string
+  children?: { label: string; href: string }[]
+}
+
+const NAV_LINKS_BY_SLUG: Record<string, NavLink[]> = {
+  urbanhomes: [
+    {
+      label: '사업안내',
+      href: '/urbanhomes/business',
+      children: [
+        { label: '사업개요', href: '/urbanhomes/business' },
+        { label: '오시는길', href: '/urbanhomes/location' },
+      ],
+    },
+    {
+      label: '단지안내',
+      href: '/urbanhomes/community',
+      children: [
+        { label: '커뮤니티', href: '/urbanhomes/community' },
+        { label: '동호수배치도', href: '/urbanhomes/layout' },
+      ],
+    },
+    {
+      label: '프리미엄',
+      href: '/urbanhomes/premium',
+      children: [
+        { label: '프리미엄', href: '/urbanhomes/premium' },
+        { label: '입지환경', href: '/urbanhomes/environment' },
+        { label: '스마트싱스', href: '/urbanhomes/smart' },
+      ],
+    },
+    {
+      label: '세대안내',
+      href: '/urbanhomes/unit',
+      children: [
+        { label: 'UNIT', href: '/urbanhomes/unit' },
+      ],
+    },
+    {
+      label: '홍보센터',
+      href: '/urbanhomes/inquiry',
+      children: [
+        { label: '관심고객등록', href: '/urbanhomes/inquiry' },
+      ],
+    },
+  ],
+  // 야목역 - 참조 사이트 메뉴 그대로. 아직 sub-page 없는 카테고리는 메인 페이지 anchor로
+  'yamok-grandhill': [
+    {
+      label: '사업안내',
+      href: '/yamok-grandhill/business',
+      children: [
+        { label: '사업개요', href: '/yamok-grandhill/business' },
+        { label: '입지프리미엄', href: '/yamok-grandhill#pc-gallery' },
+        { label: '브랜드소개', href: '/yamok-grandhill#pc-gallery' },
+        { label: '오시는길', href: '/yamok-grandhill#pc-location' },
+      ],
+    },
+    {
+      label: '분양안내',
+      href: '/yamok-grandhill#pc-gallery',
+      children: [
+        { label: '분양일정', href: '/yamok-grandhill#pc-gallery' },
+        { label: '공급안내', href: '/yamok-grandhill#pc-gallery' },
+        { label: '모집공고', href: '/yamok-grandhill#pc-gallery' },
+      ],
+    },
+    {
+      label: '청약안내',
+      href: '/yamok-grandhill#pc-gallery',
+      children: [
+        { label: '청약안내', href: '/yamok-grandhill#pc-gallery' },
+        { label: '특별공급', href: '/yamok-grandhill#pc-gallery' },
+        { label: '일반공급', href: '/yamok-grandhill#pc-gallery' },
+      ],
+    },
+    {
+      label: '단지안내',
+      href: '/yamok-grandhill#pc-gallery',
+      children: [
+        { label: '단지배치도', href: '/yamok-grandhill#pc-gallery' },
+        { label: '동호수배치도', href: '/yamok-grandhill#pc-gallery' },
+      ],
+    },
+    {
+      label: '세대안내',
+      href: '/yamok-grandhill#pc-gallery',
+      children: [
+        { label: '평면안내', href: '/yamok-grandhill#pc-gallery' },
+        { label: '마감재리스트', href: '/yamok-grandhill#pc-gallery' },
+        { label: '추가선택품목', href: '/yamok-grandhill#pc-gallery' },
+      ],
+    },
+    {
+      label: '고객센터',
+      href: '/yamok-grandhill#pc-inquiry',
+      children: [
+        { label: '관심고객등록', href: '/yamok-grandhill#pc-inquiry' },
+      ],
+    },
+  ],
+}
 
 export default function CategoryPage({
   page, slug, category, categoryTitle, categorySubtitle, primaryColor, accentColor,
@@ -76,31 +139,32 @@ export default function CategoryPage({
   }, [])
 
   const phone = page.phone_number || '1668-5257'
+  const navLinks = NAV_LINKS_BY_SLUG[slug] || NAV_LINKS_BY_SLUG.urbanhomes
 
   return (
     <div className="min-h-screen bg-white">
       {/* ===== FIXED HEADER ===== */}
       <header className="fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-sm border-b border-gray-200/60">
-        <div className="max-w-[1400px] mx-auto px-10 flex items-center justify-between h-[90px]">
+        <div className="max-w-[1400px] mx-auto px-6 flex items-center justify-between gap-4 h-[90px]">
           {/* Logo → 메인으로 */}
-          <a href={`/${slug}`} className="flex items-center gap-3">
+          <a href={`/${slug}`} className="flex items-center gap-3 flex-shrink-0">
             {page.logo_image ? (
               // eslint-disable-next-line @next/next/no-img-element
               <img src={page.logo_image} alt={page.project_name} className="h-14" />
             ) : (
-              <span className="text-3xl font-bold tracking-tight" style={{ color: primaryColor }}>
+              <span className="text-2xl xl:text-3xl font-bold tracking-tight whitespace-nowrap" style={{ color: primaryColor }}>
                 {page.project_name}
               </span>
             )}
           </a>
 
           {/* Navigation */}
-          <nav className="flex items-center gap-0">
-            {NAV_LINKS.map((item, idx) => (
+          <nav className="flex items-center gap-0 flex-shrink-0">
+            {navLinks.map((item, idx) => (
               <div key={idx} className="relative group">
                 <a
                   href={item.href}
-                  className="block px-8 py-3 text-[20px] font-semibold text-gray-800 hover:text-black transition-colors"
+                  className="block px-5 py-3 text-[18px] xl:text-[20px] font-semibold text-gray-800 hover:text-black transition-colors whitespace-nowrap"
                 >
                   {item.label}
                 </a>
@@ -125,7 +189,7 @@ export default function CategoryPage({
           </nav>
 
           {/* Phone */}
-          <a href={`tel:${phone}`} className="flex items-center gap-2 text-[24px] font-extrabold tracking-tight text-gray-900">
+          <a href={`tel:${phone}`} className="flex items-center gap-2 text-[22px] xl:text-[24px] font-extrabold tracking-tight text-gray-900 whitespace-nowrap flex-shrink-0">
             <svg xmlns="http://www.w3.org/2000/svg" className="w-6 h-6" viewBox="0 0 24 24" fill="currentColor">
               <path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z" />
             </svg>
@@ -155,18 +219,31 @@ export default function CategoryPage({
       {/* ===== CONTENT ===== */}
       <section className="py-20 px-8">
         <div className="max-w-[1100px] mx-auto">
-          {category === 'business' && <BusinessContent />}
-          {category === 'location' && <LocationContent />}
-          {category === 'community' && <CommunityContent />}
-          {category === 'layout' && <LayoutContent />}
-          {category === 'premium' && <PremiumContent />}
-          {category === 'environment' && <EnvironmentContent />}
-          {category === 'smart' && <SmartContent />}
-          {category === 'unit' && <UnitContent />}
-          {category === 'inquiry' && (
-            <div className="max-w-[700px] mx-auto">
-              <InquiryForm pageId={page.id} slug={slug} accentColor={accentColor} />
-            </div>
+          {/* 어반홈스 */}
+          {slug === 'urbanhomes' && (
+            <>
+              {category === 'business' && <BusinessContent />}
+              {category === 'location' && <LocationContent />}
+              {category === 'community' && <CommunityContent />}
+              {category === 'layout' && <LayoutContent />}
+              {category === 'premium' && <PremiumContent />}
+              {category === 'environment' && <EnvironmentContent />}
+              {category === 'smart' && <SmartContent />}
+              {category === 'unit' && <UnitContent />}
+              {category === 'inquiry' && (
+                <div className="max-w-[700px] mx-auto">
+                  <InquiryForm pageId={page.id} slug={slug} accentColor={accentColor} />
+                </div>
+              )}
+            </>
+          )}
+
+          {/* 야목역 서희스타힐스 그랜드힐 */}
+          {slug === 'yamok-grandhill' && (
+            <>
+              {category === 'business' && <YamokBusinessContent />}
+              {/* 다른 카테고리는 차례로 추가 예정 */}
+            </>
           )}
         </div>
       </section>
@@ -436,6 +513,45 @@ function UnitContent() {
             <img key={`b-${n}`} src={`https://urbanhomes.co.kr/images/page/unit/B_unit0${n}.jpg`} alt={`B동 UNIT ${n}`} className="w-full block rounded-lg" loading="lazy" />
           ))}
         </div>
+      </div>
+    </>
+  )
+}
+
+/* ===== 야목역 서희스타힐스 그랜드힐 카테고리 컴포넌트 ===== */
+
+// 사업개요 - 참조 사이트 business.php 그대로
+function YamokBusinessContent() {
+  const notices = [
+    '본 홈페이지에서 사용된 사진, CG 및 그림은 소비자의 이해를 돕기 위해 제작된 것으로 실제와 차이가 있으니 유의하시기 바랍니다.',
+    '본 홈페이지의 내용은 향후 개발 계획 및 인·허가에 따라 변경될 수 있습니다.',
+    '본 홈페이지는 제작과정상 오류가 있을 수 있으니 자세한 사항은 문의해 주시기 바랍니다.',
+    '본 홈페이지는 민·형사상 소송의 자료로 사용할 수 없습니다.',
+  ]
+  return (
+    <>
+      {/* 단지 CG + 사업 정보 표 (한 이미지에 통합) */}
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
+        src="/uploads/landing/yamok/business.png"
+        alt="야목역 서희스타힐스 그랜드힐 사업개요"
+        className="w-full block rounded-lg shadow-sm mb-12"
+        loading="lazy"
+      />
+
+      {/* 주의사항 */}
+      <div className="bg-gray-50 border border-gray-200 rounded-lg p-6 md:p-8 flex gap-5 items-start">
+        <div className="flex-shrink-0 w-12 h-12 rounded-full bg-gray-300 text-white text-2xl font-bold flex items-center justify-center">
+          !
+        </div>
+        <ul className="space-y-2 text-[14px] md:text-[15px] text-gray-700 leading-relaxed">
+          {notices.map((n, i) => (
+            <li key={i} className="flex gap-2">
+              <span className="flex-shrink-0">※</span>
+              <span>{n}</span>
+            </li>
+          ))}
+        </ul>
       </div>
     </>
   )

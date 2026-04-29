@@ -2,6 +2,8 @@
 
 import { useState, useEffect } from 'react'
 import InquiryForm from './InquiryForm'
+import LocationSection from './LocationSection'
+import type { BusinessInfo as FullBusinessInfo } from '@/lib/supabase-landing'
 
 interface Agent {
   name: string
@@ -19,6 +21,13 @@ interface Section {
 interface BusinessInfo {
   company_name?: string
   disclaimer?: string
+  location_image?: string
+  modelhouse_address?: string
+  modelhouse_naver_url?: string
+  modelhouse_kakao_url?: string
+  site_address?: string
+  site_naver_url?: string
+  site_kakao_url?: string
 }
 
 interface NavSubLink {
@@ -98,9 +107,9 @@ export default function PCLanding({
       <header
         className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 bg-white/95 backdrop-blur-sm border-b border-gray-200/60`}
       >
-        <div className="max-w-[1400px] mx-auto px-10 flex items-center justify-between h-[90px]">
+        <div className="max-w-[1400px] mx-auto px-6 flex items-center justify-between gap-4 h-[90px]">
           {/* Left: Logo */}
-          <div className="flex items-center gap-3 cursor-pointer" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>
+          <div className="flex items-center gap-3 cursor-pointer flex-shrink-0" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>
             {page.logo_image ? (
               // eslint-disable-next-line @next/next/no-img-element
               <img
@@ -109,28 +118,28 @@ export default function PCLanding({
                 className="h-14"
               />
             ) : (
-              <span className="text-3xl font-bold tracking-tight" style={{ color: primaryColor }}>
+              <span className="text-2xl xl:text-3xl font-bold tracking-tight whitespace-nowrap" style={{ color: primaryColor }}>
                 {page.project_name}
               </span>
             )}
           </div>
 
           {/* Center: Navigation */}
-          <nav className="flex items-center gap-0">
+          <nav className="flex items-center gap-0 flex-shrink-0">
             {navItems.map((item, idx) => (
               <div key={idx} className="relative group">
                 {/* 1차 메뉴 */}
                 {item.href ? (
                   <a
                     href={item.href}
-                    className="block px-8 py-3 text-[20px] font-semibold text-gray-800 hover:text-black transition-colors"
+                    className="block px-5 py-3 text-[18px] xl:text-[20px] font-semibold text-gray-800 hover:text-black transition-colors whitespace-nowrap"
                   >
                     {item.label}
                   </a>
                 ) : (
                   <button
                     onClick={() => item.id && scrollTo(item.id)}
-                    className="block px-8 py-3 text-[20px] font-semibold text-gray-800 hover:text-black transition-colors"
+                    className="block px-5 py-3 text-[18px] xl:text-[20px] font-semibold text-gray-800 hover:text-black transition-colors whitespace-nowrap"
                   >
                     {item.label}
                   </button>
@@ -158,11 +167,11 @@ export default function PCLanding({
           </nav>
 
           {/* Right: Phone */}
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-4 flex-shrink-0">
             {effectivePhone && (
               <a
                 href={`tel:${effectivePhone}`}
-                className="flex items-center gap-2 text-[24px] font-extrabold tracking-tight text-gray-900"
+                className="flex items-center gap-2 text-[22px] xl:text-[24px] font-extrabold tracking-tight text-gray-900 whitespace-nowrap"
               >
                 <svg xmlns="http://www.w3.org/2000/svg" className="w-6 h-6" viewBox="0 0 24 24" fill="currentColor">
                   <path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z" />
@@ -351,6 +360,14 @@ export default function PCLanding({
           </section>
         )
       })()}
+
+      {/* ===== LOCATION (오시는길 - business_info에 location 데이터 있을 때) ===== */}
+      <LocationSection
+        businessInfo={page.business_info as FullBusinessInfo | null}
+        primaryColor={primaryColor}
+        accentColor={accentColor}
+        id="pc-location"
+      />
 
       {/* ===== BOTTOM: Inquiry Form (main) or Video 2 (agent) ===== */}
       {isAgent ? (

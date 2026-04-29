@@ -16,6 +16,11 @@ const CATEGORIES: Record<string, Record<string, { title: string; subtitle?: stri
     unit: { title: '세대안내 (UNIT)' },
     inquiry: { title: '관심고객 등록' },
   },
+  'yamok-grandhill': {
+    // 사업안내
+    business: { title: '사업개요', subtitle: 'BUSINESS' },
+    // 다른 카테고리는 차례로 추가 예정
+  },
 }
 
 interface Props {

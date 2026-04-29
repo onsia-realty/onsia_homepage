@@ -7,6 +7,7 @@ datasource db {
   provider  = "postgresql"
   url       = env("DATABASE_URL")
   directUrl = env("DIRECT_URL")
+  schemas   = ["site"]
 }
 
 model User {
@@ -15,9 +16,9 @@ model User {
   name          String?
   phone         String?
   role          UserRole          @default(USER)
-  createdAt     DateTime          @default(now())
-  updatedAt     DateTime          @updatedAt
-  emailVerified DateTime?
+  createdAt     DateTime          @default(now()) @map("created_at")
+  updatedAt     DateTime          @updatedAt @map("updated_at")
+  emailVerified DateTime?         @map("email_verified")
   image         String?
   accounts      Account[]
   posts         Post[]
@@ -26,33 +27,41 @@ model User {
   sessions      Session[]
   favorites     Favorite[]
   viewHistory   ViewHistory[]
+
+  @@map("users")
+  @@schema("site")
 }
 
 model Account {
-  id                String  @id @default(cuid())
-  userId            String
-  type              String
-  provider          String
-  providerAccountId String
-  refresh_token     String?
-  access_token      String?
-  expires_at        Int?
-  token_type        String?
-  scope             String?
-  id_token                  String?
-  session_state             String?
-  refresh_token_expires_in  Int?
-  user                      User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id                       String  @id @default(cuid())
+  userId                   String  @map("user_id")
+  type                     String
+  provider                 String
+  providerAccountId        String  @map("provider_account_id")
+  refresh_token            String?
+  access_token             String?
+  expires_at               Int?
+  token_type               String?
+  scope                    String?
+  id_token                 String?
+  session_state            String?
+  refresh_token_expires_in Int?
+  user                     User    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([provider, providerAccountId])
+  @@map("accounts")
+  @@schema("site")
 }
 
 model Session {
   id           String   @id @default(cuid())
-  sessionToken String   @unique
-  userId       String
+  sessionToken String   @unique @map("session_token")
+  userId       String   @map("user_id")
   expires      DateTime
   user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("sessions")
+  @@schema("site")
 }
 
 model VerificationToken {
@@ -61,6 +70,8 @@ model VerificationToken {
   expires    DateTime
 
   @@unique([identifier, token])
+  @@map("verification_tokens")
+  @@schema("site")
 }
 
 model Post {
@@ -71,15 +82,18 @@ model Post {
   excerpt        String?
   category       PostCategory
   status         PostStatus   @default(DRAFT)
-  featuredImage  String?
-  seoTitle       String?
-  seoDescription String?
-  publishedAt    DateTime?
-  createdAt      DateTime     @default(now())
-  updatedAt      DateTime     @updatedAt
-  authorId       String
+  featuredImage  String?      @map("featured_image")
+  seoTitle       String?      @map("seo_title")
+  seoDescription String?      @map("seo_description")
+  publishedAt    DateTime?    @map("published_at")
+  createdAt      DateTime     @default(now()) @map("created_at")
+  updatedAt      DateTime     @updatedAt @map("updated_at")
+  authorId       String       @map("author_id")
   author         User         @relation(fields: [authorId], references: [id])
   tags           PostTag[]
+
+  @@map("posts")
+  @@schema("site")
 }
 
 model Tag {
@@ -87,34 +101,42 @@ model Tag {
   name  String    @unique
   color String?
   posts PostTag[]
+
+  @@map("tags")
+  @@schema("site")
 }
 
 model PostTag {
-  postId String
-  tagId  String
+  postId String @map("post_id")
+  tagId  String @map("tag_id")
   post   Post   @relation(fields: [postId], references: [id], onDelete: Cascade)
   tag    Tag    @relation(fields: [tagId], references: [id], onDelete: Cascade)
 
   @@id([postId, tagId])
+  @@map("post_tags")
+  @@schema("site")
 }
 
 model Video {
   id             String   @id @default(cuid())
-  youtubeId      String   @unique
+  youtubeId      String   @unique @map("youtube_id")
   title          String
   description    String?
   thumbnail      String
   duration       String?
-  publishedAt    DateTime
+  publishedAt    DateTime @map("published_at")
   category       String?
   tags           String
-  viewCount      Int?     @default(0)
-  likeCount      Int?     @default(0)
-  commentCount   Int?     @default(0)
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
-  seoTitle       String?
-  seoDescription String?
+  viewCount      Int?     @default(0) @map("view_count")
+  likeCount      Int?     @default(0) @map("like_count")
+  commentCount   Int?     @default(0) @map("comment_count")
+  createdAt      DateTime @default(now()) @map("created_at")
+  updatedAt      DateTime @updatedAt @map("updated_at")
+  seoTitle       String?  @map("seo_title")
+  seoDescription String?  @map("seo_description")
+
+  @@map("videos")
+  @@schema("site")
 }
 
 model Company {
@@ -125,22 +147,28 @@ model Company {
   vision       String?
   patents      String
   achievements String
-  teamMembers  String
-  updatedAt    DateTime @updatedAt
-  createdAt    DateTime @default(now())
+  teamMembers  String   @map("team_members")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+  createdAt    DateTime @default(now()) @map("created_at")
+
+  @@map("companies")
+  @@schema("site")
 }
 
 model Developer {
   id            String     @id @default(cuid())
   name          String     @unique
   description   String?
-  logoUrl       String?
+  logoUrl       String?    @map("logo_url")
   website       String?
-  totalProjects Int?       @default(0)
+  totalProjects Int?       @default(0) @map("total_projects")
   rating        Float?     @default(0)
-  createdAt     DateTime   @default(now())
-  updatedAt     DateTime   @updatedAt
+  createdAt     DateTime   @default(now()) @map("created_at")
+  updatedAt     DateTime   @updatedAt @map("updated_at")
   properties    Property[]
+
+  @@map("developers")
+  @@schema("site")
 }
 
 model Property {
@@ -151,44 +179,44 @@ model Property {
   address            String
   district           String
   city               String
-  zipCode            String?
-  totalUnits         Int
-  availableUnits     Int               @default(0)
-  buildingType       BuildingType
-  completionDate     DateTime
-  moveInDate         DateTime?
-  basePrice          BigInt
-  pricePerPyeong     BigInt?
-  contractDeposit    BigInt
-  interimPayments    String
-  rightsFee          BigInt?
-  profitRate         Float?
-  investmentGrade    String?
+  zipCode            String?           @map("zip_code")
+  totalUnits         Int               @map("total_units")
+  availableUnits     Int               @default(0) @map("available_units")
+  buildingType       BuildingType      @map("building_type")
+  completionDate     DateTime          @map("completion_date")
+  moveInDate         DateTime?         @map("move_in_date")
+  basePrice          BigInt            @map("base_price")
+  pricePerPyeong     BigInt?           @map("price_per_pyeong")
+  contractDeposit    BigInt            @map("contract_deposit")
+  interimPayments    String            @map("interim_payments")
+  rightsFee          BigInt?           @map("rights_fee")
+  profitRate         Float?            @map("profit_rate")
+  investmentGrade    String?           @map("investment_grade")
   constructor        String?
-  keyFeature         String?
-  totalBuildingCount Int?
-  parkingSpaces      Int?
+  keyFeature         String?           @map("key_feature")
+  totalBuildingCount Int?              @map("total_building_count")
+  parkingSpaces      Int?              @map("parking_spaces")
   facilities         String
   status             PropertyStatus    @default(AVAILABLE)
   featured           Boolean           @default(false)
-  pdfUrl             String?
-  youtubeVideoId     String?
-  locationDesc       String?
-  pyeongTypes        String?
+  pdfUrl             String?           @map("pdf_url")
+  youtubeVideoId     String?           @map("youtube_video_id")
+  locationDesc       String?           @map("location_desc")
+  pyeongTypes        String?           @map("pyeong_types")
   subdomain          String?           @unique
-  isPremium          Boolean           @default(false)
-  seoTitle           String?
-  seoDescription     String?
-  viewCount          Int               @default(0)
-  inquiryCount       Int               @default(0)
-  createdAt          DateTime          @default(now())
-  updatedAt          DateTime          @updatedAt
-  publishedAt        DateTime?
-  developerId        String
-  authorId           String
-  loanRatio          String?
-  keyFeatures        String?
-  priceDisplay       String?
+  isPremium          Boolean           @default(false) @map("is_premium")
+  seoTitle           String?           @map("seo_title")
+  seoDescription     String?           @map("seo_description")
+  viewCount          Int               @default(0) @map("view_count")
+  inquiryCount       Int               @default(0) @map("inquiry_count")
+  createdAt          DateTime          @default(now()) @map("created_at")
+  updatedAt          DateTime          @updatedAt @map("updated_at")
+  publishedAt        DateTime?         @map("published_at")
+  developerId        String            @map("developer_id")
+  authorId           String            @map("author_id")
+  loanRatio          String?           @map("loan_ratio")
+  keyFeatures        String?           @map("key_features")
+  priceDisplay       String?           @map("price_display")
   investments        Investment[]
   author             User              @relation(fields: [authorId], references: [id])
   developer          Developer         @relation(fields: [developerId], references: [id])
@@ -200,6 +228,8 @@ model Property {
   @@index([status, featured])
   @@index([district, city])
   @@index([basePrice])
+  @@map("properties")
+  @@schema("site")
 }
 
 model PropertyImage {
@@ -207,13 +237,15 @@ model PropertyImage {
   url        String
   alt        String?
   caption    String?
-  order      Int       @default(0)
+  order      Int       @default(0) @map("sort_order")
   type       ImageType @default(EXTERIOR)
-  createdAt  DateTime  @default(now())
-  propertyId String
+  createdAt  DateTime  @default(now()) @map("created_at")
+  propertyId String    @map("property_id")
   property   Property  @relation(fields: [propertyId], references: [id], onDelete: Cascade)
 
   @@index([propertyId, order])
+  @@map("property_images")
+  @@schema("site")
 }
 
 model PropertyInquiry {
@@ -222,90 +254,95 @@ model PropertyInquiry {
   email       String
   phone       String?
   message     String
-  inquiryType InquiryType   @default(GENERAL)
+  inquiryType InquiryType   @default(GENERAL) @map("inquiry_type")
   status      InquiryStatus @default(PENDING)
   source      String?
-  createdAt   DateTime      @default(now())
-  updatedAt   DateTime      @updatedAt
-  respondedAt DateTime?
-  propertyId  String
-  userId      String?
+  createdAt   DateTime      @default(now()) @map("created_at")
+  updatedAt   DateTime      @updatedAt @map("updated_at")
+  respondedAt DateTime?     @map("responded_at")
+  propertyId  String        @map("property_id")
+  userId      String?       @map("user_id")
   property    Property      @relation(fields: [propertyId], references: [id], onDelete: Cascade)
   user        User?         @relation(fields: [userId], references: [id])
 
   @@index([status, createdAt])
+  @@map("property_inquiries")
+  @@schema("site")
 }
 
 model Investment {
   id               String   @id @default(cuid())
-  currentValue     BigInt
-  projectedValue   BigInt
-  profitAmount     BigInt
-  profitRate       Float
-  investmentPeriod Int
-  riskLevel        String
-  marketAnalysis   String
-  createdAt        DateTime @default(now())
-  updatedAt        DateTime @updatedAt
-  propertyId       String
+  currentValue     BigInt   @map("current_value")
+  projectedValue   BigInt   @map("projected_value")
+  profitAmount     BigInt   @map("profit_amount")
+  profitRate       Float    @map("profit_rate")
+  investmentPeriod Int      @map("investment_period")
+  riskLevel        String   @map("risk_level")
+  marketAnalysis   String   @map("market_analysis")
+  createdAt        DateTime @default(now()) @map("created_at")
+  updatedAt        DateTime @updatedAt @map("updated_at")
+  propertyId       String   @map("property_id")
   property         Property @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+
+  @@map("investments")
+  @@schema("site")
 }
 
 model AuctionItem {
   id                     String            @id @default(cuid())
-  caseNumber             String            @unique
-  caseNumberFull         String?
-  courtCode              String?
-  courtName              String?
+  caseNumber             String            @unique @map("case_number")
+  caseNumberFull         String?           @map("case_number_full")
+  courtCode              String?           @map("court_code")
+  courtName              String?           @map("court_name")
   pnu                    String?
   address                String
-  addressDetail          String?
+  addressDetail          String?           @map("address_detail")
   city                   String
   district               String
-  itemType               AuctionItemType
-  landArea               Float?
-  buildingArea           Float?
+  itemType               AuctionItemType   @map("item_type")
+  landArea               Float?            @map("land_area")
+  buildingArea           Float?            @map("building_area")
   floor                  String?
-  appraisalPrice         BigInt
-  minimumPrice           BigInt
-  minimumRate            Int?
+  appraisalPrice         BigInt            @map("appraisal_price")
+  minimumPrice           BigInt            @map("minimum_price")
+  minimumRate            Int?              @map("minimum_rate")
   deposit                BigInt?
-  saleDate               DateTime?
-  saleTime               String?
-  bidCount               Int               @default(0)
-  bidEndDate             DateTime?
-  referenceDate          DateTime?
-  hasRisk                Boolean           @default(false)
-  riskNote               String?
+  saleDate               DateTime?         @map("sale_date")
+  saleTime               String?           @map("sale_time")
+  bidCount               Int               @default(0) @map("bid_count")
+  bidEndDate             DateTime?         @map("bid_end_date")
+  referenceDate          DateTime?         @map("reference_date")
+  hasRisk                Boolean           @default(false) @map("has_risk")
+  riskNote               String?           @map("risk_note")
   owner                  String?
   debtor                 String?
   creditor               String?
   status                 AuctionStatus     @default(SCHEDULED)
   featured               Boolean           @default(false)
-  realPrice              BigInt?
-  buildingInfo           String?
-  naverComplexId         String?
-  seoTitle               String?
-  seoDescription         String?
-  viewCount              Int               @default(0)
-  inquiryCount           Int               @default(0)
-  createdAt              DateTime          @default(now())
-  updatedAt              DateTime          @updatedAt
-  appraisalDate          DateTime?
-  appraisalOrg           String?
-  approvalDate           DateTime?
-  buildingAppraisalPrice BigInt?
-  buildingStructure      String?
-  buildingUsage          String?
+  realPrice              BigInt?           @map("real_price")
+  buildingInfo           String?           @map("building_info")
+  naverComplexId         String?           @map("naver_complex_id")
+  seoTitle               String?           @map("seo_title")
+  seoDescription         String?           @map("seo_description")
+  viewCount              Int               @default(0) @map("view_count")
+  inquiryCount           Int               @default(0) @map("inquiry_count")
+  createdAt              DateTime          @default(now()) @map("created_at")
+  updatedAt              DateTime          @updatedAt @map("updated_at")
+  appraisalDate          DateTime?         @map("appraisal_date")
+  appraisalOrg           String?           @map("appraisal_org")
+  approvalDate           DateTime?         @map("approval_date")
+  buildingAppraisalPrice BigInt?           @map("building_appraisal_price")
+  buildingStructure      String?           @map("building_structure")
+  buildingUsage          String?           @map("building_usage")
   facilities             String?
-  heatingType            String?
-  landAppraisalPrice     BigInt?
-  landUseZone            String?
-  locationNote           String?
-  nearbyFacilities       String?
-  preservationDate       DateTime?
+  heatingType            String?           @map("heating_type")
+  landAppraisalPrice     BigInt?           @map("land_appraisal_price")
+  landUseZone            String?           @map("land_use_zone")
+  locationNote           String?           @map("location_note")
+  nearbyFacilities       String?           @map("nearby_facilities")
+  preservationDate       DateTime?         @map("preservation_date")
   surroundings           String?
-  totalFloors            String?
+  totalFloors            String?           @map("total_floors")
   transportation         String?
   bids                   AuctionBid[]
   images                 AuctionImage[]
@@ -318,115 +355,125 @@ model AuctionItem {
   @@index([city, district])
   @@index([itemType])
   @@index([pnu])
+  @@map("auction_items")
+  @@schema("site")
 }
 
 model AuctionBid {
   id           String           @id @default(cuid())
-  itemId       String
+  itemId       String           @map("item_id")
   round        Int
-  bidDate      DateTime?
-  minimumPrice BigInt
+  bidDate      DateTime?        @map("bid_date")
+  minimumPrice BigInt           @map("minimum_price")
   result       AuctionBidResult
-  winningPrice BigInt?
-  bidderCount  Int?
-  createdAt    DateTime         @default(now())
+  winningPrice BigInt?          @map("winning_price")
+  bidderCount  Int?             @map("bidder_count")
+  createdAt    DateTime         @default(now()) @map("created_at")
   item         AuctionItem      @relation(fields: [itemId], references: [id], onDelete: Cascade)
 
   @@index([itemId, round])
+  @@map("auction_bids")
+  @@schema("site")
 }
 
 model AuctionRegister {
   id           String      @id @default(cuid())
-  itemId       String
-  registerType String?
-  registerNo   String?
-  receiptDate  DateTime?
+  itemId       String      @map("item_id")
+  registerType String?     @map("register_type")
+  registerNo   String?     @map("register_no")
+  receiptDate  DateTime?   @map("receipt_date")
   purpose      String?
-  rightHolder  String?
-  claimAmount  BigInt?
-  isReference  Boolean     @default(false)
-  willExpire   Boolean     @default(true)
+  rightHolder  String?     @map("right_holder")
+  claimAmount  BigInt?     @map("claim_amount")
+  isReference  Boolean     @default(false) @map("is_reference")
+  willExpire   Boolean     @default(true) @map("will_expire")
   note         String?
-  createdAt    DateTime    @default(now())
+  createdAt    DateTime    @default(now()) @map("created_at")
   item         AuctionItem @relation(fields: [itemId], references: [id], onDelete: Cascade)
 
   @@index([itemId])
+  @@map("auction_registers")
+  @@schema("site")
 }
 
 model AuctionTenant {
   id            String      @id @default(cuid())
-  itemId        String
-  tenantName    String?
-  hasPriority   Boolean?
-  occupiedPart  String?
-  moveInDate    DateTime?
-  fixedDate     DateTime?
-  hasBidRequest Boolean?
+  itemId        String      @map("item_id")
+  tenantName    String?     @map("tenant_name")
+  hasPriority   Boolean?    @map("has_priority")
+  occupiedPart  String?     @map("occupied_part")
+  moveInDate    DateTime?   @map("move_in_date")
+  fixedDate     DateTime?   @map("fixed_date")
+  hasBidRequest Boolean?    @map("has_bid_request")
   deposit       BigInt?
-  monthlyRent   BigInt?
+  monthlyRent   BigInt?     @map("monthly_rent")
   analysis      String?
   note          String?
-  createdAt     DateTime    @default(now())
+  createdAt     DateTime    @default(now()) @map("created_at")
   item          AuctionItem @relation(fields: [itemId], references: [id], onDelete: Cascade)
 
   @@index([itemId])
+  @@map("auction_tenants")
+  @@schema("site")
 }
 
 model AuctionImage {
   id          String           @id @default(cuid())
-  itemId      String
-  imageType   AuctionImageType
+  itemId      String           @map("item_id")
+  imageType   AuctionImageType @map("image_type")
   url         String
-  originalUrl String?
+  originalUrl String?          @map("original_url")
   alt         String?
-  order       Int              @default(0)
-  createdAt   DateTime         @default(now())
+  order       Int              @default(0) @map("sort_order")
+  createdAt   DateTime         @default(now()) @map("created_at")
   item        AuctionItem      @relation(fields: [itemId], references: [id], onDelete: Cascade)
 
   @@index([itemId, order])
+  @@map("auction_item_images")
+  @@schema("site")
 }
 
 model Subscription {
   id                     String                    @id @default(cuid())
-  houseManageNo          String                    @unique
-  pblancNo               String
-  houseName              String
-  houseType              String
-  houseDetailType        String
+  houseManageNo          String                    @unique @map("house_manage_no")
+  pblancNo               String                    @map("pblanc_no")
+  houseName              String                    @map("house_name")
+  houseType              String                    @map("house_type")
+  houseDetailType        String                    @map("house_detail_type")
   address                String
-  addressDetail          String?
-  zipCode                String?
+  addressDetail          String?                   @map("address_detail")
+  zipCode                String?                   @map("zip_code")
   region                 String
-  regionCode             String?
+  regionCode             String?                   @map("region_code")
   latitude               Float?
   longitude              Float?
-  totalHouseholds        Int
-  recruitDate            DateTime?
-  receptionStart         DateTime?
-  receptionEnd           DateTime?
-  specialSupplyDate      DateTime?
-  rank1Date              DateTime?
-  rank2Date              DateTime?
-  winnerAnnouncementDate DateTime?
-  contractStart          DateTime?
-  contractEnd            DateTime?
-  moveInDate             String?
+  totalHouseholds        Int                       @map("total_households")
+  recruitDate            DateTime?                 @map("recruit_date")
+  receptionStart         DateTime?                 @map("reception_start")
+  receptionEnd           DateTime?                 @map("reception_end")
+  specialSupplyDate      DateTime?                 @map("special_supply_date")
+  rank1Date              DateTime?                 @map("rank1_date")
+  rank2Date              DateTime?                 @map("rank2_date")
+  winnerAnnouncementDate DateTime?                 @map("winner_announcement_date")
+  contractStart          DateTime?                 @map("contract_start")
+  contractEnd            DateTime?                 @map("contract_end")
+  moveInDate             String?                   @map("move_in_date")
   developer              String?
   contractor             String?
-  modelHousePhone        String?
+  modelHousePhone        String?                   @map("model_house_phone")
   homepage               String?
-  noticeUrl              String?
-  avgPrice               Int?
-  avgPricePerPyeong      Int?
-  minPrice               Int?
-  maxPrice               Int?
+  noticeUrl              String?                   @map("notice_url")
+  avgPrice               Int?                      @map("avg_price")
+  avgPricePerPyeong      Int?                      @map("avg_price_per_pyeong")
+  minPrice               Int?                      @map("min_price")
+  maxPrice               Int?                      @map("max_price")
   status                 SubscriptionStatus        @default(UPCOMING)
-  isHot                  Boolean                   @default(false)
-  viewCount              Int                       @default(0)
-  rawData                Json?
-  createdAt              DateTime                  @default(now())
-  updatedAt              DateTime                  @updatedAt
-  asilId                 String?
+  isHot                  Boolean                   @default(false) @map("is_hot")
+  viewCount              Int                       @default(0) @map("view_count")
+  rawData                Json?                     @map("raw_data")
+  createdAt              DateTime                  @default(now()) @map("created_at")
+  updatedAt              DateTime                  @updatedAt @map("updated_at")
+  asilId                 String?                   @map("asil_id")
   housingTypes           SubscriptionHousingType[]
   images                 SubscriptionImage[]
   favorites              Favorite[]
@@ -436,51 +483,57 @@ model Subscription {
   @@index([status])
   @@index([region])
   @@index([receptionStart])
+  @@map("subscriptions")
+  @@schema("site")
 }
 
 model SubscriptionImage {
   id             String                    @id @default(cuid())
-  subscriptionId String
+  subscriptionId String                    @map("subscription_id")
   category       SubscriptionImageCategory
   url            String
-  originalUrl    String?
+  originalUrl    String?                   @map("original_url")
   alt            String?
-  order          Int                       @default(0)
-  createdAt      DateTime                  @default(now())
+  order          Int                       @default(0) @map("sort_order")
+  createdAt      DateTime                  @default(now()) @map("created_at")
   subscription   Subscription              @relation(fields: [subscriptionId], references: [id], onDelete: Cascade)
 
   @@index([subscriptionId, category, order])
+  @@map("subscription_images")
+  @@schema("site")
 }
 
 model SubscriptionHousingType {
   id                String       @id @default(cuid())
-  subscriptionId    String
-  houseTy           String
-  modelNo           String?
-  supplyArea        Float
-  exclusiveArea     Float?
-  totalHouseholds   Int
-  generalHouseholds Int
-  specialHouseholds Int
-  topPrice          Int?
-  pricePerPyeong    Int?
-  rawData           Json?
-  createdAt         DateTime     @default(now())
+  subscriptionId    String       @map("subscription_id")
+  houseTy           String       @map("house_ty")
+  modelNo           String?      @map("model_no")
+  supplyArea        Float        @map("supply_area")
+  exclusiveArea     Float?       @map("exclusive_area")
+  totalHouseholds   Int          @map("total_households")
+  generalHouseholds Int          @map("general_households")
+  specialHouseholds Int          @map("special_households")
+  topPrice          Int?         @map("top_price")
+  pricePerPyeong    Int?         @map("price_per_pyeong")
+  rawData           Json?        @map("raw_data")
+  createdAt         DateTime     @default(now()) @map("created_at")
   subscription      Subscription @relation(fields: [subscriptionId], references: [id], onDelete: Cascade)
 
   @@unique([subscriptionId, houseTy])
   @@index([subscriptionId])
+  @@map("subscription_housing_types")
+  @@schema("site")
 }
 
 // 관심 매물
 model Favorite {
   id             String        @id @default(cuid())
-  userId         String
-  itemType       FavoriteType
-  propertyId     String?
-  subscriptionId String?
-  auctionId      String?
-  createdAt      DateTime      @default(now())
+  userId         String        @map("user_id")
+  itemType       FavoriteType  @map("item_type")
+  propertyId     String?       @map("property_id")
+  subscriptionId String?       @map("subscription_id")
+  auctionId      String?       @map("auction_id")
+  createdAt      DateTime      @default(now()) @map("created_at")
   user           User          @relation(fields: [userId], references: [id], onDelete: Cascade)
   property       Property?     @relation(fields: [propertyId], references: [id], onDelete: Cascade)
   subscription   Subscription? @relation(fields: [subscriptionId], references: [id], onDelete: Cascade)
@@ -490,34 +543,44 @@ model Favorite {
   @@unique([userId, itemType, subscriptionId])
   @@unique([userId, itemType, auctionId])
   @@index([userId, createdAt])
+  @@map("favorites")
+  @@schema("site")
 }
 
 // 최근 본 매물
 model ViewHistory {
   id             String        @id @default(cuid())
-  userId         String
-  itemType       FavoriteType
-  propertyId     String?
-  subscriptionId String?
-  auctionId      String?
-  viewedAt       DateTime      @default(now())
+  userId         String        @map("user_id")
+  itemType       FavoriteType  @map("item_type")
+  propertyId     String?       @map("property_id")
+  subscriptionId String?       @map("subscription_id")
+  auctionId      String?       @map("auction_id")
+  viewedAt       DateTime      @default(now()) @map("viewed_at")
   user           User          @relation(fields: [userId], references: [id], onDelete: Cascade)
   property       Property?     @relation(fields: [propertyId], references: [id], onDelete: Cascade)
   subscription   Subscription? @relation(fields: [subscriptionId], references: [id], onDelete: Cascade)
   auction        AuctionItem?  @relation(fields: [auctionId], references: [id], onDelete: Cascade)
 
   @@index([userId, viewedAt])
+  @@map("view_history")
+  @@schema("site")
 }
 
 enum FavoriteType {
   PROPERTY
   SUBSCRIPTION
   AUCTION
+
+  @@map("favorite_type")
+  @@schema("site")
 }
 
 enum UserRole {
   USER
   ADMIN
+
+  @@map("user_role")
+  @@schema("site")
 }
 
 enum PostCategory {
@@ -526,12 +589,18 @@ enum PostCategory {
   AI_TECH
   BLOCKCHAIN
   MARKET_ANALYSIS
+
+  @@map("post_category")
+  @@schema("site")
 }
 
 enum PostStatus {
   DRAFT
   PUBLISHED
   ARCHIVED
+
+  @@map("post_status")
+  @@schema("site")
 }
 
 enum PropertyStatus {
@@ -539,6 +608,9 @@ enum PropertyStatus {
   SOLD_OUT
   COMING_SOON
   SUSPENDED
+
+  @@map("property_status")
+  @@schema("site")
 }
 
 enum BuildingType {
@@ -549,6 +621,9 @@ enum BuildingType {
   SPECIAL
   VILLA
   TOWNHOUSE
+
+  @@map("building_type")
+  @@schema("site")
 }
 
 enum ImageType {
@@ -557,6 +632,9 @@ enum ImageType {
   FLOOR_PLAN
   SITE_PLAN
   AMENITY
+
+  @@map("image_type")
+  @@schema("site")
 }
 
 enum InquiryType {
@@ -564,12 +642,18 @@ enum InquiryType {
   VIEWING
   INVESTMENT
   CONSULTATION
+
+  @@map("inquiry_type")
+  @@schema("site")
 }
 
 enum InquiryStatus {
   PENDING
   RESPONDED
   CLOSED
+
+  @@map("inquiry_status")
+  @@schema("site")
 }
 
 enum AuctionItemType {
@@ -582,6 +666,9 @@ enum AuctionItemType {
   FACTORY
   BUILDING
   OTHER
+
+  @@map("auction_item_type")
+  @@schema("site")
 }
 
 enum AuctionStatus {
@@ -591,6 +678,9 @@ enum AuctionStatus {
   FAILED
   WITHDRAWN
   CANCELED
+
+  @@map("auction_status")
+  @@schema("site")
 }
 
 enum AuctionBidResult {
@@ -598,6 +688,9 @@ enum AuctionBidResult {
   SUCCESSFUL
   WITHDRAWN
   POSTPONED
+
+  @@map("auction_bid_result")
+  @@schema("site")
 }
 
 enum AuctionImageType {
@@ -606,6 +699,9 @@ enum AuctionImageType {
   APPRAISAL
   REGISTER
   OTHER
+
+  @@map("auction_image_type")
+  @@schema("site")
 }
 
 enum SubscriptionStatus {
@@ -615,6 +711,9 @@ enum SubscriptionStatus {
   ANNOUNCED
   CONTRACTED
   COMPLETED
+
+  @@map("subscription_status")
+  @@schema("site")
 }
 
 enum SubscriptionImageCategory {
@@ -627,4 +726,7 @@ enum SubscriptionImageCategory {
   NOTICE_PDF
   PREMIUM
   COMMUNITY
+
+  @@map("subscription_image_category")
+  @@schema("site")
 }

@@ -18,7 +18,16 @@
       "Bash($env:PRISMA_USER_CONSENT_FOR_DANGEROUS_AI_ACTION=\"yes\")",
       "Bash(PRISMA_USER_CONSENT_FOR_DANGEROUS_AI_ACTION=yes npx prisma migrate:*)",
       "Read(//d/claude/onsia_crm2/**)",
-      "Bash(node check-users.mjs)"
+      "Bash(node check-users.mjs)",
+      "mcp__playwright__browser_snapshot",
+      "mcp__playwright__browser_press_key",
+      "mcp__playwright__browser_type",
+      "Bash(node scripts/migration/check-state.mjs)",
+      "mcp__playwright__browser_navigate",
+      "Bash(node *)",
+      "mcp__playwright__browser_evaluate",
+      "mcp__playwright__browser_take_screenshot",
+      "mcp__playwright__browser_wait_for"
     ],
     "deny": [],
     "ask": []

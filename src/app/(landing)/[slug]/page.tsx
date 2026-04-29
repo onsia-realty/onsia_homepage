@@ -6,6 +6,7 @@ import BottomBar from './BottomBar'
 import CallBanner from './CallBanner'
 import PopupModal from './PopupModal'
 import PCLanding from './PCLanding'
+import LocationSection from './LocationSection'
 
 interface Props {
   params: Promise<{ slug: string }>
@@ -118,6 +119,62 @@ export default async function LandingPage({ params, searchParams }: Props) {
         { label: 'UNIT VR', href: 'https://urbanhomes.co.kr/wangsimni_urban_homes/index.html' },
       ],
     },
+    'yamok-grandhill': {
+      navLinks: [
+        {
+          label: '사업안내',
+          href: '/yamok-grandhill/business',
+          children: [
+            { label: '사업개요', href: '/yamok-grandhill/business' },
+            { label: '입지프리미엄', href: '#pc-gallery' },
+            { label: '브랜드소개', href: '#pc-gallery' },
+            { label: '오시는길', href: '#pc-location' },
+          ],
+        },
+        {
+          label: '분양안내',
+          id: 'pc-gallery',
+          children: [
+            { label: '분양일정', href: '#pc-gallery' },
+            { label: '공급안내', href: '#pc-gallery' },
+            { label: '모집공고', href: '#pc-gallery' },
+          ],
+        },
+        {
+          label: '청약안내',
+          id: 'pc-gallery',
+          children: [
+            { label: '청약안내', href: '#pc-gallery' },
+            { label: '특별공급', href: '#pc-gallery' },
+            { label: '일반공급', href: '#pc-gallery' },
+          ],
+        },
+        {
+          label: '단지안내',
+          id: 'pc-gallery',
+          children: [
+            { label: '단지배치도', href: '#pc-gallery' },
+            { label: '동호수배치도', href: '#pc-gallery' },
+          ],
+        },
+        {
+          label: '세대안내',
+          id: 'pc-gallery',
+          children: [
+            { label: '평면안내', href: '#pc-gallery' },
+            { label: '마감재리스트', href: '#pc-gallery' },
+            { label: '추가선택품목', href: '#pc-gallery' },
+          ],
+        },
+        {
+          label: '고객센터',
+          id: 'pc-inquiry',
+          children: [
+            { label: '관심고객등록', href: '#pc-inquiry' },
+          ],
+        },
+      ],
+    },
   }
   const currentSiteConfig = siteConfig[slug]
 
@@ -144,6 +201,21 @@ export default async function LandingPage({ params, searchParams }: Props) {
             alt="청약홈 안내"
             storageKey="popup-dismissed-1"
           />
+        )}
+        {slug === 'yamok-grandhill' && (
+          <>
+            <PopupModal
+              imageUrl="/uploads/landing/yamok/popup-grand-open.png"
+              alt="GRAND OPEN"
+              storageKey="yamok-popup-grandopen"
+            />
+            <PopupModal
+              imageUrl="/uploads/landing/yamok/popup-similar-warning.png"
+              alt="유사 홈페이지 주의"
+              storageKey="yamok-popup-similar"
+              waitForKey="yamok-popup-grandopen"
+            />
+          </>
         )}
       </div>
 
@@ -284,6 +356,15 @@ export default async function LandingPage({ params, searchParams }: Props) {
           </section>
         )}
 
+        {/* 오시는길 (business_info에 location 데이터 있을 때만 표시) */}
+        <LocationSection
+          businessInfo={page.business_info}
+          primaryColor={primaryColor}
+          accentColor={accentColor}
+          id="section-location"
+          compact
+        />
+
         {/* Bottom: Inquiry Form (main) or Video 2 (agent) */}
         {agent ? (
           <section className="bg-black">
@@ -355,6 +436,22 @@ export default async function LandingPage({ params, searchParams }: Props) {
             storageKey="popup-dismissed-2"
             waitForKey="popup-dismissed-1"
           />
+        )}
+        {/* yamok-grandhill: GRAND OPEN + 유사 홈페이지 주의 (모바일) */}
+        {slug === 'yamok-grandhill' && (
+          <>
+            <PopupModal
+              imageUrl="/uploads/landing/yamok/popup-grand-open.png"
+              alt="GRAND OPEN"
+              storageKey="yamok-popup-grandopen-m"
+            />
+            <PopupModal
+              imageUrl="/uploads/landing/yamok/popup-similar-warning.png"
+              alt="유사 홈페이지 주의"
+              storageKey="yamok-popup-similar-m"
+              waitForKey="yamok-popup-grandopen-m"
+            />
+          </>
         )}
       </div>
     </>

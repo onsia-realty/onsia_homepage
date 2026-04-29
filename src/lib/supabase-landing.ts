@@ -34,6 +34,14 @@ export interface BusinessInfo {
   ceo?: string
   address?: string
   disclaimer?: string
+  // 오시는길 (LocationSection 컴포넌트에서 사용)
+  location_image?: string
+  modelhouse_address?: string
+  modelhouse_naver_url?: string
+  modelhouse_kakao_url?: string
+  site_address?: string
+  site_naver_url?: string
+  site_kakao_url?: string
 }
 
 export interface LandingPage {

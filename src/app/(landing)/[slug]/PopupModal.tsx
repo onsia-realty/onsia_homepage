@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react'
 
 interface Props {
   imageUrl: string
-  linkUrl: string
+  linkUrl?: string
   alt?: string
   storageKey?: string
   /** 이 키가 sessionStorage에 설정될 때까지 대기 (순차 팝업용) */
@@ -59,15 +59,24 @@ export default function PopupModal({ imageUrl, linkUrl, alt = '팝업', storageK
           &times;
         </button>
 
-        {/* 팝업 이미지 → 링크 */}
-        <a href={linkUrl} target="_blank" rel="noopener noreferrer">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
+        {/* 팝업 이미지 (linkUrl 있으면 새창 링크, 없으면 단순 이미지) */}
+        {linkUrl ? (
+          <a href={linkUrl} target="_blank" rel="noopener noreferrer">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={imageUrl}
+              alt={alt}
+              className="w-full rounded-lg shadow-2xl"
+            />
+          </a>
+        ) : (
+          // eslint-disable-next-line @next/next/no-img-element
           <img
             src={imageUrl}
             alt={alt}
             className="w-full rounded-lg shadow-2xl"
           />
-        </a>
+        )}
 
         {/* 하단 닫기 */}
         <button
