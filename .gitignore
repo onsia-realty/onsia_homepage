@@ -60,3 +60,15 @@ next-env.d.ts
 *.log
 crawl-*.log
 .playwright-mcp/
+
+# 작업용 디버그 스크린샷 (프로젝트 루트 한정 — public/src/ 등의 이미지는 영향 없음)
+/*.png
+/*.jpg
+/*.jpeg
+
+# Claude Code 임시 파일
+/tmpclaude-*
+
+# Prisma 마이그레이션 잔존 백업 (Neon 정리 후 삭제 예정)
+/prisma/schema.backup.prisma
+/prisma/schema.dbpull-result.prisma
