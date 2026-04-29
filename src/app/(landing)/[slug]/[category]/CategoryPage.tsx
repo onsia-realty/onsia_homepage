@@ -70,58 +70,58 @@ const NAV_LINKS_BY_SLUG: Record<string, NavLink[]> = {
       ],
     },
   ],
-  // 야목역 - 참조 사이트 메뉴 그대로. 아직 sub-page 없는 카테고리는 메인 페이지 anchor로
+  // 야목역 - 모든 메뉴 항목이 실제 sub-page로 연결됨
   'yamok-grandhill': [
     {
       label: '사업안내',
       href: '/yamok-grandhill/business',
       children: [
         { label: '사업개요', href: '/yamok-grandhill/business' },
-        { label: '입지프리미엄', href: '/yamok-grandhill#pc-gallery' },
-        { label: '브랜드소개', href: '/yamok-grandhill#pc-gallery' },
-        { label: '오시는길', href: '/yamok-grandhill#pc-location' },
+        { label: '입지프리미엄', href: '/yamok-grandhill/premium' },
+        { label: '브랜드소개', href: '/yamok-grandhill/brand' },
+        { label: '오시는길', href: '/yamok-grandhill/location' },
       ],
     },
     {
       label: '분양안내',
-      href: '/yamok-grandhill#pc-gallery',
+      href: '/yamok-grandhill/schedule',
       children: [
-        { label: '분양일정', href: '/yamok-grandhill#pc-gallery' },
-        { label: '공급안내', href: '/yamok-grandhill#pc-gallery' },
-        { label: '모집공고', href: '/yamok-grandhill#pc-gallery' },
+        { label: '분양일정', href: '/yamok-grandhill/schedule' },
+        { label: '공급안내', href: '/yamok-grandhill/supply' },
+        { label: '모집공고', href: '/yamok-grandhill/apply' },
       ],
     },
     {
       label: '청약안내',
-      href: '/yamok-grandhill#pc-gallery',
+      href: '/yamok-grandhill/subscription',
       children: [
-        { label: '청약안내', href: '/yamok-grandhill#pc-gallery' },
-        { label: '특별공급', href: '/yamok-grandhill#pc-gallery' },
-        { label: '일반공급', href: '/yamok-grandhill#pc-gallery' },
+        { label: '청약안내', href: '/yamok-grandhill/subscription' },
+        { label: '특별공급', href: '/yamok-grandhill/subscription' },
+        { label: '일반공급', href: '/yamok-grandhill/subscription' },
       ],
     },
     {
       label: '단지안내',
-      href: '/yamok-grandhill#pc-gallery',
+      href: '/yamok-grandhill/layout',
       children: [
-        { label: '단지배치도', href: '/yamok-grandhill#pc-gallery' },
-        { label: '동호수배치도', href: '/yamok-grandhill#pc-gallery' },
+        { label: '단지배치도', href: '/yamok-grandhill/layout' },
+        { label: '동호수배치도', href: '/yamok-grandhill/units' },
       ],
     },
     {
       label: '세대안내',
-      href: '/yamok-grandhill#pc-gallery',
+      href: '/yamok-grandhill/floorplan',
       children: [
-        { label: '평면안내', href: '/yamok-grandhill#pc-gallery' },
-        { label: '마감재리스트', href: '/yamok-grandhill#pc-gallery' },
-        { label: '추가선택품목', href: '/yamok-grandhill#pc-gallery' },
+        { label: '평면안내', href: '/yamok-grandhill/floorplan' },
+        { label: '마감재리스트', href: '/yamok-grandhill/interior' },
+        { label: '추가선택품목', href: '/yamok-grandhill/option' },
       ],
     },
     {
       label: '고객센터',
-      href: '/yamok-grandhill#pc-inquiry',
+      href: '/yamok-grandhill/inquiry',
       children: [
-        { label: '관심고객등록', href: '/yamok-grandhill#pc-inquiry' },
+        { label: '관심고객등록', href: '/yamok-grandhill/inquiry' },
       ],
     },
   ],
@@ -242,7 +242,23 @@ export default function CategoryPage({
           {slug === 'yamok-grandhill' && (
             <>
               {category === 'business' && <YamokBusinessContent />}
-              {/* 다른 카테고리는 차례로 추가 예정 */}
+              {category === 'premium' && <YamokPremiumContent />}
+              {category === 'brand' && <YamokBrandContent />}
+              {category === 'location' && <YamokLocationContent primaryColor={primaryColor} />}
+              {category === 'schedule' && <YamokScheduleContent />}
+              {category === 'supply' && <YamokSupplyContent />}
+              {category === 'apply' && <YamokApplyContent />}
+              {category === 'subscription' && <YamokSubscriptionContent />}
+              {category === 'layout' && <YamokLayoutContent />}
+              {category === 'units' && <YamokUnitsContent />}
+              {category === 'floorplan' && <YamokFloorplanContent />}
+              {category === 'interior' && <YamokInteriorContent />}
+              {category === 'option' && <YamokOptionContent />}
+              {category === 'inquiry' && (
+                <div className="max-w-[700px] mx-auto">
+                  <InquiryForm pageId={page.id} slug={slug} accentColor={accentColor} />
+                </div>
+              )}
             </>
           )}
         </div>
@@ -554,5 +570,194 @@ function YamokBusinessContent() {
         </ul>
       </div>
     </>
+  )
+}
+
+// 입지 프리미엄
+function YamokPremiumContent() {
+  return (
+    // eslint-disable-next-line @next/next/no-img-element
+    <img
+      src="/uploads/landing/yamok/premium.png"
+      alt="야목역 서희스타힐스 그랜드힐 입지 프리미엄"
+      className="w-full block rounded-lg shadow-sm"
+      loading="lazy"
+    />
+  )
+}
+
+// 브랜드 소개
+function YamokBrandContent() {
+  return (
+    // eslint-disable-next-line @next/next/no-img-element
+    <img
+      src="/uploads/landing/yamok/brand.jpg"
+      alt="서희스타힐스 브랜드 소개"
+      className="w-full block rounded-lg shadow-sm"
+      loading="lazy"
+    />
+  )
+}
+
+// 오시는길
+function YamokLocationContent({ primaryColor }: { primaryColor: string }) {
+  const modelhouse = '경기도 안산시 단원구 광덕4로 178'
+  const site = '경기도 화성시 비봉면 구포리 614-18번지 일원'
+  const naverUrl = (q: string) => `https://map.naver.com/p/search/${encodeURIComponent(q)}`
+  const kakaoUrl = (q: string) => `https://map.kakao.com/?q=${encodeURIComponent(q)}`
+
+  return (
+    <>
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
+        src="/uploads/landing/yamok/location.png"
+        alt="야목역 서희스타힐스 그랜드힐 오시는길"
+        className="w-full block rounded-lg shadow-sm mb-10"
+        loading="lazy"
+      />
+
+      <div className="grid md:grid-cols-2 gap-6">
+        <div className="border border-gray-200 rounded-lg p-6 md:p-8">
+          <h3 className="text-xl md:text-2xl font-bold mb-3" style={{ color: primaryColor }}>
+            견본주택
+          </h3>
+          <p className="text-[15px] text-gray-700 leading-relaxed mb-5">{modelhouse}</p>
+          <div className="flex flex-wrap gap-2">
+            <a
+              href={naverUrl(modelhouse)}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex-1 min-w-[140px] inline-flex items-center justify-center gap-1 px-4 py-2.5 rounded-md bg-gray-900 text-white text-[14px] font-semibold hover:bg-gray-800 transition-colors"
+            >
+              <span className="inline-flex items-center justify-center w-5 h-5 rounded-sm bg-[#03C75A] text-white text-[12px] font-extrabold">N</span>
+              네이버 지도
+            </a>
+            <a
+              href={kakaoUrl(modelhouse)}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex-1 min-w-[140px] inline-flex items-center justify-center gap-1 px-4 py-2.5 rounded-md bg-[#FEE500] text-gray-900 text-[14px] font-semibold hover:brightness-95 transition-all"
+            >
+              카카오 지도
+            </a>
+          </div>
+        </div>
+
+        <div className="border border-gray-200 rounded-lg p-6 md:p-8">
+          <h3 className="text-xl md:text-2xl font-bold mb-3" style={{ color: primaryColor }}>
+            현장
+          </h3>
+          <p className="text-[15px] text-gray-700 leading-relaxed mb-5">{site}</p>
+          <div className="flex flex-wrap gap-2">
+            <a
+              href={naverUrl(site)}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex-1 min-w-[140px] inline-flex items-center justify-center gap-1 px-4 py-2.5 rounded-md bg-gray-900 text-white text-[14px] font-semibold hover:bg-gray-800 transition-colors"
+            >
+              <span className="inline-flex items-center justify-center w-5 h-5 rounded-sm bg-[#03C75A] text-white text-[12px] font-extrabold">N</span>
+              네이버 지도
+            </a>
+            <a
+              href={kakaoUrl(site)}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex-1 min-w-[140px] inline-flex items-center justify-center gap-1 px-4 py-2.5 rounded-md bg-[#FEE500] text-gray-900 text-[14px] font-semibold hover:brightness-95 transition-all"
+            >
+              카카오 지도
+            </a>
+          </div>
+        </div>
+      </div>
+    </>
+  )
+}
+
+// 분양일정
+function YamokScheduleContent() {
+  return (
+    // eslint-disable-next-line @next/next/no-img-element
+    <img src="/uploads/landing/yamok/schedule.png" alt="분양일정" className="w-full block rounded-lg shadow-sm" loading="lazy" />
+  )
+}
+
+// 공급안내
+function YamokSupplyContent() {
+  return (
+    // eslint-disable-next-line @next/next/no-img-element
+    <img src="/uploads/landing/yamok/info03.png" alt="공급안내" className="w-full block rounded-lg shadow-sm" loading="lazy" />
+  )
+}
+
+// 모집공고
+function YamokApplyContent() {
+  return (
+    // eslint-disable-next-line @next/next/no-img-element
+    <img src="/uploads/landing/yamok/apply.png" alt="모집공고" className="w-full block rounded-lg shadow-sm" loading="lazy" />
+  )
+}
+
+// 청약안내
+function YamokSubscriptionContent() {
+  return (
+    // eslint-disable-next-line @next/next/no-img-element
+    <img src="/uploads/landing/yamok/ssp_guide.png" alt="청약안내" className="w-full block rounded-lg shadow-sm" loading="lazy" />
+  )
+}
+
+// 단지배치도
+function YamokLayoutContent() {
+  return (
+    // eslint-disable-next-line @next/next/no-img-element
+    <img src="/uploads/landing/yamok/cpx_layout.png" alt="단지배치도" className="w-full block rounded-lg shadow-sm" loading="lazy" />
+  )
+}
+
+// 동호수배치도
+function YamokUnitsContent() {
+  return (
+    // eslint-disable-next-line @next/next/no-img-element
+    <img src="/uploads/landing/yamok/no_layout.png" alt="동호수배치도" className="w-full block rounded-lg shadow-sm" loading="lazy" />
+  )
+}
+
+// 평면안내 (5개 타입)
+function YamokFloorplanContent() {
+  const types = [
+    { src: '/uploads/landing/yamok/unitplan_59a.png', label: '59A' },
+    { src: '/uploads/landing/yamok/unitplan_59b.png', label: '59B' },
+    { src: '/uploads/landing/yamok/unitplan_59c.png', label: '59C' },
+    { src: '/uploads/landing/yamok/unitplan_84a.png', label: '84A' },
+    { src: '/uploads/landing/yamok/unitplan_84b.png', label: '84B' },
+  ]
+  return (
+    <div className="space-y-14">
+      {types.map((t) => (
+        <div key={t.label}>
+          <h3 className="text-2xl font-bold text-gray-800 mb-5 text-center">
+            <span className="inline-block px-4 py-1 rounded-full bg-gray-900 text-white text-base mr-3">TYPE</span>
+            {t.label}
+          </h3>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src={t.src} alt={`${t.label}타입 평면`} className="w-full block rounded-lg shadow-sm" loading="lazy" />
+        </div>
+      ))}
+    </div>
+  )
+}
+
+// 마감재 리스트
+function YamokInteriorContent() {
+  return (
+    // eslint-disable-next-line @next/next/no-img-element
+    <img src="/uploads/landing/yamok/interior.png" alt="마감재 리스트" className="w-full block rounded-lg shadow-sm" loading="lazy" />
+  )
+}
+
+// 추가선택품목
+function YamokOptionContent() {
+  return (
+    // eslint-disable-next-line @next/next/no-img-element
+    <img src="/uploads/landing/yamok/option.png" alt="추가선택품목" className="w-full block rounded-lg shadow-sm" loading="lazy" />
   )
 }

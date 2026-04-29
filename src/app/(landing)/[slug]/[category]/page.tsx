@@ -19,7 +19,24 @@ const CATEGORIES: Record<string, Record<string, { title: string; subtitle?: stri
   'yamok-grandhill': {
     // 사업안내
     business: { title: '사업개요', subtitle: 'BUSINESS' },
-    // 다른 카테고리는 차례로 추가 예정
+    premium: { title: '입지 프리미엄', subtitle: 'PREMIUM' },
+    brand: { title: '브랜드 소개', subtitle: 'BRAND' },
+    location: { title: '오시는길', subtitle: 'LOCATION' },
+    // 분양안내
+    schedule: { title: '분양일정', subtitle: 'SCHEDULE' },
+    supply: { title: '공급안내', subtitle: 'SUPPLY' },
+    apply: { title: '모집공고', subtitle: 'APPLY' },
+    // 청약안내
+    subscription: { title: '청약안내', subtitle: 'SUBSCRIPTION GUIDE' },
+    // 단지안내
+    layout: { title: '단지배치도', subtitle: 'COMPLEX LAYOUT' },
+    units: { title: '동호수배치도', subtitle: 'UNIT LAYOUT' },
+    // 세대안내
+    floorplan: { title: '평면안내', subtitle: 'UNIT PLAN' },
+    interior: { title: '마감재 리스트', subtitle: 'INTERIOR' },
+    option: { title: '추가선택품목', subtitle: 'OPTION' },
+    // 고객센터
+    inquiry: { title: '관심고객 등록', subtitle: 'INQUIRY' },
   },
 }
 
