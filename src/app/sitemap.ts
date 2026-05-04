@@ -1,5 +1,6 @@
 import { MetadataRoute } from 'next';
 import { prisma } from '@/lib/prisma';
+import { getLandingPages } from '@/lib/supabase-landing';
 
 // 사이트맵 전용 청약 API 호출 (캐시 허용)
 async function fetchSubscriptionsForSitemap() {
@@ -82,7 +83,28 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       changeFrequency: 'monthly',
       priority: 0.7,
     },
+    // 분양 홈페이지 목록
+    {
+      url: `${baseUrl}/homepage`,
+      lastModified: new Date(),
+      changeFrequency: 'weekly',
+      priority: 0.85,
+    },
   ];
+
+  // 동적 랜딩페이지 (분양 현장별)
+  let landingPages: MetadataRoute.Sitemap = [];
+  try {
+    const pages = await getLandingPages();
+    landingPages = pages.map((p) => ({
+      url: `${baseUrl}/${p.slug}`,
+      lastModified: new Date(p.updated_at),
+      changeFrequency: 'weekly' as const,
+      priority: 0.95,
+    }));
+  } catch (error) {
+    console.error('Sitemap: Failed to fetch landing pages', error);
+  }
 
   // 동적 매물 페이지
   let propertyPages: MetadataRoute.Sitemap = [];
@@ -121,5 +143,5 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     console.error('Sitemap: Failed to fetch subscriptions', error);
   }
 
-  return [...staticPages, ...propertyPages, ...subscriptionPages];
+  return [...staticPages, ...landingPages, ...propertyPages, ...subscriptionPages];
 }

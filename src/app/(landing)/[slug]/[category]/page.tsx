@@ -33,6 +33,7 @@ const CATEGORIES: Record<string, Record<string, { title: string; subtitle?: stri
     units: { title: '동호수배치도', subtitle: 'UNIT LAYOUT' },
     // 세대안내
     floorplan: { title: '평면안내', subtitle: 'UNIT PLAN' },
+    vr: { title: 'E-모델하우스', subtitle: 'E-MODEL HOUSE VR' },
     interior: { title: '마감재 리스트', subtitle: 'INTERIOR' },
     option: { title: '추가선택품목', subtitle: 'OPTION' },
     // 고객센터

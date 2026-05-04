@@ -29,14 +29,28 @@ export async function generateMetadata({ params, searchParams }: Props): Promise
     ? baseOgTitle.replace(/초역세권\s*$/, '').trimEnd() + ' ' + agent.name
     : baseOgTitle
 
+  const ogImage = page.og_image || page.hero_image || undefined
+  const pageUrl = `https://www.onsia.city/${slug}${agentCodeStr ? `?a=${agentCodeStr}` : ''}`
+  const ogDescription = page.seo_description || `${page.project_name} 분양 안내`
+
   return {
     title: agent ? `${page.project_name} - ${agent.name}` : (page.seo_title || `${page.project_name} - 분양 안내`),
     description: page.seo_description || `${page.project_name} ${page.location || ''} 분양 정보`,
     keywords: page.seo_keywords || undefined,
     openGraph: {
       title: ogTitle,
-      description: page.seo_description || `${page.project_name} 분양 안내`,
-      images: page.og_image ? [page.og_image] : page.hero_image ? [page.hero_image] : [],
+      description: ogDescription,
+      url: pageUrl,
+      siteName: '온시아(ONSIA)',
+      type: 'website',
+      locale: 'ko_KR',
+      images: ogImage ? [{ url: ogImage, width: 1200, height: 630, alt: page.project_name }] : [],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: ogTitle,
+      description: ogDescription,
+      images: ogImage ? [ogImage] : [],
     },
   }
 }
@@ -162,6 +176,7 @@ export default async function LandingPage({ params, searchParams }: Props) {
           href: '/yamok-grandhill/floorplan',
           children: [
             { label: '평면안내', href: '/yamok-grandhill/floorplan' },
+            { label: 'E-모델하우스', href: '/yamok-grandhill/vr' },
             { label: '마감재리스트', href: '/yamok-grandhill/interior' },
             { label: '추가선택품목', href: '/yamok-grandhill/option' },
           ],
@@ -173,6 +188,10 @@ export default async function LandingPage({ params, searchParams }: Props) {
             { label: '관심고객등록', href: '/yamok-grandhill/inquiry' },
           ],
         },
+      ],
+      vrLinks: [
+        { label: 'VR 59A', href: '/vr/yamok/S59A.html' },
+        { label: 'VR 84B', href: '/vr/yamok/S84B.html' },
       ],
     },
   }
@@ -203,19 +222,11 @@ export default async function LandingPage({ params, searchParams }: Props) {
           />
         )}
         {slug === 'yamok-grandhill' && (
-          <>
-            <PopupModal
-              imageUrl="/uploads/landing/yamok/popup-grand-open.png"
-              alt="GRAND OPEN"
-              storageKey="yamok-popup-grandopen"
-            />
-            <PopupModal
-              imageUrl="/uploads/landing/yamok/popup-similar-warning.png"
-              alt="유사 홈페이지 주의"
-              storageKey="yamok-popup-similar"
-              waitForKey="yamok-popup-grandopen"
-            />
-          </>
+          <PopupModal
+            imageUrl="/uploads/landing/yamok/popup-grand-open.png"
+            alt="GRAND OPEN"
+            storageKey="yamok-popup-grandopen"
+          />
         )}
       </div>
 
@@ -264,6 +275,49 @@ export default async function LandingPage({ params, searchParams }: Props) {
             phone={effectivePhone}
             agentName={agent?.name}
           />
+        )}
+
+        {/* E-모델하우스 VR CTA (yamok-grandhill 한정 — 최상단 노출, 풀 폭 다크 그라디언트) */}
+        {slug === 'yamok-grandhill' && (
+          <section className="py-5 sm:py-6 px-3 sm:px-4 bg-white">
+            <a
+              href="/yamok-grandhill/vr"
+              className="block rounded-2xl overflow-hidden shadow-2xl active:opacity-95 transition-all relative"
+              style={{
+                background: 'linear-gradient(135deg, #0F172A 0%, #1E1B4B 50%, #4338CA 100%)',
+              }}
+            >
+              {/* 장식 - 오른쪽 발광 효과 */}
+              <span
+                aria-hidden
+                className="absolute top-0 right-0 w-40 h-40 rounded-full blur-3xl opacity-40 pointer-events-none"
+                style={{ background: 'radial-gradient(circle, #C9A96E 0%, transparent 70%)' }}
+              />
+              <div className="relative px-5 sm:px-6 py-6 sm:py-7 flex items-center gap-4 sm:gap-5">
+                <div className="flex-shrink-0 w-16 h-16 sm:w-[72px] sm:h-[72px] rounded-full bg-white/10 backdrop-blur-sm flex items-center justify-center ring-1 ring-white/20">
+                  <svg xmlns="http://www.w3.org/2000/svg" className="w-8 h-8 sm:w-9 sm:h-9" viewBox="0 0 24 24" fill="none" stroke="#C9A96E" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M21 12c0 1.66-4.03 3-9 3s-9-1.34-9-3" />
+                    <ellipse cx="12" cy="12" rx="9" ry="3" />
+                    <path d="M3 12v5c0 1.66 4.03 3 9 3s9-1.34 9-3v-5" />
+                  </svg>
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-[12px] sm:text-[13px] font-bold tracking-[0.22em] mb-1.5" style={{ color: '#C9A96E' }}>
+                    360° E-MODEL HOUSE
+                  </p>
+                  <p className="text-white font-extrabold text-2xl sm:text-[26px] leading-tight">
+                    E-모델하우스 보러가기
+                  </p>
+                  <p className="text-white/75 text-[14px] sm:text-[15px] mt-1.5">
+                    59㎡A · 84㎡B 두 타입 둘러보기
+                  </p>
+                </div>
+                <svg xmlns="http://www.w3.org/2000/svg" className="flex-shrink-0 w-7 h-7 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  <polyline points="9 18 15 12 9 6" />
+                </svg>
+              </div>
+            </a>
+          </section>
         )}
 
         {/* YouTube Video */}
@@ -356,6 +410,57 @@ export default async function LandingPage({ params, searchParams }: Props) {
           </section>
         )}
 
+        {/* 카테고리 바로가기 그리드 (yamok-grandhill 한정 — 풀 폭 다크 그라디언트, E-모델하우스 CTA와 통일) */}
+        {slug === 'yamok-grandhill' && (
+          <section className="py-8 sm:py-10 px-3 sm:px-4 bg-white">
+            <h2 className="text-center text-[12px] sm:text-[13px] font-bold tracking-[0.25em] mb-1.5" style={{ color: '#C9A96E' }}>
+              MORE INFO
+            </h2>
+            <p className="text-center text-xl sm:text-2xl font-extrabold mb-6 sm:mb-7 text-gray-900">
+              상세 정보 더 보기
+            </p>
+            <div className="space-y-3 sm:space-y-3.5">
+              {[
+                { href: '/yamok-grandhill/business', label: '사업개요', sub: 'BUSINESS', desc: '사업 규모 · 단지 정보', d: 'M3 21h18M5 21V7l8-4 8 4v14M9 9h.01M9 13h.01M9 17h.01M14 9h.01M14 13h.01M14 17h.01' },
+                { href: '/yamok-grandhill/premium', label: '입지 프리미엄', sub: 'PREMIUM', desc: '야목역 · GTX-F(예정)', d: 'M12 2l2.39 4.84L20 8l-4 3.9.94 5.5L12 14.77 7.06 17.4 8 11.9 4 8l5.61-1.16L12 2z' },
+                { href: '/yamok-grandhill/layout', label: '단지배치도', sub: 'LAYOUT', desc: '동·세대 배치 한눈에', d: 'M3 3h7v7H3zM14 3h7v7h-7zM14 14h7v7h-7zM3 14h7v7H3z' },
+                { href: '/yamok-grandhill/floorplan', label: '평면안내', sub: 'UNIT PLAN', desc: '59㎡A·B·C / 84㎡A·B', d: 'M3 3h18v18H3zM3 12h18M12 3v18M3 7h6v5H3z' },
+              ].map((item) => (
+                <a
+                  key={item.href}
+                  href={item.href}
+                  className="block rounded-2xl overflow-hidden shadow-xl active:opacity-95 transition-all relative"
+                  style={{
+                    background: 'linear-gradient(135deg, #0F172A 0%, #1E1B4B 50%, #4338CA 100%)',
+                  }}
+                >
+                  <div className="relative px-5 sm:px-6 py-5 sm:py-6 flex items-center gap-4 sm:gap-5">
+                    <div className="flex-shrink-0 w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-white/10 backdrop-blur-sm flex items-center justify-center ring-1 ring-white/20">
+                      <svg xmlns="http://www.w3.org/2000/svg" className="w-7 h-7 sm:w-8 sm:h-8" viewBox="0 0 24 24" fill="none" stroke="#C9A96E" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <path d={item.d} />
+                      </svg>
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-[11px] sm:text-[12px] font-bold tracking-[0.22em] mb-1" style={{ color: '#C9A96E' }}>
+                        {item.sub}
+                      </p>
+                      <p className="text-white font-extrabold text-xl sm:text-[22px] leading-tight">
+                        {item.label}
+                      </p>
+                      <p className="text-white/70 text-[13px] sm:text-[14px] mt-1">
+                        {item.desc}
+                      </p>
+                    </div>
+                    <svg xmlns="http://www.w3.org/2000/svg" className="flex-shrink-0 w-6 h-6 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                      <polyline points="9 18 15 12 9 6" />
+                    </svg>
+                  </div>
+                </a>
+              ))}
+            </div>
+          </section>
+        )}
+
         {/* 오시는길 (business_info에 location 데이터 있을 때만 표시) */}
         <LocationSection
           businessInfo={page.business_info}
@@ -437,21 +542,13 @@ export default async function LandingPage({ params, searchParams }: Props) {
             waitForKey="popup-dismissed-1"
           />
         )}
-        {/* yamok-grandhill: GRAND OPEN + 유사 홈페이지 주의 (모바일) */}
+        {/* yamok-grandhill: GRAND OPEN 팝업 (모바일) */}
         {slug === 'yamok-grandhill' && (
-          <>
-            <PopupModal
-              imageUrl="/uploads/landing/yamok/popup-grand-open.png"
-              alt="GRAND OPEN"
-              storageKey="yamok-popup-grandopen-m"
-            />
-            <PopupModal
-              imageUrl="/uploads/landing/yamok/popup-similar-warning.png"
-              alt="유사 홈페이지 주의"
-              storageKey="yamok-popup-similar-m"
-              waitForKey="yamok-popup-grandopen-m"
-            />
-          </>
+          <PopupModal
+            imageUrl="/uploads/landing/yamok/popup-grand-open.png"
+            alt="GRAND OPEN"
+            storageKey="yamok-popup-grandopen-m"
+          />
         )}
       </div>
     </>

@@ -2,12 +2,15 @@
 
 import { useState, useEffect } from 'react'
 import InquiryForm from '../InquiryForm'
+import BottomBar from '../BottomBar'
 
 interface Page {
   id: string
   project_name: string
   logo_image?: string | null
   phone_number?: string | null
+  kakao_chat_url?: string | null
+  show_bottom_bar?: boolean | null
   business_info?: { company_name?: string; disclaimer?: string } | null
 }
 
@@ -113,6 +116,7 @@ const NAV_LINKS_BY_SLUG: Record<string, NavLink[]> = {
       href: '/yamok-grandhill/floorplan',
       children: [
         { label: '평면안내', href: '/yamok-grandhill/floorplan' },
+        { label: 'E-모델하우스', href: '/yamok-grandhill/vr' },
         { label: '마감재리스트', href: '/yamok-grandhill/interior' },
         { label: '추가선택품목', href: '/yamok-grandhill/option' },
       ],
@@ -131,6 +135,8 @@ export default function CategoryPage({
   page, slug, category, categoryTitle, categorySubtitle, primaryColor, accentColor,
 }: Props) {
   const [scrolled, setScrolled] = useState(false)
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+  const [openSection, setOpenSection] = useState<number | null>(null)
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 50)
@@ -138,13 +144,26 @@ export default function CategoryPage({
     return () => window.removeEventListener('scroll', onScroll)
   }, [])
 
+  // 모바일 메뉴 열렸을 때 body 스크롤 잠금
+  useEffect(() => {
+    if (mobileMenuOpen) {
+      document.body.style.overflow = 'hidden'
+    } else {
+      document.body.style.overflow = ''
+    }
+    return () => {
+      document.body.style.overflow = ''
+    }
+  }, [mobileMenuOpen])
+
   const phone = page.phone_number || '1668-5257'
   const navLinks = NAV_LINKS_BY_SLUG[slug] || NAV_LINKS_BY_SLUG.urbanhomes
+  const showBottomBar = page.show_bottom_bar !== false
 
   return (
-    <div className="min-h-screen bg-white">
-      {/* ===== FIXED HEADER ===== */}
-      <header className="fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-sm border-b border-gray-200/60">
+    <div className={`min-h-screen bg-white ${showBottomBar ? 'pb-14 lg:pb-0' : ''}`}>
+      {/* ===== PC HEADER (lg+) ===== */}
+      <header className="hidden lg:block fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-sm border-b border-gray-200/60">
         <div className="max-w-[1400px] mx-auto px-6 flex items-center justify-between gap-4 h-[90px]">
           {/* Logo → 메인으로 */}
           <a href={`/${slug}`} className="flex items-center gap-3 flex-shrink-0">
@@ -198,26 +217,153 @@ export default function CategoryPage({
         </div>
       </header>
 
+      {/* ===== MOBILE HEADER (<lg) ===== */}
+      <header className="lg:hidden fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-sm border-b border-gray-200/60">
+        <div className="flex items-center justify-between px-4 h-14">
+          <a href={`/${slug}`} className="flex items-center gap-2 min-w-0">
+            {page.logo_image ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img src={page.logo_image} alt={page.project_name} className="h-8 max-w-[180px] object-contain" />
+            ) : (
+              <span className="text-base font-bold truncate" style={{ color: primaryColor }}>
+                {page.project_name}
+              </span>
+            )}
+          </a>
+          <div className="flex items-center gap-1">
+            <a
+              href={`tel:${phone}`}
+              className="p-2 text-gray-800"
+              aria-label="전화 걸기"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" className="w-6 h-6" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z" />
+              </svg>
+            </a>
+            <button
+              onClick={() => setMobileMenuOpen(true)}
+              className="p-2 text-gray-800"
+              aria-label="메뉴 열기"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" className="w-7 h-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <line x1="3" y1="6" x2="21" y2="6" />
+                <line x1="3" y1="12" x2="21" y2="12" />
+                <line x1="3" y1="18" x2="21" y2="18" />
+              </svg>
+            </button>
+          </div>
+        </div>
+      </header>
+
+      {/* ===== MOBILE DRAWER MENU ===== */}
+      {mobileMenuOpen && (
+        <div className="lg:hidden fixed inset-0 z-[100]">
+          {/* Backdrop */}
+          <div
+            className="absolute inset-0 bg-black/50"
+            onClick={() => setMobileMenuOpen(false)}
+          />
+          {/* Panel */}
+          <div className="absolute right-0 top-0 bottom-0 w-[85%] max-w-[360px] bg-white shadow-2xl overflow-y-auto">
+            <div
+              className="flex items-center justify-between px-4 h-14 border-b border-gray-200"
+              style={{ backgroundColor: primaryColor }}
+            >
+              <span className="text-white font-bold">MENU</span>
+              <button
+                onClick={() => setMobileMenuOpen(false)}
+                className="p-2 text-white"
+                aria-label="메뉴 닫기"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" className="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                  <line x1="18" y1="6" x2="6" y2="18" />
+                  <line x1="6" y1="6" x2="18" y2="18" />
+                </svg>
+              </button>
+            </div>
+            <nav className="py-2">
+              <a
+                href={`/${slug}`}
+                className="block px-5 py-4 text-[15px] font-semibold text-gray-900 border-b border-gray-100 hover:bg-gray-50"
+              >
+                HOME
+              </a>
+              {navLinks.map((item, idx) => {
+                const expanded = openSection === idx
+                return (
+                  <div key={idx} className="border-b border-gray-100">
+                    <button
+                      onClick={() =>
+                        setOpenSection(expanded ? null : idx)
+                      }
+                      className="w-full flex items-center justify-between px-5 py-4 text-[15px] font-semibold text-gray-900 hover:bg-gray-50"
+                    >
+                      <span>{item.label}</span>
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        className={`w-4 h-4 transition-transform ${expanded ? 'rotate-180' : ''}`}
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2.5"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      >
+                        <polyline points="6 9 12 15 18 9" />
+                      </svg>
+                    </button>
+                    {expanded && item.children && item.children.length > 0 && (
+                      <ul className="bg-gray-50">
+                        {item.children.map((sub, si) => (
+                          <li key={si}>
+                            <a
+                              href={sub.href}
+                              className="block px-8 py-3 text-[14px] text-gray-700 hover:text-black hover:bg-gray-100"
+                            >
+                              {sub.label}
+                            </a>
+                          </li>
+                        ))}
+                      </ul>
+                    )}
+                  </div>
+                )
+              })}
+            </nav>
+            <a
+              href={`tel:${phone}`}
+              className="m-4 flex items-center justify-center gap-2 h-12 rounded-md text-white font-bold text-base"
+              style={{ backgroundColor: primaryColor }}
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z" />
+              </svg>
+              {phone}
+            </a>
+          </div>
+        </div>
+      )}
+
       {/* ===== PAGE TITLE BANNER ===== */}
-      <section className="pt-[90px]">
-        <div className="py-20 text-center" style={{ backgroundColor: primaryColor }}>
-          <h1 className="text-5xl font-bold text-white mb-2">{categoryTitle}</h1>
+      <section className="pt-14 lg:pt-[90px]">
+        <div className="py-10 lg:py-20 text-center" style={{ backgroundColor: primaryColor }}>
+          <h1 className="text-2xl lg:text-5xl font-bold text-white mb-1 lg:mb-2 px-4">{categoryTitle}</h1>
           {categorySubtitle && (
-            <p className="text-white/60 text-lg tracking-widest mt-3">{categorySubtitle}</p>
+            <p className="text-white/60 text-xs lg:text-lg tracking-widest mt-2 lg:mt-3 px-4">{categorySubtitle}</p>
           )}
         </div>
         {/* Breadcrumb */}
         <div className="bg-gray-50 border-b border-gray-200">
-          <div className="max-w-[1100px] mx-auto px-8 py-4 flex items-center gap-2 text-sm text-gray-500">
+          <div className="max-w-[1100px] mx-auto px-4 lg:px-8 py-3 lg:py-4 flex items-center gap-2 text-xs lg:text-sm text-gray-500">
             <a href={`/${slug}`} className="hover:text-gray-800">HOME</a>
             <span>&gt;</span>
-            <span className="text-gray-800 font-medium">{categoryTitle}</span>
+            <span className="text-gray-800 font-medium truncate">{categoryTitle}</span>
           </div>
         </div>
       </section>
 
       {/* ===== CONTENT ===== */}
-      <section className="py-20 px-8">
+      <section className="py-10 lg:py-20 px-4 lg:px-8">
         <div className="max-w-[1100px] mx-auto">
           {/* 어반홈스 */}
           {slug === 'urbanhomes' && (
@@ -252,6 +398,7 @@ export default function CategoryPage({
               {category === 'layout' && <YamokLayoutContent />}
               {category === 'units' && <YamokUnitsContent />}
               {category === 'floorplan' && <YamokFloorplanContent />}
+              {category === 'vr' && <YamokVRContent primaryColor={primaryColor} />}
               {category === 'interior' && <YamokInteriorContent />}
               {category === 'option' && <YamokOptionContent />}
               {category === 'inquiry' && (
@@ -265,31 +412,40 @@ export default function CategoryPage({
       </section>
 
       {/* ===== FOOTER ===== */}
-      <footer className="bg-[#f5f5f5] py-14 px-8">
+      <footer className="bg-[#f5f5f5] py-10 lg:py-14 px-4 lg:px-8">
         <div className="max-w-[1000px] mx-auto text-center">
           {page.logo_image ? (
             // eslint-disable-next-line @next/next/no-img-element
-            <img src={page.logo_image} alt={page.project_name} className="h-10 mx-auto mb-6" />
+            <img src={page.logo_image} alt={page.project_name} className="h-8 lg:h-10 mx-auto mb-4 lg:mb-6" />
           ) : (
-            <p className="text-xl font-bold mb-6" style={{ color: primaryColor }}>{page.project_name}</p>
+            <p className="text-base lg:text-xl font-bold mb-4 lg:mb-6" style={{ color: primaryColor }}>{page.project_name}</p>
           )}
-          <p className="text-[13px] text-gray-500 leading-relaxed mb-5">
+          <p className="text-[12px] lg:text-[13px] text-gray-500 leading-relaxed mb-4 lg:mb-5 whitespace-pre-line">
             {page.business_info?.disclaimer ||
               '※ 본 사이트의 이미지는 소비자의 이해를 돕기 위해 제작된 것으로 실제 시공 시 다를 수 있습니다.'}
           </p>
           {page.business_info?.company_name && (
-            <p className="text-[13px] text-gray-400 leading-loose">{page.business_info.company_name}</p>
+            <p className="text-[12px] lg:text-[13px] text-gray-400 leading-loose">{page.business_info.company_name}</p>
           )}
-          <p className="mt-6 text-[12px] text-gray-400">
+          <p className="mt-5 lg:mt-6 text-[11px] lg:text-[12px] text-gray-400">
             Copyright &copy; {new Date().getFullYear()} {page.project_name}. All Rights Reserved.
           </p>
         </div>
       </footer>
 
+      {/* ===== MOBILE BOTTOM BAR ===== */}
+      {showBottomBar && (
+        <BottomBar
+          phoneNumber={page.phone_number || phone}
+          kakaoUrl={page.kakao_chat_url || null}
+          inquiryHref={`/${slug}/inquiry`}
+        />
+      )}
+
       {/* ===== SCROLL TO TOP ===== */}
       <button
         onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-        className={`fixed right-5 bottom-8 z-40 w-12 h-12 rounded-full bg-[#333] text-white shadow-lg flex items-center justify-center transition-all duration-300 hover:bg-[#555] ${
+        className={`fixed right-4 lg:right-5 z-40 w-10 h-10 lg:w-12 lg:h-12 rounded-full bg-[#333] text-white shadow-lg flex items-center justify-center transition-all duration-300 hover:bg-[#555] ${showBottomBar ? 'bottom-20 lg:bottom-8' : 'bottom-6 lg:bottom-8'} ${
           scrolled ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4 pointer-events-none'
         }`}
       >
@@ -556,11 +712,11 @@ function YamokBusinessContent() {
       />
 
       {/* 주의사항 */}
-      <div className="bg-gray-50 border border-gray-200 rounded-lg p-6 md:p-8 flex gap-5 items-start">
-        <div className="flex-shrink-0 w-12 h-12 rounded-full bg-gray-300 text-white text-2xl font-bold flex items-center justify-center">
+      <div className="bg-gray-50 border border-gray-200 rounded-lg p-4 md:p-8 flex gap-3 md:gap-5 items-start">
+        <div className="flex-shrink-0 w-9 h-9 md:w-12 md:h-12 rounded-full bg-gray-300 text-white text-lg md:text-2xl font-bold flex items-center justify-center">
           !
         </div>
-        <ul className="space-y-2 text-[14px] md:text-[15px] text-gray-700 leading-relaxed">
+        <ul className="space-y-2 text-[13px] md:text-[15px] text-gray-700 leading-relaxed">
           {notices.map((n, i) => (
             <li key={i} className="flex gap-2">
               <span className="flex-shrink-0">※</span>
@@ -731,11 +887,11 @@ function YamokFloorplanContent() {
     { src: '/uploads/landing/yamok/unitplan_84b.png', label: '84B' },
   ]
   return (
-    <div className="space-y-14">
+    <div className="space-y-10 md:space-y-14">
       {types.map((t) => (
         <div key={t.label}>
-          <h3 className="text-2xl font-bold text-gray-800 mb-5 text-center">
-            <span className="inline-block px-4 py-1 rounded-full bg-gray-900 text-white text-base mr-3">TYPE</span>
+          <h3 className="text-lg md:text-2xl font-bold text-gray-800 mb-4 md:mb-5 text-center">
+            <span className="inline-block px-3 md:px-4 py-0.5 md:py-1 rounded-full bg-gray-900 text-white text-xs md:text-base mr-2 md:mr-3 align-middle">TYPE</span>
             {t.label}
           </h3>
           {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -743,6 +899,103 @@ function YamokFloorplanContent() {
         </div>
       ))}
     </div>
+  )
+}
+
+// E-모델하우스 (VR)
+function YamokVRContent({ primaryColor }: { primaryColor: string }) {
+  const vrs = [
+    {
+      label: '59A',
+      area: '전용 59㎡A타입',
+      thumb: '/uploads/landing/yamok/unitplan_59a.png',
+      href: '/vr/yamok/S59A.html',
+    },
+    {
+      label: '84B',
+      area: '전용 84㎡B타입',
+      thumb: '/uploads/landing/yamok/unitplan_84b.png',
+      href: '/vr/yamok/S84B.html',
+    },
+  ]
+  return (
+    <>
+      <p className="text-center text-gray-600 text-[14px] md:text-[16px] leading-relaxed mb-8 md:mb-12">
+        야목역 서희스타힐스 그랜드힐 세대를 360° VR로 미리 체험해보세요.
+        <br className="hidden md:block" />
+        <span className="text-gray-500">실제 시공 시 일부 사양 및 마감재가 변경될 수 있습니다.</span>
+      </p>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
+        {vrs.map((v) => (
+          <a
+            key={v.label}
+            href={v.href}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="group block bg-white border border-gray-200 rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 hover:-translate-y-1"
+          >
+            {/* Thumbnail */}
+            <div className="relative bg-gray-50 aspect-[4/3] overflow-hidden flex items-center justify-center">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={v.thumb}
+                alt={`${v.label} 평면`}
+                className="w-full h-full object-contain p-4 transition-transform duration-500 group-hover:scale-105"
+                loading="lazy"
+              />
+              {/* 360 / VR badge */}
+              <span
+                className="absolute top-3 left-3 inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] md:text-[12px] font-bold text-white"
+                style={{ backgroundColor: primaryColor }}
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" className="w-3 h-3 md:w-3.5 md:h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M21 12c0 1.66-4.03 3-9 3s-9-1.34-9-3" />
+                  <ellipse cx="12" cy="12" rx="9" ry="3" />
+                </svg>
+                360° VR
+              </span>
+              {/* Hover overlay */}
+              <div className="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition-colors duration-300 flex items-center justify-center">
+                <span className="opacity-0 group-hover:opacity-100 transition-opacity duration-300 px-5 py-2.5 rounded-full bg-white text-gray-900 text-[13px] md:text-[14px] font-bold shadow-lg">
+                  VR 둘러보기 →
+                </span>
+              </div>
+            </div>
+            {/* Body */}
+            <div className="p-5 md:p-6">
+              <div className="flex items-center justify-between mb-2">
+                <h3 className="text-xl md:text-2xl font-bold text-gray-900">
+                  <span className="inline-block px-3 py-0.5 rounded-md text-white text-sm md:text-base mr-2 align-middle" style={{ backgroundColor: primaryColor }}>
+                    TYPE
+                  </span>
+                  {v.label}
+                </h3>
+                <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5 text-gray-400 group-hover:text-gray-700 transition-colors" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
+                  <polyline points="15 3 21 3 21 9" />
+                  <line x1="10" y1="14" x2="21" y2="3" />
+                </svg>
+              </div>
+              <p className="text-[13px] md:text-[14px] text-gray-500">{v.area}</p>
+              <button
+                type="button"
+                className="mt-4 md:mt-5 w-full inline-flex items-center justify-center gap-2 h-11 md:h-12 rounded-lg text-white text-[14px] md:text-[15px] font-bold transition-all"
+                style={{ backgroundColor: primaryColor }}
+                tabIndex={-1}
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4 md:w-5 md:h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                  <polygon points="5 3 19 12 5 21 5 3" />
+                </svg>
+                VR 입장하기
+              </button>
+            </div>
+          </a>
+        ))}
+      </div>
+      <p className="mt-8 md:mt-10 text-center text-[12px] md:text-[13px] text-gray-400 leading-relaxed">
+        ※ VR 콘텐츠는 새 탭에서 열립니다. 모바일 데이터 사용량이 많을 수 있으니 Wi-Fi 환경을 권장합니다.
+      </p>
+    </>
   )
 }
 

@@ -4,9 +4,10 @@ interface Props {
   phoneNumber: string | null
   kakaoUrl: string | null
   isAgent?: boolean
+  inquiryHref?: string
 }
 
-export default function BottomBar({ phoneNumber, kakaoUrl, isAgent }: Props) {
+export default function BottomBar({ phoneNumber, kakaoUrl, isAgent, inquiryHref }: Props) {
   return (
     <div className="fixed bottom-0 left-0 right-0 z-50 bg-white border-t border-gray-200 shadow-[0_-2px_10px_rgba(0,0,0,0.1)] lg:hidden">
       <div className="flex items-center h-14 lg:h-16 max-w-lg lg:max-w-2xl mx-auto px-2 lg:px-4 gap-2 lg:gap-3">
@@ -36,11 +37,15 @@ export default function BottomBar({ phoneNumber, kakaoUrl, isAgent }: Props) {
         )}
         {!isAgent && (
           <a
-            href="#inquiry-bottom"
-            onClick={(e) => {
-              e.preventDefault()
-              document.getElementById('inquiry-bottom')?.scrollIntoView({ behavior: 'smooth' })
-            }}
+            href={inquiryHref || '#inquiry-bottom'}
+            onClick={
+              inquiryHref
+                ? undefined
+                : (e) => {
+                    e.preventDefault()
+                    document.getElementById('inquiry-bottom')?.scrollIntoView({ behavior: 'smooth' })
+                  }
+            }
             className="flex-1 flex items-center justify-center gap-1.5 lg:gap-2 h-10 lg:h-12 text-sm lg:text-base font-bold text-white bg-green-600 rounded-lg active:opacity-80 hover:bg-green-700 transition-colors"
           >
             <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4 lg:w-5 lg:h-5" viewBox="0 0 24 24" fill="currentColor">
