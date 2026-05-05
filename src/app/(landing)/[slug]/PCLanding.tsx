@@ -71,7 +71,6 @@ interface Props {
   agentCode?: string
   navLinks?: NavLink[]
   vrLinks?: VRLink[]
-  seoSection?: React.ReactNode
 }
 
 // agent 페이지 영상 토글 (어반홈스 등 슬러그 — page.tsx와 동일 플래그)
@@ -87,7 +86,7 @@ const DEFAULT_NAV_ITEMS: NavLink[] = [
 export default function PCLanding({
   page, agent, effectivePhone, effectiveKakao,
   primaryColor, accentColor, slug, agentCode,
-  navLinks, vrLinks, seoSection,
+  navLinks, vrLinks,
 }: Props) {
   const [scrolled, setScrolled] = useState(false)
 
@@ -234,8 +233,8 @@ export default function PCLanding({
         </a>
       )}
 
-      {/* ===== E-모델하우스 VR CTA (yamok-grandhill 한정 — PC 본문 노출) ===== */}
-      {slug === 'yamok-grandhill' && (
+      {/* ===== E-모델하우스 VR CTA (yamok-grandhill 한정 — PC 본문 노출) — agent에서는 YamokAgentVrCta가 따로 노출되므로 메인 한정 ===== */}
+      {slug === 'yamok-grandhill' && !isAgent && (
         <section className="py-10 px-8 bg-white">
           <div className="max-w-[1100px] mx-auto">
             <a
@@ -460,9 +459,6 @@ export default function PCLanding({
           </div>
         </section>
       )}
-
-      {/* ===== SEO 본문 (검색봇 readable, footer 직전) ===== */}
-      {seoSection}
 
       {/* ===== FOOTER (urbanhomes style) ===== */}
       <footer className="bg-[#f5f5f5] py-14 px-8">

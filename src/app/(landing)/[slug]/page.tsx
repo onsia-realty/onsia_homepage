@@ -41,8 +41,6 @@ const YAMOK_FAQ: YamokFaqItem[] = [
   },
 ]
 
-const YAMOK_INTRO = `야목역 서희스타힐스 그랜드힐은 경기도 화성시 비봉면 구포리 614-18번지 일원에 들어서는 서희스타힐스 브랜드 신축 분양 단지입니다. 수인분당선 야목역과 도보권이며, 향후 GTX-F(예정) 노선 호재가 기대되는 더블역세권 입지입니다. 야목역세권 브랜드타운의 첫자리로, 전용면적 59㎡A·B·C 타입과 84㎡A·B 타입 총 5개 타입으로 공급됩니다. 견본주택은 경기도 안산시 단원구 광덕4로 178에 위치하며, 분양상담은 1668-5257로 가능합니다.`
-
 // agent 페이지 영상 토글 (어반홈스 등 슬러그 — 야목은 별도 VR CTA로 분기되어 영향 없음)
 const SHOW_AGENT_VIDEOS = true
 
@@ -238,37 +236,7 @@ export default async function LandingPage({ params, searchParams }: Props) {
   }
   const currentSiteConfig = siteConfig[slug]
 
-  // SEO 섹션 (yamok 한정, PC와 모바일 양쪽 footer 위에 사용)
-  const seoSection = slug === 'yamok-grandhill' ? (
-    <section
-      aria-label="야목역 서희스타힐스 그랜드힐 분양 안내"
-      className="bg-white border-t border-gray-100"
-    >
-      <div className="max-w-[1100px] mx-auto px-4 lg:px-8 py-10 lg:py-14">
-        <h2 className="text-base lg:text-lg font-bold text-gray-900 mb-3 lg:mb-4">
-          야목역 서희스타힐스 그랜드힐 분양 안내
-        </h2>
-        <p className="text-[13px] lg:text-[14px] text-gray-600 leading-relaxed mb-6 lg:mb-8">
-          {YAMOK_INTRO}
-        </p>
-        <h2 className="text-base lg:text-lg font-bold text-gray-900 mb-3 lg:mb-4">
-          자주 묻는 질문 (FAQ)
-        </h2>
-        <ul className="space-y-3 lg:space-y-4">
-          {YAMOK_FAQ.map((f, i) => (
-            <li key={i} className="border-b border-gray-100 pb-3 lg:pb-4 last:border-0">
-              <p className="text-[13px] lg:text-[14px] font-bold text-gray-900 mb-1">
-                Q. {f.q}
-              </p>
-              <p className="text-[13px] lg:text-[14px] text-gray-600 leading-relaxed">
-                A. {f.a}
-              </p>
-            </li>
-          ))}
-        </ul>
-      </div>
-    </section>
-  ) : null
+  // 시각 본문(intro + FAQ)은 사용자 요청으로 제거. JSON-LD FAQPage Schema는 검색엔진 노출용으로 유지.
 
   return (
     <>
@@ -290,7 +258,6 @@ export default async function LandingPage({ params, searchParams }: Props) {
           agentCode={agentCodeStr}
           navLinks={currentSiteConfig?.navLinks}
           vrLinks={currentSiteConfig?.vrLinks}
-          seoSection={seoSection}
         />
         {slug === 'urbanhomes' && (
           <PopupModal
@@ -356,8 +323,8 @@ export default async function LandingPage({ params, searchParams }: Props) {
           />
         )}
 
-        {/* E-모델하우스 VR CTA (yamok-grandhill 한정 — 최상단 노출, 풀 폭 다크 그라디언트) */}
-        {slug === 'yamok-grandhill' && (
+        {/* E-모델하우스 VR CTA (yamok-grandhill 한정 — 최상단 노출, 풀 폭 다크 그라디언트) — agent 페이지에서는 YamokAgentVrCta가 따로 노출되므로 메인 한정 */}
+        {slug === 'yamok-grandhill' && !agent && (
           <section className="py-5 sm:py-6 px-3 sm:px-4 bg-white">
             <a
               href="/yamok-grandhill/vr"
@@ -576,9 +543,6 @@ export default async function LandingPage({ params, searchParams }: Props) {
             </div>
           </section>
         )}
-
-        {/* SEO 본문 (검색봇 readable, yamok 한정 — Footer 직전) */}
-        {seoSection}
 
         {/* Footer */}
         <footer className="py-6 sm:py-8 px-4 bg-gray-900 text-gray-400 text-center text-xs sm:text-sm leading-relaxed">
