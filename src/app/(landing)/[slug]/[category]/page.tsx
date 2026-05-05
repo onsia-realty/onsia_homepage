@@ -3,8 +3,8 @@ import { notFound } from 'next/navigation'
 import { getLandingPageBySlug } from '@/lib/supabase-landing'
 import CategoryPage from './CategoryPage'
 
-// 카테고리 정의
-const CATEGORIES: Record<string, Record<string, { title: string; subtitle?: string }>> = {
+// 카테고리 정의 (sitemap.ts에서도 import해서 sub-page 동적 등록)
+export const CATEGORIES: Record<string, Record<string, { title: string; subtitle?: string }>> = {
   urbanhomes: {
     business: { title: '사업개요' },
     location: { title: '오시는길' },

@@ -1,6 +1,7 @@
 import { MetadataRoute } from 'next';
 import { prisma } from '@/lib/prisma';
 import { getLandingPages } from '@/lib/supabase-landing';
+import { CATEGORIES } from '@/app/(landing)/[slug]/[category]/page';
 
 // 사이트맵 전용 청약 API 호출 (캐시 허용)
 async function fetchSubscriptionsForSitemap() {
@@ -92,16 +93,31 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     },
   ];
 
-  // 동적 랜딩페이지 (분양 현장별)
+  // 동적 랜딩페이지 (분양 현장별 메인 + 카테고리 sub-page)
   let landingPages: MetadataRoute.Sitemap = [];
   try {
     const pages = await getLandingPages();
-    landingPages = pages.map((p) => ({
-      url: `${baseUrl}/${p.slug}`,
-      lastModified: new Date(p.updated_at),
-      changeFrequency: 'weekly' as const,
-      priority: 0.95,
-    }));
+    pages.forEach((p) => {
+      // 메인 랜딩 (priority 0.95)
+      landingPages.push({
+        url: `${baseUrl}/${p.slug}`,
+        lastModified: new Date(p.updated_at),
+        changeFrequency: 'weekly' as const,
+        priority: 0.95,
+      });
+      // 카테고리 sub-page (CATEGORIES에 정의된 슬러그만 — 야목/어반홈스 등)
+      const cats = CATEGORIES[p.slug];
+      if (cats) {
+        Object.keys(cats).forEach((category) => {
+          landingPages.push({
+            url: `${baseUrl}/${p.slug}/${category}`,
+            lastModified: new Date(p.updated_at),
+            changeFrequency: 'weekly' as const,
+            priority: 0.85,
+          });
+        });
+      }
+    });
   } catch (error) {
     console.error('Sitemap: Failed to fetch landing pages', error);
   }
