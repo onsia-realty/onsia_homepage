@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import InquiryForm from './InquiryForm'
 import LocationSection from './LocationSection'
+import YamokAgentVrCta from './YamokAgentVrCta'
 import type { BusinessInfo as FullBusinessInfo } from '@/lib/supabase-landing'
 
 interface Agent {
@@ -70,7 +71,11 @@ interface Props {
   agentCode?: string
   navLinks?: NavLink[]
   vrLinks?: VRLink[]
+  seoSection?: React.ReactNode
 }
+
+// agent 페이지 영상 토글 (어반홈스 등 슬러그 — page.tsx와 동일 플래그)
+const SHOW_AGENT_VIDEOS = true
 
 const DEFAULT_NAV_ITEMS: NavLink[] = [
   { label: '사업안내', id: 'pc-section-info' },
@@ -82,7 +87,7 @@ const DEFAULT_NAV_ITEMS: NavLink[] = [
 export default function PCLanding({
   page, agent, effectivePhone, effectiveKakao,
   primaryColor, accentColor, slug, agentCode,
-  navLinks, vrLinks,
+  navLinks, vrLinks, seoSection,
 }: Props) {
   const [scrolled, setScrolled] = useState(false)
 
@@ -229,6 +234,63 @@ export default function PCLanding({
         </a>
       )}
 
+      {/* ===== E-모델하우스 VR CTA (yamok-grandhill 한정 — PC 본문 노출) ===== */}
+      {slug === 'yamok-grandhill' && (
+        <section className="py-10 px-8 bg-white">
+          <div className="max-w-[1100px] mx-auto">
+            <a
+              href="/yamok-grandhill/vr"
+              className="block rounded-3xl overflow-hidden shadow-2xl active:opacity-95 hover:shadow-[0_25px_60px_rgba(67,56,202,0.35)] transition-all duration-300 relative group"
+              style={{
+                background: 'linear-gradient(135deg, #0F172A 0%, #1E1B4B 50%, #4338CA 100%)',
+              }}
+            >
+              {/* 우상단 발광 효과 */}
+              <span
+                aria-hidden
+                className="absolute top-0 right-0 w-[420px] h-[420px] rounded-full blur-3xl opacity-30 pointer-events-none"
+                style={{ background: 'radial-gradient(circle, #C9A96E 0%, transparent 70%)' }}
+              />
+              <div className="relative px-12 py-10 flex items-center gap-10">
+                {/* 좌측: 큰 360° 아이콘 */}
+                <div className="flex-shrink-0 w-28 h-28 rounded-full bg-white/10 backdrop-blur-sm flex items-center justify-center ring-1 ring-white/20">
+                  <svg xmlns="http://www.w3.org/2000/svg" className="w-14 h-14" viewBox="0 0 24 24" fill="none" stroke="#C9A96E" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M21 12c0 1.66-4.03 3-9 3s-9-1.34-9-3" />
+                    <ellipse cx="12" cy="12" rx="9" ry="3" />
+                    <path d="M3 12v5c0 1.66 4.03 3 9 3s9-1.34 9-3v-5" />
+                  </svg>
+                </div>
+                {/* 가운데: 텍스트 */}
+                <div className="flex-1 min-w-0">
+                  <p className="text-[14px] font-bold tracking-[0.28em] mb-2" style={{ color: '#C9A96E' }}>
+                    360° E-MODEL HOUSE
+                  </p>
+                  <p className="text-white font-extrabold text-4xl leading-tight mb-2">
+                    E-모델하우스 보러가기
+                  </p>
+                  <p className="text-white/75 text-lg">
+                    59㎡A · 84㎡B 두 가지 타입을 360° VR로 미리 체험해보세요
+                  </p>
+                </div>
+                {/* 우측: 입장 버튼 + 화살표 */}
+                <div className="flex-shrink-0 flex flex-col items-center gap-3">
+                  <span
+                    className="inline-flex items-center justify-center gap-2 px-7 py-3.5 rounded-full font-bold text-[16px] transition-all group-hover:translate-x-1"
+                    style={{ backgroundColor: '#C9A96E', color: '#0F172A' }}
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
+                      <polygon points="5 3 19 12 5 21 5 3" />
+                    </svg>
+                    VR 입장하기
+                  </span>
+                  <span className="text-white/50 text-[12px] tracking-wide">VIEW NOW</span>
+                </div>
+              </div>
+            </a>
+          </div>
+        </section>
+      )}
+
       {/* ===== YOUTUBE ===== */}
       {page.youtube_id && (
         <section className="bg-black py-12">
@@ -246,19 +308,23 @@ export default function PCLanding({
         </section>
       )}
 
-      {/* ===== TOP: Inquiry Form (main) or Video (agent) ===== */}
+      {/* ===== TOP: Inquiry Form (main) or Video (agent) — yamok=VR CTA, 영상=토글 ===== */}
       {isAgent ? (
-        <section className="bg-black">
-          <div className="max-w-[1100px] mx-auto">
-            <video
-              src="https://uwddeseqwdsryvuoulsm.supabase.co/storage/v1/object/public/landing/videos/wangsimni-jeongwono-seongdong.mp4"
-              controls
-              playsInline
-              preload="metadata"
-              className="w-full block min-h-[30vh] object-contain"
-            />
-          </div>
-        </section>
+        slug === 'yamok-grandhill' ? (
+          <YamokAgentVrCta variant="hero" pc />
+        ) : SHOW_AGENT_VIDEOS ? (
+          <section className="bg-black">
+            <div className="max-w-[1100px] mx-auto">
+              <video
+                src="https://uwddeseqwdsryvuoulsm.supabase.co/storage/v1/object/public/landing/videos/wangsimni-jeongwono-seongdong.mp4"
+                controls
+                playsInline
+                preload="metadata"
+                className="w-full block min-h-[30vh] object-contain"
+              />
+            </div>
+          </section>
+        ) : null
       ) : (
         <section id="pc-inquiry" className="py-16 px-8" style={{ backgroundColor: primaryColor }}>
           <div className="max-w-[700px] mx-auto">
@@ -369,8 +435,11 @@ export default function PCLanding({
         id="pc-location"
       />
 
-      {/* ===== BOTTOM: Inquiry Form (main) or Video 2 (agent) ===== */}
+      {/* ===== BOTTOM: Inquiry Form (main) or Video 2 (agent) — yamok=VR 카드, 영상=토글 ===== */}
       {isAgent ? (
+        slug === 'yamok-grandhill' ? (
+          <YamokAgentVrCta variant="cards" pc />
+        ) : SHOW_AGENT_VIDEOS ? (
         <section className="bg-black">
           <div className="max-w-[1100px] mx-auto">
             <video
@@ -382,6 +451,7 @@ export default function PCLanding({
             />
           </div>
         </section>
+        ) : null
       ) : (
         <section className="py-16 px-8" style={{ backgroundColor: primaryColor }}>
           <div className="max-w-[700px] mx-auto">
@@ -390,6 +460,9 @@ export default function PCLanding({
           </div>
         </section>
       )}
+
+      {/* ===== SEO 본문 (검색봇 readable, footer 직전) ===== */}
+      {seoSection}
 
       {/* ===== FOOTER (urbanhomes style) ===== */}
       <footer className="bg-[#f5f5f5] py-14 px-8">

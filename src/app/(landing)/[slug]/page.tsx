@@ -7,6 +7,44 @@ import CallBanner from './CallBanner'
 import PopupModal from './PopupModal'
 import PCLanding from './PCLanding'
 import LocationSection from './LocationSection'
+import YamokStructuredData, { type YamokFaqItem } from './YamokStructuredData'
+import YamokAgentVrCta from './YamokAgentVrCta'
+
+const YAMOK_FAQ: YamokFaqItem[] = [
+  {
+    q: '야목역 서희스타힐스 그랜드힐 위치는 어디인가요?',
+    a: '경기도 화성시 비봉면 구포리 614-18번지 일원에 위치합니다. 수인분당선 야목역과 도보권이며, GTX-F(예정) 더블역세권 단지입니다.',
+  },
+  {
+    q: '견본주택은 어디에 있나요?',
+    a: '경기도 안산시 단원구 광덕4로 178에 위치합니다. 자세한 방문 안내는 분양상담 1668-5257로 문의해 주세요.',
+  },
+  {
+    q: '공급 평형(타입)은 어떻게 구성되나요?',
+    a: '전용면적 59㎡A·B·C 타입과 84㎡A·B 타입 총 5개 타입으로 구성됩니다. 평면 상세는 평면안내 페이지에서 확인하실 수 있습니다.',
+  },
+  {
+    q: '교통은 어떻게 되나요?',
+    a: '수인분당선 야목역 도보권이며, GTX-F 노선이 예정되어 있어 더블역세권으로 미래 가치가 기대됩니다.',
+  },
+  {
+    q: '분양일정과 분양가는 어떻게 확인하나요?',
+    a: '분양일정·공급안내·모집공고는 본 홈페이지 분양안내에서 확인 가능하며, 정확한 분양가는 모집공고문을 기준으로 확정 안내됩니다. 관심고객 등록 시 분양일정을 우선 안내해 드립니다.',
+  },
+  {
+    q: 'E-모델하우스(VR) 둘러보기가 가능한가요?',
+    a: '네, 59㎡A 타입과 84㎡B 타입 두 가지를 360° VR로 체험하실 수 있습니다. E-모델하우스 메뉴 또는 메인 페이지의 VR 둘러보기 버튼을 클릭해 주세요.',
+  },
+  {
+    q: '관심고객 등록은 어떻게 하나요?',
+    a: '본 홈페이지 상단·하단의 관심고객 등록 폼에서 이름과 연락처를 남겨주시면, 분양일정·공급안내·모집공고 등 주요 일정을 우선 안내해 드립니다.',
+  },
+]
+
+const YAMOK_INTRO = `야목역 서희스타힐스 그랜드힐은 경기도 화성시 비봉면 구포리 614-18번지 일원에 들어서는 서희스타힐스 브랜드 신축 분양 단지입니다. 수인분당선 야목역과 도보권이며, 향후 GTX-F(예정) 노선 호재가 기대되는 더블역세권 입지입니다. 야목역세권 브랜드타운의 첫자리로, 전용면적 59㎡A·B·C 타입과 84㎡A·B 타입 총 5개 타입으로 공급됩니다. 견본주택은 경기도 안산시 단원구 광덕4로 178에 위치하며, 분양상담은 1668-5257로 가능합니다.`
+
+// agent 페이지 영상 토글 (어반홈스 등 슬러그 — 야목은 별도 VR CTA로 분기되어 영향 없음)
+const SHOW_AGENT_VIDEOS = true
 
 interface Props {
   params: Promise<{ slug: string }>
@@ -20,13 +58,13 @@ export async function generateMetadata({ params, searchParams }: Props): Promise
 
   if (!page) return { title: '페이지를 찾을 수 없습니다' }
 
-  // Agent별 OG 타이틀: "왕십리역 어반홈스 ㅣ교통의 중심 왕십리역 박찬효"
+  // Agent별 OG 타이틀: "{프로젝트명} {직원명}" — 모든 슬러그 동일 패턴
   const agentCodeStr = typeof agentCode === 'string' ? agentCode : undefined
   const agent = agentCodeStr ? await getAgentByCode(page.id, agentCodeStr) : null
 
   const baseOgTitle = page.seo_title || page.project_name
   const ogTitle = agent
-    ? baseOgTitle.replace(/초역세권\s*$/, '').trimEnd() + ' ' + agent.name
+    ? `${page.project_name} ${agent.name}`
     : baseOgTitle
 
   const ogImage = page.og_image || page.hero_image || undefined
@@ -37,6 +75,9 @@ export async function generateMetadata({ params, searchParams }: Props): Promise
     title: agent ? `${page.project_name} - ${agent.name}` : (page.seo_title || `${page.project_name} - 분양 안내`),
     description: page.seo_description || `${page.project_name} ${page.location || ''} 분양 정보`,
     keywords: page.seo_keywords || undefined,
+    alternates: {
+      canonical: `https://www.onsia.city/${slug}`,
+    },
     openGraph: {
       title: ogTitle,
       description: ogDescription,
@@ -197,8 +238,45 @@ export default async function LandingPage({ params, searchParams }: Props) {
   }
   const currentSiteConfig = siteConfig[slug]
 
+  // SEO 섹션 (yamok 한정, PC와 모바일 양쪽 footer 위에 사용)
+  const seoSection = slug === 'yamok-grandhill' ? (
+    <section
+      aria-label="야목역 서희스타힐스 그랜드힐 분양 안내"
+      className="bg-white border-t border-gray-100"
+    >
+      <div className="max-w-[1100px] mx-auto px-4 lg:px-8 py-10 lg:py-14">
+        <h2 className="text-base lg:text-lg font-bold text-gray-900 mb-3 lg:mb-4">
+          야목역 서희스타힐스 그랜드힐 분양 안내
+        </h2>
+        <p className="text-[13px] lg:text-[14px] text-gray-600 leading-relaxed mb-6 lg:mb-8">
+          {YAMOK_INTRO}
+        </p>
+        <h2 className="text-base lg:text-lg font-bold text-gray-900 mb-3 lg:mb-4">
+          자주 묻는 질문 (FAQ)
+        </h2>
+        <ul className="space-y-3 lg:space-y-4">
+          {YAMOK_FAQ.map((f, i) => (
+            <li key={i} className="border-b border-gray-100 pb-3 lg:pb-4 last:border-0">
+              <p className="text-[13px] lg:text-[14px] font-bold text-gray-900 mb-1">
+                Q. {f.q}
+              </p>
+              <p className="text-[13px] lg:text-[14px] text-gray-600 leading-relaxed">
+                A. {f.a}
+              </p>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </section>
+  ) : null
+
   return (
     <>
+      {/* ===== SEO 구조화 데이터 (JSON-LD, yamok-grandhill 한정, 메타데이터로만 사용) ===== */}
+      {slug === 'yamok-grandhill' && (
+        <YamokStructuredData faq={YAMOK_FAQ} ogImage={page.og_image || undefined} />
+      )}
+
       {/* ===== PC 전용 (lg+) ===== */}
       <div className="hidden lg:block">
         <PCLanding
@@ -212,6 +290,7 @@ export default async function LandingPage({ params, searchParams }: Props) {
           agentCode={agentCodeStr}
           navLinks={currentSiteConfig?.navLinks}
           vrLinks={currentSiteConfig?.vrLinks}
+          seoSection={seoSection}
         />
         {slug === 'urbanhomes' && (
           <PopupModal
@@ -337,17 +416,21 @@ export default async function LandingPage({ params, searchParams }: Props) {
           </section>
         )}
 
-        {/* Top: Inquiry Form (main) or Video 1 (agent) */}
+        {/* Top: Inquiry Form (main) or Video 1 (agent) — yamok agent는 VR CTA, 영상은 SHOW_AGENT_VIDEOS 토글 */}
         {agent ? (
-          <section className="bg-black">
-            <video
-              src="https://uwddeseqwdsryvuoulsm.supabase.co/storage/v1/object/public/landing/videos/wangsimni-jeongwono-seongdong.mp4"
-              controls
-              playsInline
-              preload="metadata"
-              className="w-full block min-h-[30vh] object-contain"
-            />
-          </section>
+          slug === 'yamok-grandhill' ? (
+            <YamokAgentVrCta variant="hero" />
+          ) : SHOW_AGENT_VIDEOS ? (
+            <section className="bg-black">
+              <video
+                src="https://uwddeseqwdsryvuoulsm.supabase.co/storage/v1/object/public/landing/videos/wangsimni-jeongwono-seongdong.mp4"
+                controls
+                playsInline
+                preload="metadata"
+                className="w-full block min-h-[30vh] object-contain"
+              />
+            </section>
+          ) : null
         ) : (
           <section id="inquiry-top" className="py-8 sm:py-10 px-4" style={{ backgroundColor: primaryColor }}>
             <div className="max-w-lg mx-auto">
@@ -470,17 +553,21 @@ export default async function LandingPage({ params, searchParams }: Props) {
           compact
         />
 
-        {/* Bottom: Inquiry Form (main) or Video 2 (agent) */}
+        {/* Bottom: Inquiry Form (main) or Video 2 (agent) — yamok agent는 VR 카드, 영상은 SHOW_AGENT_VIDEOS 토글 */}
         {agent ? (
-          <section className="bg-black">
-            <video
-              src="https://uwddeseqwdsryvuoulsm.supabase.co/storage/v1/object/public/landing/videos/jeongwono-seoul.mp4"
-              controls
-              playsInline
-              preload="metadata"
-              className="w-full block min-h-[30vh] object-contain"
-            />
-          </section>
+          slug === 'yamok-grandhill' ? (
+            <YamokAgentVrCta variant="cards" />
+          ) : SHOW_AGENT_VIDEOS ? (
+            <section className="bg-black">
+              <video
+                src="https://uwddeseqwdsryvuoulsm.supabase.co/storage/v1/object/public/landing/videos/jeongwono-seoul.mp4"
+                controls
+                playsInline
+                preload="metadata"
+                className="w-full block min-h-[30vh] object-contain"
+              />
+            </section>
+          ) : null
         ) : (
           <section id="inquiry-bottom" className="py-8 sm:py-10 px-4" style={{ backgroundColor: primaryColor }}>
             <div className="max-w-lg mx-auto">
@@ -489,6 +576,9 @@ export default async function LandingPage({ params, searchParams }: Props) {
             </div>
           </section>
         )}
+
+        {/* SEO 본문 (검색봇 readable, yamok 한정 — Footer 직전) */}
+        {seoSection}
 
         {/* Footer */}
         <footer className="py-6 sm:py-8 px-4 bg-gray-900 text-gray-400 text-center text-xs sm:text-sm leading-relaxed">

@@ -833,7 +833,7 @@ function YamokLocationContent({ primaryColor }: { primaryColor: string }) {
 function YamokScheduleContent() {
   return (
     // eslint-disable-next-line @next/next/no-img-element
-    <img src="/uploads/landing/yamok/schedule.png" alt="분양일정" className="w-full block rounded-lg shadow-sm" loading="lazy" />
+    <img src="/uploads/landing/yamok/schedule.png" alt="야목역 서희스타힐스 그랜드힐 분양일정" className="w-full block rounded-lg shadow-sm" loading="lazy" />
   )
 }
 
@@ -841,7 +841,7 @@ function YamokScheduleContent() {
 function YamokSupplyContent() {
   return (
     // eslint-disable-next-line @next/next/no-img-element
-    <img src="/uploads/landing/yamok/info03.png" alt="공급안내" className="w-full block rounded-lg shadow-sm" loading="lazy" />
+    <img src="/uploads/landing/yamok/info03.png" alt="야목역 서희스타힐스 그랜드힐 공급안내 (59㎡A·B·C / 84㎡A·B 타입)" className="w-full block rounded-lg shadow-sm" loading="lazy" />
   )
 }
 
@@ -849,7 +849,7 @@ function YamokSupplyContent() {
 function YamokApplyContent() {
   return (
     // eslint-disable-next-line @next/next/no-img-element
-    <img src="/uploads/landing/yamok/apply.png" alt="모집공고" className="w-full block rounded-lg shadow-sm" loading="lazy" />
+    <img src="/uploads/landing/yamok/apply.png" alt="야목역 서희스타힐스 그랜드힐 모집공고 - 화성 비봉 분양" className="w-full block rounded-lg shadow-sm" loading="lazy" />
   )
 }
 
@@ -857,7 +857,7 @@ function YamokApplyContent() {
 function YamokSubscriptionContent() {
   return (
     // eslint-disable-next-line @next/next/no-img-element
-    <img src="/uploads/landing/yamok/ssp_guide.png" alt="청약안내" className="w-full block rounded-lg shadow-sm" loading="lazy" />
+    <img src="/uploads/landing/yamok/ssp_guide.png" alt="야목역 서희스타힐스 그랜드힐 청약안내 (특별공급·일반공급)" className="w-full block rounded-lg shadow-sm" loading="lazy" />
   )
 }
 
@@ -865,7 +865,7 @@ function YamokSubscriptionContent() {
 function YamokLayoutContent() {
   return (
     // eslint-disable-next-line @next/next/no-img-element
-    <img src="/uploads/landing/yamok/cpx_layout.png" alt="단지배치도" className="w-full block rounded-lg shadow-sm" loading="lazy" />
+    <img src="/uploads/landing/yamok/cpx_layout.png" alt="야목역 서희스타힐스 그랜드힐 단지배치도" className="w-full block rounded-lg shadow-sm" loading="lazy" />
   )
 }
 
@@ -873,7 +873,7 @@ function YamokLayoutContent() {
 function YamokUnitsContent() {
   return (
     // eslint-disable-next-line @next/next/no-img-element
-    <img src="/uploads/landing/yamok/no_layout.png" alt="동호수배치도" className="w-full block rounded-lg shadow-sm" loading="lazy" />
+    <img src="/uploads/landing/yamok/no_layout.png" alt="야목역 서희스타힐스 그랜드힐 동호수배치도" className="w-full block rounded-lg shadow-sm" loading="lazy" />
   )
 }
 
@@ -895,7 +895,7 @@ function YamokFloorplanContent() {
             {t.label}
           </h3>
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src={t.src} alt={`${t.label}타입 평면`} className="w-full block rounded-lg shadow-sm" loading="lazy" />
+          <img src={t.src} alt={`야목역 서희스타힐스 그랜드힐 ${t.label} 타입 평면도 (전용 ${t.label.startsWith('59') ? '59㎡' : '84㎡'})`} className="w-full block rounded-lg shadow-sm" loading="lazy" />
         </div>
       ))}
     </div>
@@ -939,7 +939,7 @@ function YamokVRContent({ primaryColor }: { primaryColor: string }) {
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src={v.thumb}
-                alt={`${v.label} 평면`}
+                alt={`야목역 서희스타힐스 그랜드힐 ${v.label} 타입 360° VR 모델하우스 평면도`}
                 className="w-full h-full object-contain p-4 transition-transform duration-500 group-hover:scale-105"
                 loading="lazy"
               />
@@ -1003,7 +1003,7 @@ function YamokVRContent({ primaryColor }: { primaryColor: string }) {
 function YamokInteriorContent() {
   return (
     // eslint-disable-next-line @next/next/no-img-element
-    <img src="/uploads/landing/yamok/interior.png" alt="마감재 리스트" className="w-full block rounded-lg shadow-sm" loading="lazy" />
+    <img src="/uploads/landing/yamok/interior.png" alt="야목역 서희스타힐스 그랜드힐 마감재 리스트" className="w-full block rounded-lg shadow-sm" loading="lazy" />
   )
 }
 
@@ -1011,6 +1011,6 @@ function YamokInteriorContent() {
 function YamokOptionContent() {
   return (
     // eslint-disable-next-line @next/next/no-img-element
-    <img src="/uploads/landing/yamok/option.png" alt="추가선택품목" className="w-full block rounded-lg shadow-sm" loading="lazy" />
+    <img src="/uploads/landing/yamok/option.png" alt="야목역 서희스타힐스 그랜드힐 추가선택품목" className="w-full block rounded-lg shadow-sm" loading="lazy" />
   )
 }
