@@ -520,11 +520,10 @@ export default async function LandingPage({ params, searchParams }: Props) {
           compact
         />
 
-        {/* Bottom: Inquiry Form (main) or Video 2 (agent) — yamok agent는 VR 카드, 영상은 SHOW_AGENT_VIDEOS 토글 */}
+        {/* Bottom: Inquiry Form (main) or Video 2 (agent) — yamok agent는 상단 hero CTA만 남기고 하단 카드는 중복이라 제거 */}
         {agent ? (
-          slug === 'yamok-grandhill' ? (
-            <YamokAgentVrCta variant="cards" />
-          ) : SHOW_AGENT_VIDEOS ? (
+          slug === 'yamok-grandhill' ? null
+          : SHOW_AGENT_VIDEOS ? (
             <section className="bg-black">
               <video
                 src="https://uwddeseqwdsryvuoulsm.supabase.co/storage/v1/object/public/landing/videos/jeongwono-seoul.mp4"
@@ -553,14 +552,12 @@ export default async function LandingPage({ params, searchParams }: Props) {
               )}
             </div>
           )}
-          <p className="text-gray-500 max-w-2xl mx-auto text-xs sm:text-sm whitespace-pre-line">
-            {agent
-              ? (page.business_info?.disclaimer || '본 홍보물의 내용은 소비자의 이해를 돕기 위해 제작된 것으로, 개발·분양사의 사정에 따라 변경될 수 있으며 법적 효력이 없습니다.')
-                .replace(/분양대행사\s*[:：].*?((?=시행)|$)/gs, '')
-                .trim()
-              : (page.business_info?.disclaimer ||
-                '본 홍보물의 내용은 소비자의 이해를 돕기 위해 제작된 것으로, 개발·분양사의 사정에 따라 변경될 수 있으며 법적 효력이 없습니다. 계약 시에는 반드시 모집공고문과 계약서를 기준으로 확인하시기 바랍니다.')}
-          </p>
+          {!agent && (
+            <p className="text-gray-500 max-w-2xl mx-auto text-xs sm:text-sm whitespace-pre-line">
+              {page.business_info?.disclaimer ||
+                '본 홍보물의 내용은 소비자의 이해를 돕기 위해 제작된 것으로, 개발·분양사의 사정에 따라 변경될 수 있으며 법적 효력이 없습니다. 계약 시에는 반드시 모집공고문과 계약서를 기준으로 확인하시기 바랍니다.'}
+            </p>
+          )}
           <a
             href="https://www.applyhome.co.kr/ai/aia/selectOtherLttotPblancListView.do"
             target="_blank"

@@ -434,11 +434,10 @@ export default function PCLanding({
         id="pc-location"
       />
 
-      {/* ===== BOTTOM: Inquiry Form (main) or Video 2 (agent) — yamok=VR 카드, 영상=토글 ===== */}
+      {/* ===== BOTTOM: Inquiry Form (main) or Video 2 (agent) — yamok agent는 상단 hero CTA만, 하단 중복 제거 ===== */}
       {isAgent ? (
-        slug === 'yamok-grandhill' ? (
-          <YamokAgentVrCta variant="cards" pc />
-        ) : SHOW_AGENT_VIDEOS ? (
+        slug === 'yamok-grandhill' ? null
+        : SHOW_AGENT_VIDEOS ? (
         <section className="bg-black">
           <div className="max-w-[1100px] mx-auto">
             <video
@@ -471,15 +470,13 @@ export default function PCLanding({
             <p className="text-xl font-bold mb-6" style={{ color: primaryColor }}>{page.project_name}</p>
           )}
 
-          {/* Disclaimer - agent는 분양대행사 정보 숨김 */}
-          <p className="text-[13px] text-gray-500 leading-relaxed mb-5">
-            {isAgent
-              ? (page.business_info?.disclaimer || '※ 본 사이트의 이미지는 소비자의 이해를 돕기 위해 제작된 것으로 실제 시공 시 다를 수 있습니다.')
-                .replace(/분양대행사\s*[:：].*?((?=시행)|$)/gs, '')
-                .trim()
-              : (page.business_info?.disclaimer ||
-                '※ 본 사이트의 이미지는 소비자의 이해를 돕기 위해 제작된 것으로 실제 시공 시 다를 수 있습니다.')}
-          </p>
+          {/* Disclaimer - agent 페이지는 통째 숨김 (직원 명함 OG 깔끔) */}
+          {!isAgent && (
+            <p className="text-[13px] text-gray-500 leading-relaxed mb-5">
+              {page.business_info?.disclaimer ||
+                '※ 본 사이트의 이미지는 소비자의 이해를 돕기 위해 제작된 것으로 실제 시공 시 다를 수 있습니다.'}
+            </p>
+          )}
 
           {/* Company Info - agent는 숨김 */}
           {!isAgent && page.business_info?.company_name && (
