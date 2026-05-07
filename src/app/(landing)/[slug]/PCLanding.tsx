@@ -6,6 +6,30 @@ import LocationSection from './LocationSection'
 import YamokAgentVrCta from './YamokAgentVrCta'
 import type { BusinessInfo as FullBusinessInfo } from '@/lib/supabase-landing'
 
+// 야목역 갤러리 alt 키워드 매핑 (네이버 이미지 검색용)
+function getGalleryAlt(slug: string, projectName: string, imgUrl: string, idx: number): string {
+  if (slug !== 'yamok-grandhill') return `${projectName} ${idx + 1}`
+  const file = imgUrl.split('/').pop()?.toLowerCase() || ''
+  if (file.includes('business')) return '야목역 서희스타힐스 그랜드힐 사업개요 — 비봉 신축 아파트'
+  if (file.includes('premium')) return '야목역서희 입지 프리미엄 — 야목역세권 GTX-F(예정) 더블역세권'
+  if (file.includes('brand')) return '서희스타힐스 브랜드 — 야목역 서희스타힐스 그랜드힐'
+  if (file.includes('location')) return '야목역서희스타힐스 위치 — 경기도 화성시 비봉면 구포리'
+  if (file.includes('schedule')) return '야목역서희 일반분양 분양일정 안내'
+  if (file.includes('info')) return '야목역서희 분양가 공급안내 — 야목역 서희스타힐스 그랜드힐'
+  if (file.includes('apply')) return '야목역서희 일반분양 모집공고'
+  if (file.includes('ssp_guide')) return '야목역서희 청약안내 — 일반분양 자격 안내'
+  if (file.includes('cpx_layout')) return '야목역 서희스타힐스 그랜드힐 단지배치도'
+  if (file.includes('no_layout')) return '야목역 서희스타힐스 그랜드힐 동호수배치도'
+  if (file.includes('unitplan_59a')) return '야목역서희 59㎡A 평면 — 비봉아파트 신축 분양'
+  if (file.includes('unitplan_59b')) return '야목역서희 59㎡B 평면 — 비봉아파트 신축 분양'
+  if (file.includes('unitplan_59c')) return '야목역서희 59㎡C 평면 — 비봉아파트 신축 분양'
+  if (file.includes('unitplan_84a')) return '야목역서희 84㎡A 평면 — 비봉서희스타힐스'
+  if (file.includes('unitplan_84b')) return '야목역서희 84㎡B 평면 — 비봉서희스타힐스'
+  if (file.includes('interior')) return '야목역 서희스타힐스 그랜드힐 마감재 리스트'
+  if (file.includes('option')) return '야목역 서희스타힐스 그랜드힐 추가선택품목'
+  return `야목역 서희스타힐스 그랜드힐 ${idx + 1} — 야목역서희 일반분양`
+}
+
 interface Agent {
   name: string
   phone?: string
@@ -402,7 +426,7 @@ export default function PCLanding({
                       <img
                         key={idx}
                         src={src}
-                        alt={`${page.project_name} ${idx + 1}`}
+                        alt={getGalleryAlt(slug, page.project_name, src, idx)}
                         className="w-full block rounded-lg shadow-sm"
                         loading="lazy"
                       />

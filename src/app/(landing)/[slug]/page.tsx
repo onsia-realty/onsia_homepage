@@ -44,6 +44,32 @@ const YAMOK_FAQ: YamokFaqItem[] = [
 // agent 페이지 영상 토글 (어반홈스 등 슬러그 — 야목은 별도 VR CTA로 분기되어 영향 없음)
 const SHOW_AGENT_VIDEOS = true
 
+// 야목역 갤러리 이미지의 파일명 패턴별 SEO alt 매핑 (네이버 이미지 검색 대응)
+function getGalleryAlt(slug: string, projectName: string, imgUrl: string, idx: number): string {
+  if (slug !== 'yamok-grandhill') return `${projectName} ${idx + 1}`
+
+  const file = imgUrl.split('/').pop()?.toLowerCase() || ''
+  // 파일명별 키워드 매핑 (update-yamok-landing.mjs의 갤러리 17장 기준)
+  if (file.includes('business')) return '야목역 서희스타힐스 그랜드힐 사업개요 — 비봉 신축 아파트'
+  if (file.includes('premium')) return '야목역서희 입지 프리미엄 — 야목역세권 GTX-F(예정) 더블역세권'
+  if (file.includes('brand')) return '서희스타힐스 브랜드 — 야목역 서희스타힐스 그랜드힐'
+  if (file.includes('location')) return '야목역서희스타힐스 위치 — 경기도 화성시 비봉면 구포리'
+  if (file.includes('schedule')) return '야목역서희 일반분양 분양일정 안내'
+  if (file.includes('info')) return '야목역서희 분양가 공급안내 — 야목역 서희스타힐스 그랜드힐'
+  if (file.includes('apply')) return '야목역서희 일반분양 모집공고'
+  if (file.includes('ssp_guide')) return '야목역서희 청약안내 — 일반분양 자격 안내'
+  if (file.includes('cpx_layout')) return '야목역 서희스타힐스 그랜드힐 단지배치도'
+  if (file.includes('no_layout')) return '야목역 서희스타힐스 그랜드힐 동호수배치도'
+  if (file.includes('unitplan_59a')) return '야목역서희 59㎡A 평면 — 비봉아파트 신축 분양'
+  if (file.includes('unitplan_59b')) return '야목역서희 59㎡B 평면 — 비봉아파트 신축 분양'
+  if (file.includes('unitplan_59c')) return '야목역서희 59㎡C 평면 — 비봉아파트 신축 분양'
+  if (file.includes('unitplan_84a')) return '야목역서희 84㎡A 평면 — 비봉서희스타힐스'
+  if (file.includes('unitplan_84b')) return '야목역서희 84㎡B 평면 — 비봉서희스타힐스'
+  if (file.includes('interior')) return '야목역 서희스타힐스 그랜드힐 마감재 리스트'
+  if (file.includes('option')) return '야목역 서희스타힐스 그랜드힐 추가선택품목'
+  return `야목역 서희스타힐스 그랜드힐 ${idx + 1} — 야목역서희 일반분양`
+}
+
 interface Props {
   params: Promise<{ slug: string }>
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>
@@ -287,7 +313,11 @@ export default async function LandingPage({ params, searchParams }: Props) {
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src={page.hero_image}
-              alt={page.project_name}
+              alt={
+                slug === 'yamok-grandhill'
+                  ? '야목역 서희스타힐스 그랜드힐 — 야목역서희 일반분양 (경기도 화성시 비봉면)'
+                  : page.project_name
+              }
               className="w-full block"
             />
             {page.subtitle && (
@@ -452,7 +482,7 @@ export default async function LandingPage({ params, searchParams }: Props) {
               <img
                 key={i}
                 src={img}
-                alt={`${page.project_name} ${i + 1}`}
+                alt={getGalleryAlt(slug, page.project_name, img, i)}
                 className="w-full block"
                 loading="lazy"
               />
