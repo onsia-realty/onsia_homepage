@@ -70,6 +70,12 @@ crawl-*.log
 # Claude Code 임시 파일
 /tmpclaude-*
 
+# 임시 미디어/스크린샷 (대용량 mp4·이미지가 실수로 커밋되는 것 방지)
+/KakaoTalk_*.mp4
+/Capture_*.png
+/yamok-cross-link-*.png
+/nul
+
 # Prisma 마이그레이션 잔존 백업 (Neon 정리 후 삭제 예정)
 /prisma/schema.backup.prisma
 /prisma/schema.dbpull-result.prisma
