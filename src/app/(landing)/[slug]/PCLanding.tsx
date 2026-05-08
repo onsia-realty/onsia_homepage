@@ -331,10 +331,48 @@ export default function PCLanding({
         </section>
       )}
 
-      {/* ===== TOP: Inquiry Form (main) or Video (agent) — yamok=VR CTA, 영상=토글 ===== */}
+      {/* ===== 직원 영상 (yamok-grandhill 메인 한정 — VR CTA 밑) ===== */}
+      {slug === 'yamok-grandhill' && !isAgent && (
+        <section className="bg-black">
+          <div className="max-w-[1100px] mx-auto">
+            <video
+              src="https://uwddeseqwdsryvuoulsm.supabase.co/storage/v1/object/public/landing/videos/yamok-grandhill-staff.mp4#t=1"
+              poster="https://uwddeseqwdsryvuoulsm.supabase.co/storage/v1/object/public/landing/videos/yamok-grandhill-staff-poster.jpg"
+              controls
+              autoPlay
+              muted
+              loop
+              playsInline
+              preload="auto"
+              className="w-full block min-h-[30vh] object-contain"
+            />
+          </div>
+        </section>
+      )}
+
+      {/* ===== TOP: Inquiry Form (main) or Video (agent) — yamok=VR CTA + 영상, 그 외=영상만 ===== */}
       {isAgent ? (
         slug === 'yamok-grandhill' ? (
-          <YamokAgentVrCta variant="hero" pc />
+          <>
+            <YamokAgentVrCta variant="hero" pc />
+            {SHOW_AGENT_VIDEOS && (
+              <section className="bg-black">
+                <div className="max-w-[1100px] mx-auto">
+                  <video
+                    src="https://uwddeseqwdsryvuoulsm.supabase.co/storage/v1/object/public/landing/videos/yamok-grandhill-staff.mp4#t=1"
+                    poster="https://uwddeseqwdsryvuoulsm.supabase.co/storage/v1/object/public/landing/videos/yamok-grandhill-staff-poster.jpg"
+                    controls
+                    autoPlay
+                    muted
+                    loop
+                    playsInline
+                    preload="auto"
+                    className="w-full block min-h-[30vh] object-contain"
+                  />
+                </div>
+              </section>
+            )}
+          </>
         ) : SHOW_AGENT_VIDEOS ? (
           <section className="bg-black">
             <div className="max-w-[1100px] mx-auto">

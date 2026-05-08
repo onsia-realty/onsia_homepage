@@ -413,10 +413,44 @@ export default async function LandingPage({ params, searchParams }: Props) {
           </section>
         )}
 
-        {/* Top: Inquiry Form (main) or Video 1 (agent) — yamok agent는 VR CTA, 영상은 SHOW_AGENT_VIDEOS 토글 */}
+        {/* 직원 영상 (yamok-grandhill 메인 한정 — VR CTA 밑) */}
+        {slug === 'yamok-grandhill' && !agent && (
+          <section className="bg-black">
+            <video
+              src="https://uwddeseqwdsryvuoulsm.supabase.co/storage/v1/object/public/landing/videos/yamok-grandhill-staff.mp4#t=1"
+              poster="https://uwddeseqwdsryvuoulsm.supabase.co/storage/v1/object/public/landing/videos/yamok-grandhill-staff-poster.jpg"
+              controls
+              autoPlay
+              muted
+              loop
+              playsInline
+              preload="auto"
+              className="w-full block min-h-[30vh] object-contain"
+            />
+          </section>
+        )}
+
+        {/* Top: Inquiry Form (main) or Video 1 (agent) — yamok agent는 VR CTA + 영상, 그 외는 영상만 (SHOW_AGENT_VIDEOS 토글) */}
         {agent ? (
           slug === 'yamok-grandhill' ? (
-            <YamokAgentVrCta variant="hero" />
+            <>
+              <YamokAgentVrCta variant="hero" />
+              {SHOW_AGENT_VIDEOS && (
+                <section className="bg-black">
+                  <video
+                    src="https://uwddeseqwdsryvuoulsm.supabase.co/storage/v1/object/public/landing/videos/yamok-grandhill-staff.mp4#t=1"
+                    poster="https://uwddeseqwdsryvuoulsm.supabase.co/storage/v1/object/public/landing/videos/yamok-grandhill-staff-poster.jpg"
+                    controls
+                    autoPlay
+                    muted
+                    loop
+                    playsInline
+                    preload="auto"
+                    className="w-full block min-h-[30vh] object-contain"
+                  />
+                </section>
+              )}
+            </>
           ) : SHOW_AGENT_VIDEOS ? (
             <section className="bg-black">
               <video
