@@ -9,6 +9,7 @@ import PCLanding from './PCLanding'
 import LocationSection from './LocationSection'
 import YamokStructuredData, { type YamokFaqItem } from './YamokStructuredData'
 import YamokAgentVrCta from './YamokAgentVrCta'
+import RelatedProjects from './RelatedProjects'
 
 const YAMOK_FAQ: YamokFaqItem[] = [
   {
@@ -141,6 +142,13 @@ export default async function LandingPage({ params, searchParams }: Props) {
   // 유효 전화번호/카톡 결정 (agent 우선, 없으면 대표)
   const effectivePhone = agent?.phone || page.phone_number
   const effectiveKakao = agent?.kakao_url || page.kakao_chat_url
+
+  // SEO 백링크용 - 다른 단지 목록 (현재 슬러그 제외, agent 페이지에서는 숨김)
+  const relatedProjects = !agent
+    ? (await getLandingPages())
+        .filter((p) => p.slug !== slug)
+        .map((p) => ({ slug: p.slug, project_name: p.project_name }))
+    : []
 
   const primaryColor = page.primary_color || '#1E3A5F'
   const accentColor = page.accent_color || '#C9A96E'
@@ -284,6 +292,7 @@ export default async function LandingPage({ params, searchParams }: Props) {
           agentCode={agentCodeStr}
           navLinks={currentSiteConfig?.navLinks}
           vrLinks={currentSiteConfig?.vrLinks}
+          relatedProjects={relatedProjects}
         />
         {slug === 'urbanhomes' && (
           <PopupModal
@@ -605,6 +614,11 @@ export default async function LandingPage({ params, searchParams }: Props) {
               <InquiryForm pageId={page.id} slug={slug} accentColor={accentColor} agentCode={agentCodeStr} agentName={agent?.name} />
             </div>
           </section>
+        )}
+
+        {/* Related Projects (cross-link for SEO) — agent 페이지에서는 숨김 */}
+        {!agent && relatedProjects.length > 0 && (
+          <RelatedProjects projects={relatedProjects} variant="mobile" />
         )}
 
         {/* Footer */}

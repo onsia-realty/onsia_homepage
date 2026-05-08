@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import InquiryForm from './InquiryForm'
 import LocationSection from './LocationSection'
 import YamokAgentVrCta from './YamokAgentVrCta'
+import RelatedProjects, { type RelatedProjectItem } from './RelatedProjects'
 import type { BusinessInfo as FullBusinessInfo } from '@/lib/supabase-landing'
 
 // 야목역 갤러리 alt 키워드 매핑 (네이버 이미지 검색용)
@@ -95,6 +96,7 @@ interface Props {
   agentCode?: string
   navLinks?: NavLink[]
   vrLinks?: VRLink[]
+  relatedProjects?: RelatedProjectItem[]
 }
 
 // agent 페이지 영상 토글 (어반홈스 등 슬러그 — page.tsx와 동일 플래그)
@@ -110,7 +112,7 @@ const DEFAULT_NAV_ITEMS: NavLink[] = [
 export default function PCLanding({
   page, agent, effectivePhone, effectiveKakao,
   primaryColor, accentColor, slug, agentCode,
-  navLinks, vrLinks,
+  navLinks, vrLinks, relatedProjects,
 }: Props) {
   const [scrolled, setScrolled] = useState(false)
 
@@ -519,6 +521,11 @@ export default function PCLanding({
             <InquiryForm pageId={page.id} slug={slug} accentColor={accentColor} agentCode={agentCode} agentName={agent?.name} />
           </div>
         </section>
+      )}
+
+      {/* ===== RELATED PROJECTS (cross-link for SEO) — agent에서는 숨김 ===== */}
+      {!isAgent && relatedProjects && relatedProjects.length > 0 && (
+        <RelatedProjects projects={relatedProjects} variant="pc" />
       )}
 
       {/* ===== FOOTER (urbanhomes style) ===== */}
