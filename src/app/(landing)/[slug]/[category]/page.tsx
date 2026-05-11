@@ -37,6 +37,7 @@ export const CATEGORIES: Record<string, Record<string, { title: string; subtitle
     interior: { title: '마감재 리스트', subtitle: 'INTERIOR' },
     option: { title: '추가선택품목', subtitle: 'OPTION' },
     // 고객센터
+    faq: { title: '자주 묻는 질문', subtitle: 'FAQ' },
     inquiry: { title: '관심고객 등록', subtitle: 'INQUIRY' },
   },
 }
@@ -144,6 +145,13 @@ const YAMOK_CATEGORY_SEO: Record<string, { title: string; description: string; k
       '야목역 서희스타힐스 그랜드힐 추가선택품목 안내. 컬러·발코니 확장·가전·붙박이 옵션 정보.',
     keywords:
       '야목역서희스타힐스, 야목역서희아파트, 비봉아파트',
+  },
+  faq: {
+    title: '자주 묻는 질문 (FAQ) | 야목역 서희스타힐스 그랜드힐',
+    description:
+      '야목역 서희스타힐스 그랜드힐 자주 묻는 질문 — 위치, 견본주택, 평형 타입, 교통, 분양일정, E-모델하우스 VR, 관심고객 등록 안내.',
+    keywords:
+      '야목역서희스타힐스, 야목역서희, 야목역서희분양가, 야목역서희스타힐스모델하우스, 야목역서희스타힐스위치, 야목역서희일반분양',
   },
   inquiry: {
     title: '관심고객 등록 | 야목역 서희스타힐스 그랜드힐',

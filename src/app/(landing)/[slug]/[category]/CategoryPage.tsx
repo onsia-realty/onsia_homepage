@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import InquiryForm from '../InquiryForm'
 import BottomBar from '../BottomBar'
+import { YAMOK_FAQ } from '../yamok-faq'
 
 interface Page {
   id: string
@@ -401,6 +402,7 @@ export default function CategoryPage({
               {category === 'vr' && <YamokVRContent primaryColor={primaryColor} />}
               {category === 'interior' && <YamokInteriorContent />}
               {category === 'option' && <YamokOptionContent />}
+              {category === 'faq' && <YamokFaqContent />}
               {category === 'inquiry' && (
                 <div className="max-w-[700px] mx-auto">
                   <InquiryForm pageId={page.id} slug={slug} accentColor={accentColor} />
@@ -711,6 +713,27 @@ function YamokBusinessContent() {
         loading="lazy"
       />
 
+      {/* SEO 본문 — 야목역 서희스타힐스 그랜드힐 사업개요 텍스트 */}
+      <article className="prose prose-sm md:prose-base max-w-none text-gray-700 leading-relaxed mb-10">
+        <p>
+          <strong>야목역 서희스타힐스 그랜드힐</strong>은 경기도 화성시 비봉면 구포리 614-18번지 일원 비봉택지지구에 들어서는
+          {' '}<strong>998세대 규모의 신축 아파트</strong>입니다. 수인분당선 야목역 도보권에 위치하며,
+          GTX-F 노선(예정) 호재로 더블역세권의 미래가치를 갖춘 단지입니다.
+        </p>
+        <ul>
+          <li><strong>단지 위치:</strong> 경기도 화성시 비봉면 구포리 614-18번지 일원 (비봉택지지구)</li>
+          <li><strong>총 세대수:</strong> 998세대</li>
+          <li><strong>주택 형태:</strong> 전용면적 59㎡A·B·C, 84㎡A·B 두 가지 평형 (총 5개 타입)</li>
+          <li><strong>입주 예정:</strong> 2028년</li>
+          <li><strong>분양 형식:</strong> 일반분양 + 관심고객 등록 운영</li>
+        </ul>
+        <p>
+          야목역 서희스타힐스 그랜드힐은 비봉택지지구의 신규 개발 호재와 야목역세권 브랜드타운으로서의 입지 프리미엄을 동시에 갖춘
+          단지입니다. 견본주택은 방문예약제로 상시 운영 중이며, 360° E-모델하우스 VR을 통해 59㎡A·84㎡B 두 타입을
+          사전에 미리 체험할 수 있습니다.
+        </p>
+      </article>
+
       {/* 주의사항 */}
       <div className="bg-gray-50 border border-gray-200 rounded-lg p-4 md:p-8 flex gap-3 md:gap-5 items-start">
         <div className="flex-shrink-0 w-9 h-9 md:w-12 md:h-12 rounded-full bg-gray-300 text-white text-lg md:text-2xl font-bold flex items-center justify-center">
@@ -732,13 +755,40 @@ function YamokBusinessContent() {
 // 입지 프리미엄
 function YamokPremiumContent() {
   return (
-    // eslint-disable-next-line @next/next/no-img-element
-    <img
-      src="/uploads/landing/yamok/premium.png"
-      alt="야목역 서희스타힐스 그랜드힐 입지 프리미엄"
-      className="w-full block rounded-lg shadow-sm"
-      loading="lazy"
-    />
+    <>
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
+        src="/uploads/landing/yamok/premium.png"
+        alt="야목역 서희스타힐스 그랜드힐 입지 프리미엄"
+        className="w-full block rounded-lg shadow-sm mb-10"
+        loading="lazy"
+      />
+
+      {/* SEO 본문 — 입지환경 텍스트 */}
+      <article className="prose prose-sm md:prose-base max-w-none text-gray-700 leading-relaxed">
+        <p>
+          <strong>야목역 서희스타힐스 그랜드힐 입지</strong>는 수인분당선 야목역을 중심으로 한 더블역세권 호재가 핵심입니다.
+          화성 비봉택지지구 내 신규 개발 단지로 광역교통망과 자연환경을 동시에 갖추고 있습니다.
+        </p>
+        <h3>교통 인프라</h3>
+        <ul>
+          <li><strong>수인분당선 야목역</strong> 도보권 단지 (역세권 입지)</li>
+          <li><strong>GTX-F 야목역</strong> 정차 예정 — 강남·여의도 직결 호재</li>
+          <li>봉담 IC·매송 IC 광역도로망 인접</li>
+          <li>수원·안산·서울 도심 접근성 우수</li>
+        </ul>
+        <h3>주변 환경</h3>
+        <ul>
+          <li>비봉택지지구 신규 개발로 인근 인프라 동반 성장</li>
+          <li>화성 비봉면·매송면 자연환경, 학세권 형성 진행 중</li>
+          <li>야목역 일대 상업·생활편의시설 확충 계획</li>
+        </ul>
+        <p>
+          야목역 서희스타힐스 그랜드힐은 단순한 신축 아파트가 아닌, 야목역세권 브랜드타운의 첫 자리로 미래 가치가 기대됩니다.
+          비봉서희스타힐스로도 불리는 본 단지는 화성 비봉 일대의 대표 신축 아파트 분양으로 자리매김하고 있습니다.
+        </p>
+      </article>
+    </>
   )
 }
 
@@ -832,8 +882,29 @@ function YamokLocationContent({ primaryColor }: { primaryColor: string }) {
 // 분양일정
 function YamokScheduleContent() {
   return (
-    // eslint-disable-next-line @next/next/no-img-element
-    <img src="/uploads/landing/yamok/schedule.png" alt="야목역 서희스타힐스 그랜드힐 분양일정" className="w-full block rounded-lg shadow-sm" loading="lazy" />
+    <>
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img src="/uploads/landing/yamok/schedule.png" alt="야목역 서희스타힐스 그랜드힐 분양일정" className="w-full block rounded-lg shadow-sm mb-10" loading="lazy" />
+
+      {/* SEO 본문 — 분양정보 텍스트 */}
+      <article className="prose prose-sm md:prose-base max-w-none text-gray-700 leading-relaxed">
+        <p>
+          <strong>야목역 서희스타힐스 그랜드힐 분양</strong>은 998세대 규모 일반분양으로 진행되며,
+          견본주택 방문 전 사전예약과 360° VR 체험을 통해 충분한 정보 확인이 가능합니다.
+        </p>
+        <h3>분양 안내</h3>
+        <ul>
+          <li><strong>분양 문의:</strong> 1668-5257 (방문예약 / 분양 상담)</li>
+          <li><strong>모델하우스:</strong> 방문예약제 상시 운영 (경기도 안산시 단원구 광덕4로 178)</li>
+          <li><strong>E-모델하우스 VR:</strong> 59㎡A · 84㎡B 360° 사전 체험 가능</li>
+          <li><strong>관심고객 등록:</strong> 분양일정·로얄층 우선 안내</li>
+        </ul>
+        <p>
+          야목역 서희스타힐스 그랜드힐의 정확한 입주자모집공고일, 청약 자격, 당첨자발표일, 계약일 등 핵심 일정은
+          모집공고 페이지와 공급안내 페이지에서 확인 가능하며, 관심고객 등록 시 일정이 확정되는 즉시 우선 안내해 드립니다.
+        </p>
+      </article>
+    </>
   )
 }
 
@@ -1012,5 +1083,47 @@ function YamokOptionContent() {
   return (
     // eslint-disable-next-line @next/next/no-img-element
     <img src="/uploads/landing/yamok/option.png" alt="야목역 서희스타힐스 그랜드힐 추가선택품목" className="w-full block rounded-lg shadow-sm" loading="lazy" />
+  )
+}
+
+// FAQ — 자주 묻는 질문 (SEO 자연검색 노출용)
+function YamokFaqContent() {
+  return (
+    <div className="max-w-3xl mx-auto">
+      <p className="text-gray-600 text-[14px] md:text-[16px] leading-relaxed mb-6 md:mb-8">
+        야목역 서희스타힐스 그랜드힐과 관련해 가장 많이 문의하시는 내용을 모았습니다.
+        추가 문의는 분양상담 <strong className="text-gray-900">1668-5257</strong>로 연락 주세요.
+      </p>
+      <div className="space-y-3">
+        {YAMOK_FAQ.map((f, i) => (
+          <details
+            key={i}
+            className="group bg-white rounded-lg border border-gray-200 overflow-hidden"
+            open={i === 0}
+          >
+            <summary className="flex items-center justify-between px-4 md:px-6 py-4 md:py-5 cursor-pointer list-none hover:bg-gray-50">
+              <h2 className="text-[15px] md:text-[17px] font-semibold text-gray-900 pr-3">
+                Q. {f.q}
+              </h2>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="flex-shrink-0 w-5 h-5 text-gray-400 transition-transform group-open:rotate-180"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <polyline points="6 9 12 15 18 9" />
+              </svg>
+            </summary>
+            <div className="px-4 md:px-6 pb-5 md:pb-6 text-[14px] md:text-[15.5px] text-gray-700 leading-relaxed border-t border-gray-100 pt-4">
+              {f.a}
+            </div>
+          </details>
+        ))}
+      </div>
+    </div>
   )
 }

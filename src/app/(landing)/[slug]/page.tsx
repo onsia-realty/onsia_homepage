@@ -7,40 +7,9 @@ import CallBanner from './CallBanner'
 import PopupModal from './PopupModal'
 import PCLanding from './PCLanding'
 import LocationSection from './LocationSection'
-import YamokStructuredData, { type YamokFaqItem } from './YamokStructuredData'
+import YamokStructuredData from './YamokStructuredData'
 import YamokAgentVrCta from './YamokAgentVrCta'
-import RelatedProjects from './RelatedProjects'
-
-const YAMOK_FAQ: YamokFaqItem[] = [
-  {
-    q: '야목역 서희스타힐스 그랜드힐 위치는 어디인가요?',
-    a: '경기도 화성시 비봉면 구포리 614-18번지 일원에 위치합니다. 수인분당선 야목역과 도보권이며, GTX-F(예정) 더블역세권 단지입니다.',
-  },
-  {
-    q: '견본주택은 어디에 있나요?',
-    a: '경기도 안산시 단원구 광덕4로 178에 위치합니다. 자세한 방문 안내는 분양상담 1668-5257로 문의해 주세요.',
-  },
-  {
-    q: '공급 평형(타입)은 어떻게 구성되나요?',
-    a: '전용면적 59㎡A·B·C 타입과 84㎡A·B 타입 총 5개 타입으로 구성됩니다. 평면 상세는 평면안내 페이지에서 확인하실 수 있습니다.',
-  },
-  {
-    q: '교통은 어떻게 되나요?',
-    a: '수인분당선 야목역 도보권이며, GTX-F 노선이 예정되어 있어 더블역세권으로 미래 가치가 기대됩니다.',
-  },
-  {
-    q: '분양일정과 분양가는 어떻게 확인하나요?',
-    a: '분양일정·공급안내·모집공고는 본 홈페이지 분양안내에서 확인 가능하며, 정확한 분양가는 모집공고문을 기준으로 확정 안내됩니다. 관심고객 등록 시 분양일정을 우선 안내해 드립니다.',
-  },
-  {
-    q: 'E-모델하우스(VR) 둘러보기가 가능한가요?',
-    a: '네, 59㎡A 타입과 84㎡B 타입 두 가지를 360° VR로 체험하실 수 있습니다. E-모델하우스 메뉴 또는 메인 페이지의 VR 둘러보기 버튼을 클릭해 주세요.',
-  },
-  {
-    q: '관심고객 등록은 어떻게 하나요?',
-    a: '본 홈페이지 상단·하단의 관심고객 등록 폼에서 이름과 연락처를 남겨주시면, 분양일정·공급안내·모집공고 등 주요 일정을 우선 안내해 드립니다.',
-  },
-]
+import { YAMOK_FAQ } from './yamok-faq'
 
 // agent 페이지 영상 토글 (어반홈스 등 슬러그 — 야목은 별도 VR CTA로 분기되어 영향 없음)
 const SHOW_AGENT_VIDEOS = true
@@ -145,13 +114,6 @@ export default async function LandingPage({ params, searchParams }: Props) {
   // 유효 전화번호/카톡 결정 (agent 우선, 없으면 대표)
   const effectivePhone = agent?.phone || page.phone_number
   const effectiveKakao = agent?.kakao_url || page.kakao_chat_url
-
-  // SEO 백링크용 - 다른 단지 목록 (현재 슬러그 제외, agent 페이지에서는 숨김)
-  const relatedProjects = !agent
-    ? (await getLandingPages())
-        .filter((p) => p.slug !== slug)
-        .map((p) => ({ slug: p.slug, project_name: p.project_name }))
-    : []
 
   const primaryColor = page.primary_color || '#1E3A5F'
   const accentColor = page.accent_color || '#C9A96E'
@@ -295,7 +257,6 @@ export default async function LandingPage({ params, searchParams }: Props) {
           agentCode={agentCodeStr}
           navLinks={currentSiteConfig?.navLinks}
           vrLinks={currentSiteConfig?.vrLinks}
-          relatedProjects={relatedProjects}
         />
         {slug === 'urbanhomes' && (
           <PopupModal
@@ -596,46 +557,6 @@ export default async function LandingPage({ params, searchParams }: Props) {
           compact
         />
 
-        {/* FAQ (yamok-grandhill, 자연검색 노출용 — agent 페이지에서는 숨김) */}
-        {slug === 'yamok-grandhill' && !agent && (
-          <section id="section-faq" className="bg-gray-50 py-10 sm:py-12 px-4">
-            <div className="max-w-3xl mx-auto">
-              <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mb-5 sm:mb-6">
-                야목역 서희스타힐스 그랜드힐 자주 묻는 질문
-              </h2>
-              <div className="space-y-2.5">
-                {YAMOK_FAQ.map((f, i) => (
-                  <details
-                    key={i}
-                    className="group bg-white rounded-lg border border-gray-200 overflow-hidden"
-                  >
-                    <summary className="flex items-center justify-between px-4 sm:px-5 py-3.5 sm:py-4 cursor-pointer list-none hover:bg-gray-50">
-                      <h3 className="text-[14px] sm:text-[15px] font-semibold text-gray-900 pr-3">
-                        Q. {f.q}
-                      </h3>
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        className="flex-shrink-0 w-5 h-5 text-gray-400 transition-transform group-open:rotate-180"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="2"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                      >
-                        <polyline points="6 9 12 15 18 9" />
-                      </svg>
-                    </summary>
-                    <div className="px-4 sm:px-5 pb-4 sm:pb-5 text-[13.5px] sm:text-[14.5px] text-gray-700 leading-relaxed border-t border-gray-100 pt-3">
-                      {f.a}
-                    </div>
-                  </details>
-                ))}
-              </div>
-            </div>
-          </section>
-        )}
-
         {/* Bottom: Inquiry Form (main) or Video 2 (agent) — yamok agent는 상단 hero CTA만 남기고 하단 카드는 중복이라 제거 */}
         {agent ? (
           slug === 'yamok-grandhill' ? null
@@ -657,11 +578,6 @@ export default async function LandingPage({ params, searchParams }: Props) {
               <InquiryForm pageId={page.id} slug={slug} accentColor={accentColor} agentCode={agentCodeStr} agentName={agent?.name} />
             </div>
           </section>
-        )}
-
-        {/* Related Projects (cross-link for SEO) — agent 페이지에서는 숨김 */}
-        {!agent && relatedProjects.length > 0 && (
-          <RelatedProjects projects={relatedProjects} variant="mobile" />
         )}
 
         {/* Footer */}
