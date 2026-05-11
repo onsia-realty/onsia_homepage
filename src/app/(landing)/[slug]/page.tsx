@@ -100,6 +100,9 @@ export async function generateMetadata({ params, searchParams }: Props): Promise
     title: agent ? `${page.project_name} - ${agent.name}` : (page.seo_title || `${page.project_name} - 분양 안내`),
     description: page.seo_description || `${page.project_name} ${page.location || ''} 분양 정보`,
     keywords: page.seo_keywords || undefined,
+    robots: agentCodeStr
+      ? { index: false, follow: true }
+      : { index: true, follow: true },
     alternates: {
       canonical: `https://www.onsia.city/${slug}`,
     },
@@ -487,15 +490,15 @@ export default async function LandingPage({ params, searchParams }: Props) {
             id={i === 0 ? 'section-info' : i === 1 ? 'section-premium' : undefined}
             className={`py-8 sm:py-12 px-4 ${i % 2 === 0 ? 'bg-white' : 'bg-gray-50'}`}
           >
-            <div className="max-w-4xl mx-auto">
+            <div className="max-w-3xl mx-auto">
               {section.title && (
-                <h2 className="text-xl sm:text-2xl font-bold text-center mb-4 sm:mb-6" style={{ color: primaryColor }}>
+                <h2 className="text-xl sm:text-2xl font-bold mb-4 sm:mb-5" style={{ color: primaryColor }}>
                   {section.title}
                 </h2>
               )}
               {section.content && (
                 <div
-                  className="prose prose-sm sm:prose-lg max-w-none text-gray-700 text-center"
+                  className="prose prose-sm sm:prose-base max-w-none text-gray-700 leading-relaxed"
                   dangerouslySetInnerHTML={{ __html: section.content }}
                 />
               )}
@@ -592,6 +595,46 @@ export default async function LandingPage({ params, searchParams }: Props) {
           id="section-location"
           compact
         />
+
+        {/* FAQ (yamok-grandhill, 자연검색 노출용 — agent 페이지에서는 숨김) */}
+        {slug === 'yamok-grandhill' && !agent && (
+          <section id="section-faq" className="bg-gray-50 py-10 sm:py-12 px-4">
+            <div className="max-w-3xl mx-auto">
+              <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mb-5 sm:mb-6">
+                야목역 서희스타힐스 그랜드힐 자주 묻는 질문
+              </h2>
+              <div className="space-y-2.5">
+                {YAMOK_FAQ.map((f, i) => (
+                  <details
+                    key={i}
+                    className="group bg-white rounded-lg border border-gray-200 overflow-hidden"
+                  >
+                    <summary className="flex items-center justify-between px-4 sm:px-5 py-3.5 sm:py-4 cursor-pointer list-none hover:bg-gray-50">
+                      <h3 className="text-[14px] sm:text-[15px] font-semibold text-gray-900 pr-3">
+                        Q. {f.q}
+                      </h3>
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="flex-shrink-0 w-5 h-5 text-gray-400 transition-transform group-open:rotate-180"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      >
+                        <polyline points="6 9 12 15 18 9" />
+                      </svg>
+                    </summary>
+                    <div className="px-4 sm:px-5 pb-4 sm:pb-5 text-[13.5px] sm:text-[14.5px] text-gray-700 leading-relaxed border-t border-gray-100 pt-3">
+                      {f.a}
+                    </div>
+                  </details>
+                ))}
+              </div>
+            </div>
+          </section>
+        )}
 
         {/* Bottom: Inquiry Form (main) or Video 2 (agent) — yamok agent는 상단 hero CTA만 남기고 하단 카드는 중복이라 제거 */}
         {agent ? (
