@@ -59,9 +59,15 @@ export default function PopupModal({ imageUrl, linkUrl, alt = '팝업', storageK
           &times;
         </button>
 
-        {/* 팝업 이미지 (linkUrl 있으면 새창 링크, 없으면 단순 이미지) */}
+        {/* 팝업 이미지 (linkUrl: 내부 경로(/)는 같은 창, 외부는 새 창) */}
         {linkUrl ? (
-          <a href={linkUrl} target="_blank" rel="noopener noreferrer">
+          <a
+            href={linkUrl}
+            {...(linkUrl.startsWith('/')
+              ? {}
+              : { target: '_blank', rel: 'noopener noreferrer' })}
+            onClick={() => sessionStorage.setItem(storageKey, '1')}
+          >
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src={imageUrl}

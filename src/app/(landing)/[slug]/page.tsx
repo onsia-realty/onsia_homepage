@@ -266,11 +266,22 @@ export default async function LandingPage({ params, searchParams }: Props) {
             storageKey="popup-dismissed-1"
           />
         )}
+        {/* yamok-grandhill 팝업 #1 - 스타벅스 기프티콘 이벤트 (PC) */}
+        {slug === 'yamok-grandhill' && (
+          <PopupModal
+            imageUrl="/Gemini_Generated_Image_8wu5br8wu5br8wu5.png"
+            linkUrl="/yamok-grandhill/inquiry"
+            alt="LMS 문자 상담시 스타벅스 기프티콘 제공 - 관심고객 등록"
+            storageKey="yamok-popup-starbucks"
+          />
+        )}
+        {/* yamok-grandhill 팝업 #2 - GRAND OPEN (1번 닫은 후 표시, PC) */}
         {slug === 'yamok-grandhill' && (
           <PopupModal
             imageUrl="/uploads/landing/yamok/popup-grand-open.png"
             alt="GRAND OPEN"
             storageKey="yamok-popup-grandopen"
+            waitForKey="yamok-popup-starbucks"
           />
         )}
       </div>
@@ -630,12 +641,22 @@ export default async function LandingPage({ params, searchParams }: Props) {
             waitForKey="popup-dismissed-1"
           />
         )}
-        {/* yamok-grandhill: GRAND OPEN 팝업 (모바일) */}
+        {/* yamok-grandhill 팝업 #1 - 스타벅스 기프티콘 이벤트 (모바일) */}
+        {slug === 'yamok-grandhill' && (
+          <PopupModal
+            imageUrl="/Gemini_Generated_Image_8wu5br8wu5br8wu5.png"
+            linkUrl="/yamok-grandhill/inquiry"
+            alt="LMS 문자 상담시 스타벅스 기프티콘 제공 - 관심고객 등록"
+            storageKey="yamok-popup-starbucks-m"
+          />
+        )}
+        {/* yamok-grandhill 팝업 #2 - GRAND OPEN (1번 닫은 후 표시, 모바일) */}
         {slug === 'yamok-grandhill' && (
           <PopupModal
             imageUrl="/uploads/landing/yamok/popup-grand-open.png"
             alt="GRAND OPEN"
             storageKey="yamok-popup-grandopen-m"
+            waitForKey="yamok-popup-starbucks-m"
           />
         )}
       </div>
