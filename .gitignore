@@ -79,3 +79,6 @@ crawl-*.log
 # Prisma 마이그레이션 잔존 백업 (Neon 정리 후 삭제 예정)
 /prisma/schema.backup.prisma
 /prisma/schema.dbpull-result.prisma
+
+# DB 데이터 백업 (민감 정보 포함 — 전화번호, kakao URL 등)
+/backups/

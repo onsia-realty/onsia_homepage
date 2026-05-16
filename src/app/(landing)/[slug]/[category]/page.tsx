@@ -1,6 +1,7 @@
 import { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import { getLandingPageBySlug } from '@/lib/supabase-landing'
+import { toKoreanSlug } from '@/lib/landing-slugs'
 import CategoryPage from './CategoryPage'
 
 // 카테고리 정의 (sitemap.ts에서도 import해서 sub-page 동적 등록)
@@ -176,17 +177,18 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const description =
     yamokSeo?.description || `${page.project_name} ${cat.title} - 분양 안내`
 
+  const publicSlug = toKoreanSlug(slug)
   return {
     title,
     description,
     keywords: yamokSeo?.keywords,
     alternates: {
-      canonical: `https://www.onsia.city/${slug}/${category}`,
+      canonical: `https://www.onsia.city/${publicSlug}/${category}`,
     },
     openGraph: {
       title,
       description,
-      url: `https://www.onsia.city/${slug}/${category}`,
+      url: `https://www.onsia.city/${publicSlug}/${category}`,
       siteName: '온시아(ONSIA)',
       type: 'website',
       locale: 'ko_KR',

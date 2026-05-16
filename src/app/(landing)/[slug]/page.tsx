@@ -1,6 +1,7 @@
 import { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import { getLandingPageBySlug, getLandingPages, getAgentByCode, type LandingPage as LandingPageType } from '@/lib/supabase-landing'
+import { toKoreanSlug } from '@/lib/landing-slugs'
 import InquiryForm from './InquiryForm'
 import BottomBar from './BottomBar'
 import CallBanner from './CallBanner'
@@ -62,7 +63,8 @@ export async function generateMetadata({ params, searchParams }: Props): Promise
     : baseOgTitle
 
   const ogImage = page.og_image || page.hero_image || undefined
-  const pageUrl = `https://www.onsia.city/${slug}${agentCodeStr ? `?a=${agentCodeStr}` : ''}`
+  const publicSlug = toKoreanSlug(slug)
+  const pageUrl = `https://www.onsia.city/${publicSlug}${agentCodeStr ? `?a=${agentCodeStr}` : ''}`
   const ogDescription = page.seo_description || `${page.project_name} 분양 안내`
 
   return {
@@ -73,7 +75,7 @@ export async function generateMetadata({ params, searchParams }: Props): Promise
       ? { index: false, follow: true }
       : { index: true, follow: true },
     alternates: {
-      canonical: `https://www.onsia.city/${slug}`,
+      canonical: `https://www.onsia.city/${publicSlug}`,
     },
     openGraph: {
       title: ogTitle,

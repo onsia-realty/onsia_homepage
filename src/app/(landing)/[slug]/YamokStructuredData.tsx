@@ -19,7 +19,7 @@ export default function YamokStructuredData({ faq, ogImage }: Props) {
     '@graph': [
       {
         '@type': 'ApartmentComplex',
-        '@id': 'https://www.onsia.city/yamok-grandhill#apartmentcomplex',
+        '@id': 'https://www.onsia.city/야목역서희스타힐스#apartmentcomplex',
         name: '야목역 서희스타힐스 그랜드힐',
         alternateName: [
           '야목역서희스타힐스그랜드힐',
@@ -38,7 +38,7 @@ export default function YamokStructuredData({ faq, ogImage }: Props) {
           '야목역서희스타힐스그랜드힐, 야목역서희스타힐스, 야목역서희, 야목역서희아파트, 야목역서희스타, 야목역서희스타힐스모델하우스, 야목역서희스타힐스위치, 야목역서희분양가, 야목역서희일반분양, 비봉서희스타힐스, 비봉아파트, 비봉아파트분양, 비봉신축아파트, 경기도화성시아파트분양, 남양아파트분양, 남양읍아파트, 봉담민간임대아파트',
         description:
           '야목역 서희스타힐스 그랜드힐 — 수인분당선 야목역 도보권, GTX-F(예정) 더블역세권 화성 비봉 신축 아파트. 야목역서희 모델하우스 위치·분양가·일반분양 안내. 비봉아파트 분양 / 경기도 화성시 아파트 분양.',
-        url: 'https://www.onsia.city/yamok-grandhill',
+        url: 'https://www.onsia.city/야목역서희스타힐스',
         image: ogImage || 'https://www.onsia.city/images/yamok-og.jpg',
         numberOfAccommodationUnits: 586,
         address: {
@@ -88,10 +88,10 @@ export default function YamokStructuredData({ faq, ogImage }: Props) {
       },
       {
         '@type': 'RealEstateAgent',
-        '@id': 'https://www.onsia.city/yamok-grandhill#agent',
+        '@id': 'https://www.onsia.city/야목역서희스타힐스#agent',
         name: '온시아 공인중개사',
         telephone: '+82-1668-5257',
-        url: 'https://www.onsia.city/yamok-grandhill',
+        url: 'https://www.onsia.city/야목역서희스타힐스',
         address: {
           '@type': 'PostalAddress',
           addressCountry: 'KR',
@@ -116,7 +116,7 @@ export default function YamokStructuredData({ faq, ogImage }: Props) {
       },
       {
         '@type': 'Place',
-        '@id': 'https://www.onsia.city/yamok-grandhill#site',
+        '@id': 'https://www.onsia.city/야목역서희스타힐스#site',
         name: '야목역 서희스타힐스 그랜드힐 현장',
         address: {
           '@type': 'PostalAddress',
@@ -129,7 +129,7 @@ export default function YamokStructuredData({ faq, ogImage }: Props) {
       },
       {
         '@type': 'Place',
-        '@id': 'https://www.onsia.city/yamok-grandhill#modelhouse',
+        '@id': 'https://www.onsia.city/야목역서희스타힐스#modelhouse',
         name: '야목역 서희스타힐스 그랜드힐 견본주택',
         address: {
           '@type': 'PostalAddress',
@@ -142,7 +142,7 @@ export default function YamokStructuredData({ faq, ogImage }: Props) {
       },
       {
         '@type': 'FAQPage',
-        '@id': 'https://www.onsia.city/yamok-grandhill#faq',
+        '@id': 'https://www.onsia.city/야목역서희스타힐스#faq',
         mainEntity: faq.map((f) => ({
           '@type': 'Question',
           name: f.q,

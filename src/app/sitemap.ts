@@ -2,6 +2,7 @@ import { MetadataRoute } from 'next';
 import { prisma } from '@/lib/prisma';
 import { getLandingPages } from '@/lib/supabase-landing';
 import { CATEGORIES } from '@/app/(landing)/[slug]/[category]/page';
+import { toKoreanSlug } from '@/lib/landing-slugs';
 
 // 사이트맵 전용 청약 API 호출 (캐시 허용)
 async function fetchSubscriptionsForSitemap() {
@@ -98,9 +99,10 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   try {
     const pages = await getLandingPages();
     pages.forEach((p) => {
+      const publicSlug = toKoreanSlug(p.slug);
       // 메인 랜딩 (priority 0.95)
       landingPages.push({
-        url: `${baseUrl}/${p.slug}`,
+        url: `${baseUrl}/${publicSlug}`,
         lastModified: new Date(p.updated_at),
         changeFrequency: 'weekly' as const,
         priority: 0.95,
@@ -110,7 +112,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       if (cats) {
         Object.keys(cats).forEach((category) => {
           landingPages.push({
-            url: `${baseUrl}/${p.slug}/${category}`,
+            url: `${baseUrl}/${publicSlug}/${category}`,
             lastModified: new Date(p.updated_at),
             changeFrequency: 'weekly' as const,
             priority: 0.85,
