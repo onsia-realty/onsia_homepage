@@ -99,15 +99,15 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   try {
     const pages = await getLandingPages();
     pages.forEach((p) => {
-      const publicSlug = toKoreanSlug(p.slug);
-      // 메인 랜딩 (priority 0.95)
+      // 한글 slug는 sitemap 표준(RFC 3986)에 맞춰 percent-encoding
+      // (네이버 Yeti가 비표준 URL을 늦게 색인하는 문제 대응)
+      const publicSlug = encodeURIComponent(toKoreanSlug(p.slug));
       landingPages.push({
         url: `${baseUrl}/${publicSlug}`,
         lastModified: new Date(p.updated_at),
         changeFrequency: 'weekly' as const,
         priority: 0.95,
       });
-      // 카테고리 sub-page (CATEGORIES에 정의된 슬러그만 — 야목/어반홈스 등)
       const cats = CATEGORIES[p.slug];
       if (cats) {
         Object.keys(cats).forEach((category) => {
