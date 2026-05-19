@@ -1,4 +1,5 @@
 import { Metadata } from 'next'
+import dynamic from 'next/dynamic'
 import { notFound } from 'next/navigation'
 import { getLandingPageBySlug, getLandingPages, getAgentByCode, type LandingPage as LandingPageType } from '@/lib/supabase-landing'
 import { toKoreanSlug } from '@/lib/landing-slugs'
@@ -11,6 +12,11 @@ import LocationSection from './LocationSection'
 import YamokStructuredData from './YamokStructuredData'
 import YamokAgentVrCta from './YamokAgentVrCta'
 import { YAMOK_FAQ } from './yamok-faq'
+
+// 부정클릭 게이트 (yamok-grandhill / urbanhomes 한정) — 다른 슬러그 번들 영향 0
+// (Next 15 server component에선 ssr:false 금지 → 기본 dynamic. FraudGate 자체가 'use client'라 useEffect는 클라이언트에서만 실행됨)
+const FraudGate = dynamic(() => import('./FraudGate'))
+const FRAUD_SLUGS = new Set(['yamok-grandhill', 'urbanhomes'])
 
 // agent 페이지 영상 토글 (어반홈스 등 슬러그 — 야목은 별도 VR CTA로 분기되어 영향 없음)
 const SHOW_AGENT_VIDEOS = true
@@ -239,7 +245,7 @@ export default async function LandingPage({ params, searchParams }: Props) {
 
   // 시각 본문(intro + FAQ)은 사용자 요청으로 제거. JSON-LD FAQPage Schema는 검색엔진 노출용으로 유지.
 
-  return (
+  const body = (
     <>
       {/* ===== SEO 구조화 데이터 (JSON-LD, yamok-grandhill 한정, 메타데이터로만 사용) ===== */}
       {slug === 'yamok-grandhill' && (
@@ -664,4 +670,14 @@ export default async function LandingPage({ params, searchParams }: Props) {
       </div>
     </>
   )
+
+  if (FRAUD_SLUGS.has(slug)) {
+    return (
+      <FraudGate siteId={slug} agentCode={agentCodeStr}>
+        {body}
+      </FraudGate>
+    )
+  }
+
+  return body
 }

@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { useFraudGate } from './FraudGateContext'
 
 interface Props {
   pageId: string
@@ -17,6 +18,8 @@ export default function InquiryForm({ pageId, slug, accentColor, agentCode, agen
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [submitted, setSubmitted] = useState(false)
   const [error, setError] = useState('')
+
+  const fraudGate = useFraudGate()
 
   // 010-XXXX-XXXX 자동 포맷팅
   const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -51,6 +54,18 @@ export default function InquiryForm({ pageId, slug, accentColor, agentCode, agen
     }
 
     setIsSubmitting(true)
+
+    // 부정클릭 게이트 체크 (활성 시) — block tier면 submit 차단
+    if (fraudGate.enabled) {
+      const gate = await fraudGate.reportClick('inquiry_submit', {
+        targetText: '관심고객 등록',
+      })
+      if (!gate.allow) {
+        setError('현재 접속에서 비정상 패턴이 감지되어 등록이 차단되었습니다. 1668-5257로 직접 문의해주세요.')
+        setIsSubmitting(false)
+        return
+      }
+    }
 
     const urlParams = new URLSearchParams(window.location.search)
 

@@ -1,5 +1,7 @@
 'use client'
 
+import { useFraudGate } from './FraudGateContext'
+
 interface Props {
   phone: string
   agentName?: string
@@ -10,8 +12,24 @@ export default function CallBanner({ phone, agentName }: Props) {
   const isAgent = !!agentName
   const displayNumber = isAgent ? phone.replace(/^010-?/, '') : phone
 
+  const { reportClick, tier, enabled } = useFraudGate()
+
+  const handleClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    // 부정클릭 게이트 비활성 → 기존 동작 100% 유지
+    if (!enabled) return
+
+    // 이미 차단 상태 → 통화 차단
+    if (tier === 'block') {
+      e.preventDefault()
+      return
+    }
+
+    // 광고 클릭으로 보고 (서버에서 fraud 판정 후 응답)
+    reportClick('cta_click', { targetText: '전화상담', targetUrl: `tel:${phone}` }).catch(() => {})
+  }
+
   return (
-    <a href={`tel:${phone}`} className="call-banner block w-full">
+    <a href={`tel:${phone}`} className="call-banner block w-full" onClick={handleClick}>
       <div className="py-4 sm:py-5 px-4 text-center max-w-4xl lg:mx-auto">
         {isAgent ? (
           <>

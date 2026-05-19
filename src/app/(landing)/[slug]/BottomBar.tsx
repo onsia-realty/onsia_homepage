@@ -1,5 +1,7 @@
 'use client'
 
+import { useFraudGate } from './FraudGateContext'
+
 interface Props {
   phoneNumber: string | null
   kakaoUrl: string | null
@@ -8,12 +10,28 @@ interface Props {
 }
 
 export default function BottomBar({ phoneNumber, kakaoUrl, isAgent, inquiryHref }: Props) {
+  const { reportClick, tier, enabled } = useFraudGate()
+
+  const guardedClick = (
+    e: React.MouseEvent<HTMLAnchorElement>,
+    label: string,
+    targetUrl?: string
+  ) => {
+    if (!enabled) return
+    if (tier === 'block') {
+      e.preventDefault()
+      return
+    }
+    reportClick('cta_click', { targetText: label, targetUrl }).catch(() => {})
+  }
+
   return (
     <div className="fixed bottom-0 left-0 right-0 z-50 bg-white border-t border-gray-200 shadow-[0_-2px_10px_rgba(0,0,0,0.1)] lg:hidden">
       <div className="flex items-center h-14 lg:h-16 max-w-lg lg:max-w-2xl mx-auto px-2 lg:px-4 gap-2 lg:gap-3">
         {phoneNumber && (
           <a
             href={`tel:${phoneNumber}`}
+            onClick={(e) => guardedClick(e, '전화상담', `tel:${phoneNumber}`)}
             className="flex-1 flex items-center justify-center gap-1.5 lg:gap-2 h-10 lg:h-12 text-sm lg:text-base font-bold text-white bg-blue-600 rounded-lg active:opacity-80 hover:bg-blue-700 transition-colors"
           >
             <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4 lg:w-5 lg:h-5" viewBox="0 0 24 24" fill="currentColor">
@@ -27,6 +45,7 @@ export default function BottomBar({ phoneNumber, kakaoUrl, isAgent, inquiryHref 
             href={kakaoUrl}
             target="_blank"
             rel="noopener noreferrer"
+            onClick={(e) => guardedClick(e, '카카오톡 문의', kakaoUrl)}
             className="flex-1 flex items-center justify-center gap-1.5 lg:gap-2 h-10 lg:h-12 text-sm lg:text-base font-bold text-gray-900 bg-[#FEE500] rounded-lg active:opacity-80 hover:bg-[#F5DC00] transition-colors"
           >
             <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4 lg:w-5 lg:h-5" viewBox="0 0 24 24" fill="currentColor">
@@ -38,14 +57,22 @@ export default function BottomBar({ phoneNumber, kakaoUrl, isAgent, inquiryHref 
         {!isAgent && (
           <a
             href={inquiryHref || '#inquiry-bottom'}
-            onClick={
-              inquiryHref
-                ? undefined
-                : (e) => {
-                    e.preventDefault()
-                    document.getElementById('inquiry-bottom')?.scrollIntoView({ behavior: 'smooth' })
-                  }
-            }
+            onClick={(e) => {
+              if (enabled && tier === 'block') {
+                e.preventDefault()
+                return
+              }
+              if (!inquiryHref) {
+                e.preventDefault()
+                document.getElementById('inquiry-bottom')?.scrollIntoView({ behavior: 'smooth' })
+              }
+              if (enabled) {
+                reportClick('cta_click', {
+                  targetText: '방문예약',
+                  targetUrl: inquiryHref || '#inquiry-bottom',
+                }).catch(() => {})
+              }
+            }}
             className="flex-1 flex items-center justify-center gap-1.5 lg:gap-2 h-10 lg:h-12 text-sm lg:text-base font-bold text-white bg-green-600 rounded-lg active:opacity-80 hover:bg-green-700 transition-colors"
           >
             <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4 lg:w-5 lg:h-5" viewBox="0 0 24 24" fill="currentColor">
