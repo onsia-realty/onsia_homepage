@@ -140,43 +140,10 @@ const jsonLd = {
         "name": "대한민국"
       },
       "serviceType": ["분양권 거래", "부동산 경매", "청약 정보", "AI 시세분석", "아파트 분양 상담"]
-    },
-    {
-      "@type": "BreadcrumbList",
-      "@id": "https://www.onsia.city/#breadcrumb",
-      "itemListElement": [
-        {
-          "@type": "ListItem",
-          "position": 1,
-          "name": "홈",
-          "item": "https://www.onsia.city"
-        },
-        {
-          "@type": "ListItem",
-          "position": 2,
-          "name": "분양정보",
-          "item": "https://www.onsia.city/subscription"
-        },
-        {
-          "@type": "ListItem",
-          "position": 3,
-          "name": "분양권",
-          "item": "https://www.onsia.city/properties"
-        },
-        {
-          "@type": "ListItem",
-          "position": 4,
-          "name": "경매정보",
-          "item": "https://www.onsia.city/auctions"
-        },
-        {
-          "@type": "ListItem",
-          "position": 5,
-          "name": "AI 부동산시세",
-          "item": "https://www.onsia.city/market"
-        }
-      ]
     }
+    // BreadcrumbList는 홈(src/app/page.tsx)과 각 랜딩 페이지에서 개별 주입.
+    // 전역에 두면 모든 페이지(랜딩 포함) 검색 결과에 동일 빵부스러기가 노출되어
+    // 단지명 매칭이 약해짐 → 페이지별 분리.
   ]
 };
 

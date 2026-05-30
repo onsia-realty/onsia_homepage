@@ -12,6 +12,7 @@ import LocationSection from './LocationSection'
 import YamokStructuredData from './YamokStructuredData'
 import YamokAgentVrCta from './YamokAgentVrCta'
 import { YAMOK_FAQ } from './yamok-faq'
+import BreadcrumbStructuredData from './BreadcrumbStructuredData'
 
 // 부정클릭 게이트 (yamok-grandhill / urbanhomes 한정) — 다른 슬러그 번들 영향 0
 // (Next 15 server component에선 ssr:false 금지 → 기본 dynamic. FraudGate 자체가 'use client'라 useEffect는 클라이언트에서만 실행됨)
@@ -250,6 +251,15 @@ export default async function LandingPage({ params, searchParams }: Props) {
       {/* ===== SEO 구조화 데이터 (JSON-LD, yamok-grandhill 한정, 메타데이터로만 사용) ===== */}
       {slug === 'yamok-grandhill' && (
         <YamokStructuredData faq={YAMOK_FAQ} ogImage={page.og_image || undefined} />
+      )}
+
+      {/* ===== BreadcrumbList JSON-LD (야목 외 슬러그 — 야목은 YamokStructuredData에 포함) =====
+          검색 결과 빵부스러기에 단지명 노출 → 키워드 매칭 강화 */}
+      {slug !== 'yamok-grandhill' && (
+        <BreadcrumbStructuredData
+          projectName={page.project_name}
+          pageUrl={`https://www.onsia.city/${toKoreanSlug(slug)}`}
+        />
       )}
 
       {/* ===== PC 전용 (lg+) ===== */}

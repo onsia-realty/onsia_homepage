@@ -152,6 +152,24 @@ export default function YamokStructuredData({ faq, ogImage }: Props) {
           },
         })),
       },
+      {
+        '@type': 'BreadcrumbList',
+        '@id': 'https://www.onsia.city/야목역서희스타힐스#breadcrumb',
+        itemListElement: [
+          {
+            '@type': 'ListItem',
+            position: 1,
+            name: '홈',
+            item: 'https://www.onsia.city',
+          },
+          {
+            '@type': 'ListItem',
+            position: 2,
+            name: '야목역 서희스타힐스 그랜드힐',
+            item: 'https://www.onsia.city/야목역서희스타힐스',
+          },
+        ],
+      },
     ],
   }
 
