@@ -1,8 +1,23 @@
 import type { NextConfig } from "next";
 
+// 포워딩 전용 도메인: 야목역서희스타힐스.xyz (punycode)
+const YAMOK_FORWARD_HOSTS = [
+  'xn--w52b01jv7aa057aotah02dmgmlja.xyz',
+  'www.xn--w52b01jv7aa057aotah02dmgmlja.xyz',
+];
+
 const nextConfig: NextConfig = {
   typescript: {
     ignoreBuildErrors: true,
+  },
+  async redirects() {
+    // 야목역서희스타힐스.xyz → onsia.city 한글 랜딩으로 301 (쿼리 ?a= 자동 보존)
+    return YAMOK_FORWARD_HOSTS.map((host) => ({
+      source: '/:path*',
+      has: [{ type: 'host' as const, value: host }],
+      destination: 'https://www.onsia.city/야목역서희스타힐스',
+      permanent: true,
+    }));
   },
   images: {
     qualities: [25, 50, 75, 100],
