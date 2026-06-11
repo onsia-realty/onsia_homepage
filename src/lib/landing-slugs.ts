@@ -28,3 +28,21 @@ export function isEnglishLandingSlug(slug: string): boolean {
 export function isKoreanLandingSlug(slug: string): boolean {
   return slug in KO_TO_EN_SLUG
 }
+
+// ============================================================
+// 독립 랜딩 도메인: 도메인 루트 자체가 랜딩 페이지 주소
+// (광고/검색 노출용 — middleware가 host 보고 내부 slug로 rewrite)
+// ============================================================
+export const LANDING_DOMAINS: Record<string, string> = {
+  // 야목역서희스타힐스.xyz
+  'xn--w52b01jv7aa057aotah02dmgmlja.xyz': 'yamok-grandhill',
+}
+
+// 현재 접속 host 기준 랜딩의 base URL (canonical/OG용)
+// - 독립 도메인으로 접속: https://야목역서희스타힐스.xyz (루트)
+// - 그 외: https://www.onsia.city/한글슬러그
+export function landingBaseUrl(host: string | null | undefined, slug: string): string {
+  const apex = (host || '').toLowerCase().split(':')[0].replace(/^www\./, '')
+  if (LANDING_DOMAINS[apex] === slug) return `https://${apex}`
+  return `https://www.onsia.city/${toKoreanSlug(slug)}`
+}

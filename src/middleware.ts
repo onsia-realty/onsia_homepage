@@ -1,7 +1,7 @@
 import { getToken } from 'next-auth/jwt';
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
-import { EN_TO_KO_SLUG, KO_TO_EN_SLUG } from '@/lib/landing-slugs';
+import { EN_TO_KO_SLUG, KO_TO_EN_SLUG, LANDING_DOMAINS } from '@/lib/landing-slugs';
 
 // 로그인 필요한 상세 페이지 경로 패턴
 const protectedPaths = [
@@ -26,6 +26,33 @@ export async function middleware(request: NextRequest) {
     decodedPath = decodeURIComponent(pathname);
   } catch {
     // malformed URI는 그대로 사용
+  }
+
+  // ============================================================
+  // 0) 독립 랜딩 도메인 (야목역서희스타힐스.xyz 등)
+  //    도메인 루트가 곧 랜딩 — 영문 slug로 internal rewrite (주소창 유지)
+  // ============================================================
+  const host = (request.headers.get('host') || '').toLowerCase().split(':')[0];
+  const apexHost = host.replace(/^www\./, '');
+  const domainSlug = LANDING_DOMAINS[apexHost];
+  if (domainSlug) {
+    const search = request.nextUrl.search;
+    // www → apex 301
+    if (host !== apexHost) {
+      return NextResponse.redirect(`https://${apexHost}${pathname}${search}`, 301);
+    }
+    // /yamok-grandhill, /야목역서희스타힐스 prefix로 들어온 경우 루트로 301 (중복 URL 방지)
+    const koSlug = EN_TO_KO_SLUG[domainSlug];
+    for (const prefix of [`/${domainSlug}`, `/${koSlug}`]) {
+      if (decodedPath === prefix || decodedPath.startsWith(`${prefix}/`)) {
+        const rest = decodedPath.slice(prefix.length) || '/';
+        return NextResponse.redirect(`https://${apexHost}${encodeURI(rest)}${search}`, 301);
+      }
+    }
+    // 루트(/) → 랜딩, 하위 경로(/business 등) → 카테고리 sub-page
+    const url = request.nextUrl.clone();
+    url.pathname = decodedPath === '/' ? `/${domainSlug}` : `/${domainSlug}${decodedPath}`;
+    return NextResponse.rewrite(url);
   }
 
   // ============================================================

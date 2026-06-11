@@ -1,8 +1,9 @@
 import { Metadata } from 'next'
 import dynamic from 'next/dynamic'
+import { headers } from 'next/headers'
 import { notFound } from 'next/navigation'
 import { getLandingPageBySlug, getLandingPages, getAgentByCode, type LandingPage as LandingPageType } from '@/lib/supabase-landing'
-import { toKoreanSlug } from '@/lib/landing-slugs'
+import { landingBaseUrl } from '@/lib/landing-slugs'
 import InquiryForm from './InquiryForm'
 import BottomBar from './BottomBar'
 import CallBanner from './CallBanner'
@@ -70,8 +71,9 @@ export async function generateMetadata({ params, searchParams }: Props): Promise
     : baseOgTitle
 
   const ogImage = page.og_image || page.hero_image || undefined
-  const publicSlug = toKoreanSlug(slug)
-  const pageUrl = `https://www.onsia.city/${publicSlug}${agentCodeStr ? `?a=${agentCodeStr}` : ''}`
+  // 독립 도메인(야목역서희스타힐스.xyz)으로 접속 시 canonical/OG도 그 도메인 기준
+  const baseUrl = landingBaseUrl((await headers()).get('host'), slug)
+  const pageUrl = `${baseUrl}${agentCodeStr ? `?a=${agentCodeStr}` : ''}`
   const ogDescription = page.seo_description || `${page.project_name} 분양 안내`
 
   return {
@@ -82,7 +84,7 @@ export async function generateMetadata({ params, searchParams }: Props): Promise
       ? { index: false, follow: true }
       : { index: true, follow: true },
     alternates: {
-      canonical: `https://www.onsia.city/${publicSlug}`,
+      canonical: baseUrl,
     },
     openGraph: {
       title: ogTitle,
@@ -119,6 +121,9 @@ export default async function LandingPage({ params, searchParams }: Props) {
   // Agent 조회 (URL ?a=xxx)
   const agentCodeStr = typeof agentCode === 'string' ? agentCode : undefined
   const agent = agentCodeStr ? await getAgentByCode(page.id, agentCodeStr) : null
+
+  // 독립 도메인 접속 시 JSON-LD 등의 기준 URL도 그 도메인으로
+  const pageBaseUrl = landingBaseUrl((await headers()).get('host'), slug)
 
   // 유효 전화번호/카톡 결정 (agent 우선, 없으면 대표)
   const effectivePhone = agent?.phone || page.phone_number
@@ -250,7 +255,7 @@ export default async function LandingPage({ params, searchParams }: Props) {
     <>
       {/* ===== SEO 구조화 데이터 (JSON-LD, yamok-grandhill 한정, 메타데이터로만 사용) ===== */}
       {slug === 'yamok-grandhill' && (
-        <YamokStructuredData faq={YAMOK_FAQ} ogImage={page.og_image || undefined} />
+        <YamokStructuredData faq={YAMOK_FAQ} ogImage={page.og_image || undefined} baseUrl={pageBaseUrl} />
       )}
 
       {/* ===== BreadcrumbList JSON-LD (야목 외 슬러그 — 야목은 YamokStructuredData에 포함) =====
@@ -258,7 +263,7 @@ export default async function LandingPage({ params, searchParams }: Props) {
       {slug !== 'yamok-grandhill' && (
         <BreadcrumbStructuredData
           projectName={page.project_name}
-          pageUrl={`https://www.onsia.city/${toKoreanSlug(slug)}`}
+          pageUrl={pageBaseUrl}
         />
       )}
 

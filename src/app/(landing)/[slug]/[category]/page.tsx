@@ -1,7 +1,8 @@
 import { Metadata } from 'next'
+import { headers } from 'next/headers'
 import { notFound } from 'next/navigation'
 import { getLandingPageBySlug } from '@/lib/supabase-landing'
-import { toKoreanSlug } from '@/lib/landing-slugs'
+import { landingBaseUrl } from '@/lib/landing-slugs'
 import CategoryPage from './CategoryPage'
 
 // 카테고리 정의 (sitemap.ts에서도 import해서 sub-page 동적 등록)
@@ -177,18 +178,19 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const description =
     yamokSeo?.description || `${page.project_name} ${cat.title} - 분양 안내`
 
-  const publicSlug = toKoreanSlug(slug)
+  // 독립 도메인(야목역서희스타힐스.xyz) 접속 시 canonical/OG도 그 도메인 기준
+  const baseUrl = landingBaseUrl((await headers()).get('host'), slug)
   return {
     title,
     description,
     keywords: yamokSeo?.keywords,
     alternates: {
-      canonical: `https://www.onsia.city/${publicSlug}/${category}`,
+      canonical: `${baseUrl}/${category}`,
     },
     openGraph: {
       title,
       description,
-      url: `https://www.onsia.city/${publicSlug}/${category}`,
+      url: `${baseUrl}/${category}`,
       siteName: '온시아(ONSIA)',
       type: 'website',
       locale: 'ko_KR',
