@@ -1,7 +1,7 @@
 import { getToken } from 'next-auth/jwt';
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
-import { EN_TO_KO_SLUG, KO_TO_EN_SLUG, LANDING_DOMAINS } from '@/lib/landing-slugs';
+import { EN_TO_KO_SLUG, KO_TO_EN_SLUG, LANDING_DOMAINS, SLUG_TO_DOMAIN } from '@/lib/landing-slugs';
 
 // 로그인 필요한 상세 페이지 경로 패턴
 const protectedPaths = [
@@ -53,6 +53,25 @@ export async function middleware(request: NextRequest) {
     const url = request.nextUrl.clone();
     url.pathname = decodedPath === '/' ? `/${domainSlug}` : `/${domainSlug}${decodedPath}`;
     return NextResponse.rewrite(url);
+  }
+
+  // ============================================================
+  // 0.5) 메인 도메인(onsia.city)에서 전용 도메인 보유 슬러그 접속
+  //      → 전용 랜딩 도메인으로 301 (중복 콘텐츠 제거, SEO 단일화)
+  //      예) onsia.city/야목역서희스타힐스?a=kim → 야목역서희스타힐스.xyz/?a=kim
+  //      (직원 링크의 ?a= 쿼리는 그대로 보존 → 실적 추적 유지)
+  // ============================================================
+  for (const [slug, domain] of Object.entries(SLUG_TO_DOMAIN)) {
+    const koSlug = EN_TO_KO_SLUG[slug];
+    for (const prefix of [`/${slug}`, `/${koSlug}`]) {
+      if (decodedPath === prefix || decodedPath.startsWith(`${prefix}/`)) {
+        const rest = decodedPath.slice(prefix.length) || '/';
+        return NextResponse.redirect(
+          `https://${domain}${encodeURI(rest)}${request.nextUrl.search}`,
+          301
+        );
+      }
+    }
   }
 
   // ============================================================
