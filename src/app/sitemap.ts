@@ -1,8 +1,9 @@
 import { MetadataRoute } from 'next';
+import { headers } from 'next/headers';
 import { prisma } from '@/lib/prisma';
 import { getLandingPages } from '@/lib/supabase-landing';
 import { CATEGORIES } from '@/app/(landing)/[slug]/[category]/page';
-import { toKoreanSlug } from '@/lib/landing-slugs';
+import { toKoreanSlug, LANDING_DOMAINS, SLUG_TO_DOMAIN } from '@/lib/landing-slugs';
 
 // 사이트맵 전용 청약 API 호출 (캐시 허용)
 async function fetchSubscriptionsForSitemap() {
@@ -34,6 +35,34 @@ async function fetchSubscriptionsForSitemap() {
 }
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
+  // ============================================================
+  // 전용 랜딩 도메인(야목역서희스타힐스.xyz 등)으로 접속 시
+  //  → 해당 랜딩 URL만 담은 사이트맵 (도메인 단위 색인용)
+  //  도메인 루트(/) = 랜딩, 하위(/business 등) = 카테고리 sub-page
+  // ============================================================
+  const host = ((await headers()).get('host') || '').toLowerCase().split(':')[0];
+  const apex = host.replace(/^www\./, '');
+  const landingSlug = LANDING_DOMAINS[apex];
+  if (landingSlug) {
+    const base = `https://${apex}`;
+    const now = new Date();
+    const entries: MetadataRoute.Sitemap = [
+      { url: base, lastModified: now, changeFrequency: 'weekly', priority: 1 },
+    ];
+    const cats = CATEGORIES[landingSlug];
+    if (cats) {
+      Object.keys(cats).forEach((category) => {
+        entries.push({
+          url: `${base}/${category}`,
+          lastModified: now,
+          changeFrequency: 'weekly',
+          priority: 0.85,
+        });
+      });
+    }
+    return entries;
+  }
+
   const baseUrl = 'https://www.onsia.city';
 
   // 정적 페이지
@@ -99,6 +128,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   try {
     const pages = await getLandingPages();
     pages.forEach((p) => {
+      // 전용 도메인 보유 슬러그(야목 등)는 onsia.city에서 xyz로 301 → onsia 사이트맵에서 제외
+      // (리다이렉트 URL을 사이트맵에 넣지 않음 / 색인 권한을 xyz 사이트맵으로 단일화)
+      if (SLUG_TO_DOMAIN[p.slug]) return;
       // 한글 slug는 sitemap 표준(RFC 3986)에 맞춰 percent-encoding
       // (네이버 Yeti가 비표준 URL을 늦게 색인하는 문제 대응)
       const publicSlug = encodeURIComponent(toKoreanSlug(p.slug));
