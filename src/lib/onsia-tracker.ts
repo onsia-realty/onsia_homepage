@@ -55,8 +55,16 @@ export class OnsiaFraudTracker {
   private pageEnterTime = Date.now()
   private maxScrollDepth = 0
   private mouseMovements = 0
+  private scrollEvents = 0
+  private clicks = 0
   private scrollHandler?: () => void
   private mouseHandler?: () => void
+
+  // 페이지뷰(체류시간) 추적
+  private pageViewId: string | null = null
+  private pvFinalized = false
+  private visibilityHandler?: () => void
+  private pagehideHandler?: () => void
 
   constructor(config: OnsiaTrackerConfig) {
     this.config = config
@@ -80,8 +88,12 @@ export class OnsiaFraudTracker {
   }
 
   destroy(): void {
+    // SPA 언마운트/이동 시에도 체류시간 확정
+    this.finalizePageView('navigate')
     if (this.scrollHandler) window.removeEventListener('scroll', this.scrollHandler)
     if (this.mouseHandler) document.removeEventListener('mousemove', this.mouseHandler)
+    if (this.visibilityHandler) document.removeEventListener('visibilitychange', this.visibilityHandler)
+    if (this.pagehideHandler) window.removeEventListener('pagehide', this.pagehideHandler)
     this.listeners = []
   }
 
@@ -109,6 +121,8 @@ export class OnsiaFraudTracker {
       // init 안 끝났거나 차단됨 — 부정클릭 아님으로 통과
       return null
     }
+
+    this.clicks += 1
 
     // agent 모드면 fraud check 우회 (직원 본인 명함 정상 사용)
     const actualType = this.config.agentCode ? AGENT_DOWNGRADE_TYPE : eventType
@@ -212,9 +226,67 @@ export class OnsiaFraudTracker {
       this.sessionId = data.sessionId
       if (data.isBlocked) {
         this.setState({ tier: 'block', riskScore: 100, reasons: ['차단된 세션입니다.'] })
+        return
       }
+      // 세션 정상 → 페이지뷰 기록 시작 (체류시간 측정의 진입점)
+      await this.createPageView()
     } catch (e) {
       this.log('createSession failed', e)
+    }
+  }
+
+  // ============================================
+  // 내부: 페이지뷰(체류시간) 기록
+  // ============================================
+
+  private async createPageView(): Promise<void> {
+    if (!this.sessionId) return
+    try {
+      const res = await fetch(`${this.config.endpoint}/api/analytics/pageview`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          sessionId: this.sessionId,
+          landingSiteSlug: this.config.siteId,
+          path: window.location.pathname,
+          fullUrl: window.location.href,
+          title: document.title,
+        }),
+      })
+      if (!res.ok) {
+        this.log('pageview POST non-ok', res.status)
+        return
+      }
+      const data = (await res.json()) as { pageViewId: string | null }
+      this.pageViewId = data.pageViewId
+    } catch (e) {
+      this.log('createPageView failed', e)
+    }
+  }
+
+  // 이탈 시 1회만 체류시간/스크롤 확정 (세션 totalDwellTime 중복 가산 방지)
+  private finalizePageView(exitType: 'hidden' | 'unload' | 'navigate'): void {
+    if (this.pvFinalized || !this.pageViewId) return
+    this.pvFinalized = true
+
+    const dwellTime = Math.round((Date.now() - this.pageEnterTime) / 1000)
+    try {
+      fetch(`${this.config.endpoint}/api/analytics/pageview`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          pageViewId: this.pageViewId,
+          dwellTime,
+          scrollDepth: this.maxScrollDepth,
+          scrollEvents: this.scrollEvents,
+          mouseMovements: this.mouseMovements,
+          clicks: this.clicks,
+          exitType,
+        }),
+        keepalive: true,
+      }).catch((e) => this.log('finalizePageView failed', e))
+    } catch (e) {
+      this.log('finalizePageView failed', e)
     }
   }
 
@@ -250,6 +322,7 @@ export class OnsiaFraudTracker {
 
   private setupBehaviorTracking(): void {
     this.scrollHandler = throttle(() => {
+      this.scrollEvents += 1
       const scrollTop = window.scrollY || document.documentElement.scrollTop
       const docHeight =
         Math.max(document.body.scrollHeight, document.documentElement.scrollHeight) -
@@ -264,6 +337,14 @@ export class OnsiaFraudTracker {
 
     window.addEventListener('scroll', this.scrollHandler, { passive: true })
     document.addEventListener('mousemove', this.mouseHandler, { passive: true })
+
+    // 이탈 감지 — 모바일은 beforeunload가 불안정해 visibilitychange/pagehide 사용
+    this.visibilityHandler = () => {
+      if (document.visibilityState === 'hidden') this.finalizePageView('hidden')
+    }
+    this.pagehideHandler = () => this.finalizePageView('unload')
+    document.addEventListener('visibilitychange', this.visibilityHandler)
+    window.addEventListener('pagehide', this.pagehideHandler)
   }
 
   // ============================================
