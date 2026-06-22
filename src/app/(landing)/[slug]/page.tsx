@@ -12,6 +12,8 @@ import PCLanding from './PCLanding'
 import LocationSection from './LocationSection'
 import YamokStructuredData from './YamokStructuredData'
 import YamokAgentVrCta from './YamokAgentVrCta'
+import YamokFactStrip from './YamokFactStrip'
+import YamokMobileGallery from './YamokMobileGallery'
 import { YAMOK_FAQ } from './yamok-faq'
 import BreadcrumbStructuredData from './BreadcrumbStructuredData'
 
@@ -360,6 +362,9 @@ export default async function LandingPage({ params, searchParams }: Props) {
           />
         )}
 
+        {/* 야목 모바일 팩트 스트립 (메인/직원 공통) */}
+        {slug === 'yamok-grandhill' && <YamokFactStrip />}
+
         {/* E-모델하우스 VR CTA (yamok-grandhill 한정 — 최상단 노출, 풀 폭 다크 그라디언트) — agent 페이지에서는 YamokAgentVrCta가 따로 노출되므로 메인 한정 */}
         {slug === 'yamok-grandhill' && !agent && (
           <section className="py-5 sm:py-6 px-3 sm:px-4 bg-white">
@@ -515,20 +520,28 @@ export default async function LandingPage({ params, searchParams }: Props) {
           </section>
         ))}
 
-        {/* Gallery (seamless vertical stack) */}
+        {/* Gallery — 야목은 6섹션화(컬러 헤더+중간CTA), 그 외 슬러그는 기존 seamless 스택 */}
         {page.gallery && page.gallery.length > 0 && (
-          <section id="section-gallery" style={{ backgroundColor: primaryColor, fontSize: 0, lineHeight: 0 }}>
-            {page.gallery.map((img, i) => (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img
-                key={i}
-                src={img}
-                alt={getGalleryAlt(slug, page.project_name, img, i)}
-                className="w-full block"
-                loading="lazy"
-              />
-            ))}
-          </section>
+          slug === 'yamok-grandhill' ? (
+            <YamokMobileGallery
+              gallery={page.gallery}
+              mode={agent ? 'agent' : 'main'}
+              phone={effectivePhone || undefined}
+            />
+          ) : (
+            <section id="section-gallery" style={{ backgroundColor: primaryColor, fontSize: 0, lineHeight: 0 }}>
+              {page.gallery.map((img, i) => (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img
+                  key={i}
+                  src={img}
+                  alt={getGalleryAlt(slug, page.project_name, img, i)}
+                  className="w-full block"
+                  loading="lazy"
+                />
+              ))}
+            </section>
+          )
         )}
 
         {/* 카테고리 바로가기 그리드 (yamok-grandhill 한정 — 풀 폭 다크 그라디언트, E-모델하우스 CTA와 통일) */}

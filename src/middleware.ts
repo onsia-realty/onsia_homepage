@@ -35,6 +35,25 @@ export async function middleware(request: NextRequest) {
   const host = (request.headers.get('host') || '').toLowerCase().split(':')[0];
   const apexHost = host.replace(/^www\./, '');
   const domainSlug = LANDING_DOMAINS[apexHost];
+
+  // ============================================================
+  // localhost 개발 프리뷰: 랜딩 슬러그를 prod 도메인으로 301하지 않고 직접 렌더
+  // (host가 localhost/127.0.0.1일 때만 동작 → 운영 환경엔 영향 0)
+  // ============================================================
+  if (host === 'localhost' || host === '127.0.0.1') {
+    for (const [koSlug, enSlug] of Object.entries(KO_TO_EN_SLUG)) {
+      if (decodedPath === `/${koSlug}` || decodedPath.startsWith(`/${koSlug}/`)) {
+        const url = request.nextUrl.clone();
+        url.pathname = decodedPath.replace(`/${koSlug}`, `/${enSlug}`);
+        return NextResponse.rewrite(url);
+      }
+    }
+    for (const enSlug of Object.keys(EN_TO_KO_SLUG)) {
+      if (decodedPath === `/${enSlug}` || decodedPath.startsWith(`/${enSlug}/`)) {
+        return NextResponse.next();
+      }
+    }
+  }
   if (domainSlug) {
     const search = request.nextUrl.search;
     // www → apex 301
