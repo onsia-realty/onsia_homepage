@@ -9,6 +9,7 @@ import BottomBar from './BottomBar'
 import CallBanner from './CallBanner'
 import PopupModal from './PopupModal'
 import PCLanding from './PCLanding'
+import UrbanhomesKeyVisual from './UrbanhomesKeyVisual'
 import LocationSection from './LocationSection'
 import YamokStructuredData from './YamokStructuredData'
 import YamokAgentVrCta from './YamokAgentVrCta'
@@ -152,9 +153,8 @@ export default async function LandingPage({ params, searchParams }: Props) {
         },
         {
           label: '단지안내',
-          href: '/urbanhomes/community',
+          href: '/urbanhomes/layout',
           children: [
-            { label: '커뮤니티', href: '/urbanhomes/community' },
             { label: '동호수배치도', href: '/urbanhomes/layout' },
           ],
         },
@@ -164,7 +164,6 @@ export default async function LandingPage({ params, searchParams }: Props) {
           children: [
             { label: '프리미엄', href: '/urbanhomes/premium' },
             { label: '입지환경', href: '/urbanhomes/environment' },
-            { label: '스마트싱스', href: '/urbanhomes/smart' },
           ],
         },
         {
@@ -182,10 +181,7 @@ export default async function LandingPage({ params, searchParams }: Props) {
           ],
         },
       ],
-      vrLinks: [
-        { label: 'SKY VR', href: 'https://urbanhomes.co.kr/vr3/index.html' },
-        { label: 'UNIT VR', href: 'https://urbanhomes.co.kr/wangsimni_urban_homes/index.html' },
-      ],
+      // VR 제거: 원본 호스트(urbanhomes.co.kr) 사망 + 백업/아카이브 소스 없음으로 복구 불가 (2026-06-24)
     },
     'yamok-grandhill': {
       navLinks: [
@@ -361,6 +357,9 @@ export default async function LandingPage({ params, searchParams }: Props) {
             agentName={agent?.name}
           />
         )}
+
+        {/* 어반홈스 키비주 밴드 (실입주금 6천만원대 / 월세보다 저렴하게 내집마련) */}
+        {slug === 'urbanhomes' && <UrbanhomesKeyVisual />}
 
         {/* 야목 모바일 팩트 스트립 (메인/직원 공통) */}
         {slug === 'yamok-grandhill' && <YamokFactStrip />}
@@ -667,16 +666,7 @@ export default async function LandingPage({ params, searchParams }: Props) {
             storageKey="popup-dismissed-1"
           />
         )}
-        {/* Popup Modal 2 - UNIT VR (1번 닫은 후 표시) */}
-        {slug === 'urbanhomes' && (
-          <PopupModal
-            imageUrl="/images/unit-vr-thumb.jpeg"
-            linkUrl="https://urbanhomes.co.kr/wangsimni_urban_homes/index.html"
-            alt="UNIT VR 모델하우스"
-            storageKey="popup-dismissed-2"
-            waitForKey="popup-dismissed-1"
-          />
-        )}
+        {/* UNIT VR 팝업 제거: 원본 호스트(urbanhomes.co.kr) 사망으로 링크 깨짐 — 복구 소스 없음 (2026-06-24) */}
         {/* yamok-grandhill 팝업 #1 - 스타벅스 기프티콘 이벤트 (모바일) */}
         {slug === 'yamok-grandhill' && (
           <PopupModal

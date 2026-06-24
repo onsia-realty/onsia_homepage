@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import InquiryForm from './InquiryForm'
 import LocationSection from './LocationSection'
 import YamokAgentVrCta from './YamokAgentVrCta'
+import UrbanhomesKeyVisual from './UrbanhomesKeyVisual'
 import type { BusinessInfo as FullBusinessInfo } from '@/lib/supabase-landing'
 
 // 야목역 갤러리 alt 키워드 매핑 (네이버 이미지 검색용)
@@ -256,6 +257,9 @@ export default function PCLanding({
           </div>
         </a>
       )}
+
+      {/* ===== 어반홈스 키비주 밴드 (실입주금 6천만원대 / 월세보다 저렴하게 내집마련) ===== */}
+      {slug === 'urbanhomes' && <UrbanhomesKeyVisual />}
 
       {/* ===== E-모델하우스 VR CTA (yamok-grandhill 한정 — PC 본문 노출) — agent에서는 YamokAgentVrCta가 따로 노출되므로 메인 한정 ===== */}
       {slug === 'yamok-grandhill' && !isAgent && (

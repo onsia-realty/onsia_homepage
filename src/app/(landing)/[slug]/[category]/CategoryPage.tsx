@@ -44,9 +44,8 @@ const NAV_LINKS_BY_SLUG: Record<string, NavLink[]> = {
     },
     {
       label: '단지안내',
-      href: '/urbanhomes/community',
+      href: '/urbanhomes/layout',
       children: [
-        { label: '커뮤니티', href: '/urbanhomes/community' },
         { label: '동호수배치도', href: '/urbanhomes/layout' },
       ],
     },
@@ -56,7 +55,6 @@ const NAV_LINKS_BY_SLUG: Record<string, NavLink[]> = {
       children: [
         { label: '프리미엄', href: '/urbanhomes/premium' },
         { label: '입지환경', href: '/urbanhomes/environment' },
-        { label: '스마트싱스', href: '/urbanhomes/smart' },
       ],
     },
     {
@@ -371,11 +369,9 @@ export default function CategoryPage({
             <>
               {category === 'business' && <BusinessContent />}
               {category === 'location' && <LocationContent />}
-              {category === 'community' && <CommunityContent />}
               {category === 'layout' && <LayoutContent />}
               {category === 'premium' && <PremiumContent />}
               {category === 'environment' && <EnvironmentContent />}
-              {category === 'smart' && <SmartContent />}
               {category === 'unit' && <UnitContent />}
               {category === 'inquiry' && (
                 <div className="max-w-[700px] mx-auto">
@@ -465,7 +461,7 @@ function BusinessContent() {
   return (
     <>
       {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img src="https://urbanhomes.co.kr/images/page/business01.jpg" alt="사업개요" className="w-full block rounded-lg mb-12" loading="lazy" />
+      <img src="/uploads/landing/urbanhomes/business01.jpg" alt="사업개요" className="w-full block rounded-lg mb-12" loading="lazy" />
       <div className="grid grid-cols-2 gap-8">
         <InfoTable
           title="왕십리역 어반홈스 A동"
@@ -565,83 +561,28 @@ function LocationContent() {
   )
 }
 
-function CommunityContent() {
-  const items = [
-    {
-      img: 'https://urbanhomes.co.kr/images/page/community01.jpg',
-      title: '공유 오피스',
-      features: [
-        '1인 기업, 스타트업, 소규모 기업 증가',
-        '깔끔한 인테리어, 편안한 업무 환경 제공',
-        '회의실, 미팅룸 등 다양한 크기의 사무 공간 제공',
-        '부수적인 업무 공간 제공',
-        '무인 운영 가능 인건비 부담이 크지 않음',
-      ],
-    },
-    {
-      img: 'https://urbanhomes.co.kr/images/page/community02.jpg',
-      title: '휘트니스 센터',
-      features: [
-        "차별화 된 이미지 구축 '프리미엄 라이프 스타일'",
-        '웰니스(Wellness) 트렌드에 맞춰 수요층에게 부합, 분양률이나 임대 수익을 상승',
-        '임대·파트너십을 통해 안정적인 수익원 확보',
-        '대단지 아파트에서 누릴 수 있는 건강한 삶',
-      ],
-    },
-    {
-      img: 'https://urbanhomes.co.kr/images/page/community03.jpg',
-      title: '코인 세탁실',
-      features: [
-        '입주자 뿐만 아니라 인근 지역 이용객도 확보 가능',
-        '대형세탁 서비스를 통해 입주 만족도 상승',
-        '다양한 서비스, 시설로 추가 수익 창출',
-        '무인 운영 가능 인건비 부담이 크지 않음',
-      ],
-    },
-  ]
-
-  return (
-    <>
-      <div className="space-y-16">
-        {items.map((item) => (
-          <div key={item.title} className="flex gap-10 items-start">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={item.img} alt={item.title} className="w-[500px] rounded-lg flex-shrink-0" loading="lazy" />
-            <div className="pt-4">
-              <h3 className="text-2xl font-bold text-gray-900 mb-6">{item.title}</h3>
-              <ul className="space-y-3">
-                {item.features.map((f, i) => (
-                  <li key={i} className="flex items-start gap-3 text-gray-600">
-                    <span className="text-green-500 mt-0.5 flex-shrink-0">&#10003;</span>
-                    <span>{f}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </div>
-        ))}
-      </div>
-      <p className="text-xs text-gray-400 mt-10 text-center">
-        ※ 일부 시설은 유료로 전환, 다른 업종으로 변경 사용될 수 있습니다.<br />
-        ※ 상기 이미지는 소비자의 이해를 돕기 위한 것으로 실제와 다소 차이가 있을 수 있습니다.
-      </p>
-    </>
-  )
-}
-
 function LayoutContent() {
   return (
     // eslint-disable-next-line @next/next/no-img-element
-    <img src="https://urbanhomes.co.kr/images/page/layout.jpg" alt="동호수배치도" className="w-full block rounded-lg" loading="lazy" />
+    <img src="/uploads/landing/urbanhomes/layout.jpg" alt="동호수배치도" className="w-full block rounded-lg" loading="lazy" />
   )
 }
 
 function PremiumContent() {
+  const base = '/uploads/landing/urbanhomes'
   return (
     <div className="space-y-6">
-      {['premium01', 'premium02', 'premium03', 'premium04', 'premium05', 'premium06'].map((name) => (
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img src={`${base}/premium-main.jpg`} alt="프리미엄" className="w-full block rounded-lg" loading="lazy" />
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+        {['premium-card1', 'premium-card2', 'premium-card3', 'premium-card4'].map((name) => (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img key={name} src={`${base}/${name}.png`} alt={`프리미엄 옵션`} className="w-full block rounded-lg" loading="lazy" />
+        ))}
+      </div>
+      {['premium-graph.webp', 'premium-flex.webp', 'premium-extra1.png', 'premium-extra2.png'].map((name) => (
         // eslint-disable-next-line @next/next/no-img-element
-        <img key={name} src={`https://urbanhomes.co.kr/images/page/${name}.jpg`} alt={`프리미엄 ${name}`} className="w-full block rounded-lg" loading="lazy" />
+        <img key={name} src={`${base}/${name}`} alt="프리미엄" className="w-full block rounded-lg" loading="lazy" />
       ))}
     </div>
   )
@@ -650,18 +591,7 @@ function PremiumContent() {
 function EnvironmentContent() {
   return (
     // eslint-disable-next-line @next/next/no-img-element
-    <img src="https://urbanhomes.co.kr/images/page/environment.jpg" alt="입지환경" className="w-full block rounded-lg" loading="lazy" />
-  )
-}
-
-function SmartContent() {
-  return (
-    <div className="space-y-6">
-      {['smart01', 'smart02', 'smart03'].map((name) => (
-        // eslint-disable-next-line @next/next/no-img-element
-        <img key={name} src={`https://urbanhomes.co.kr/images/page/${name}.jpg`} alt={`스마트싱스 ${name}`} className="w-full block rounded-lg" loading="lazy" />
-      ))}
-    </div>
+    <img src="/uploads/landing/urbanhomes/environment01.png" alt="입지환경" className="w-full block rounded-lg" loading="lazy" />
   )
 }
 
@@ -674,7 +604,7 @@ function UnitContent() {
         <div className="grid grid-cols-2 gap-5">
           {[1, 2, 3, 4, 5, 6].map((n) => (
             // eslint-disable-next-line @next/next/no-img-element
-            <img key={`a-${n}`} src={`https://urbanhomes.co.kr/images/page/unit/unit0${n}.jpg`} alt={`A동 UNIT ${n}`} className="w-full block rounded-lg" loading="lazy" />
+            <img key={`a-${n}`} src={`/uploads/landing/urbanhomes/unit0${n}.jpg`} alt={`A동 UNIT ${n}`} className="w-full block rounded-lg" loading="lazy" />
           ))}
         </div>
       </div>
@@ -684,7 +614,7 @@ function UnitContent() {
         <div className="grid grid-cols-2 gap-5">
           {[1, 2, 3, 4, 5, 6].map((n) => (
             // eslint-disable-next-line @next/next/no-img-element
-            <img key={`b-${n}`} src={`https://urbanhomes.co.kr/images/page/unit/B_unit0${n}.jpg`} alt={`B동 UNIT ${n}`} className="w-full block rounded-lg" loading="lazy" />
+            <img key={`b-${n}`} src={`/uploads/landing/urbanhomes/B_unit0${n}.jpg`} alt={`B동 UNIT ${n}`} className="w-full block rounded-lg" loading="lazy" />
           ))}
         </div>
       </div>

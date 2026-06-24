@@ -10,11 +10,9 @@ export const CATEGORIES: Record<string, Record<string, { title: string; subtitle
   urbanhomes: {
     business: { title: '사업개요' },
     location: { title: '오시는길' },
-    community: { title: '커뮤니티', subtitle: 'SPECIAL COMMUNITY' },
     layout: { title: '동호수배치도' },
     premium: { title: '프리미엄' },
     environment: { title: '입지환경' },
-    smart: { title: '스마트싱스', subtitle: 'SMART THINGS' },
     unit: { title: '세대안내 (UNIT)' },
     inquiry: { title: '관심고객 등록' },
   },
