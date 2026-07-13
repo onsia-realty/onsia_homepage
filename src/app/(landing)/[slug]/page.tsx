@@ -19,7 +19,7 @@ import YamokPopupCarousel from './YamokPopupCarousel'
 import YamokReserveCounter from './YamokReserveCounter'
 import YamokInquiryGift from './YamokInquiryGift'
 import YamokEventPopup from './YamokEventPopup'
-import YamokLiveRequests from './YamokLiveRequests'
+import YamokConsultSection from './YamokConsultSection'
 import Reveal from './Reveal'
 import { YAMOK_FAQ } from './yamok-faq'
 import BreadcrumbStructuredData from './BreadcrumbStructuredData'
@@ -360,7 +360,7 @@ export default async function LandingPage({ params, searchParams }: Props) {
         {slug === 'yamok-grandhill' && (
           <Reveal enabled={slug === 'yamok-grandhill'}>
             <section className="py-8 px-4 bg-gray-50">
-              <YamokLiveRequests pageId={page.id} />
+              <YamokConsultSection pageId={page.id} slug={slug} />
             </section>
           </Reveal>
         )}

@@ -9,7 +9,7 @@ import UrbanhomesKeyVisual from './UrbanhomesKeyVisual'
 import YamokReserveCounter from './YamokReserveCounter'
 import YamokStatsBand from './YamokStatsBand'
 import YamokInquiryGift from './YamokInquiryGift'
-import YamokLiveRequests from './YamokLiveRequests'
+import YamokConsultSection from './YamokConsultSection'
 import Reveal from './Reveal'
 import type { BusinessInfo as FullBusinessInfo } from '@/lib/supabase-landing'
 
@@ -280,7 +280,7 @@ export default function PCLanding({
       {isYamok && !isAgent && (
         <Reveal enabled variant="up">
           <section className="py-12 px-8 bg-gray-50">
-            <YamokLiveRequests pageId={page.id} />
+            <YamokConsultSection pageId={page.id} slug={slug} />
           </section>
         </Reveal>
       )}
