@@ -288,6 +288,25 @@ export default function PCLanding({
       {/* ===== 어반홈스 키비주 밴드 (실입주금 6천만원대 / 월세보다 저렴하게 내집마련) ===== */}
       {slug === 'urbanhomes' && <UrbanhomesKeyVisual />}
 
+      {/* ===== 직원 영상 (yamok-grandhill 메인 한정 — VR CTA 위) ===== */}
+      {slug === 'yamok-grandhill' && !isAgent && (
+        <section className="bg-black">
+          <div className="max-w-[1100px] mx-auto">
+            <video
+              src="https://uwddeseqwdsryvuoulsm.supabase.co/storage/v1/object/public/landing/videos/yamok-grandhill-staff.mp4#t=1"
+              poster="https://uwddeseqwdsryvuoulsm.supabase.co/storage/v1/object/public/landing/videos/yamok-grandhill-staff-poster.jpg"
+              controls
+              autoPlay
+              muted
+              loop
+              playsInline
+              preload="auto"
+              className="w-full block min-h-[30vh] object-contain"
+            />
+          </div>
+        </section>
+      )}
+
       {/* ===== E-모델하우스 VR CTA (yamok-grandhill 한정 — PC 본문 노출) — agent에서는 YamokAgentVrCta가 따로 노출되므로 메인 한정 ===== */}
       {slug === 'yamok-grandhill' && !isAgent && (
         <Reveal enabled>
@@ -360,25 +379,6 @@ export default function PCLanding({
                 allowFullScreen
               />
             </div>
-          </div>
-        </section>
-      )}
-
-      {/* ===== 직원 영상 (yamok-grandhill 메인 한정 — VR CTA 밑) ===== */}
-      {slug === 'yamok-grandhill' && !isAgent && (
-        <section className="bg-black">
-          <div className="max-w-[1100px] mx-auto">
-            <video
-              src="https://uwddeseqwdsryvuoulsm.supabase.co/storage/v1/object/public/landing/videos/yamok-grandhill-staff.mp4#t=1"
-              poster="https://uwddeseqwdsryvuoulsm.supabase.co/storage/v1/object/public/landing/videos/yamok-grandhill-staff-poster.jpg"
-              controls
-              autoPlay
-              muted
-              loop
-              playsInline
-              preload="auto"
-              className="w-full block min-h-[30vh] object-contain"
-            />
           </div>
         </section>
       )}
@@ -537,15 +537,15 @@ export default function PCLanding({
         />
       )}
 
-      {/* ===== LOCATION (오시는길 - business_info에 location 데이터 있을 때) ===== */}
-      <Reveal enabled={isYamok}>
+      {/* ===== LOCATION (오시는길) — 야목 메인은 숨김(요청). 타 슬러그만 표시 ===== */}
+      {!isYamok && (
         <LocationSection
           businessInfo={page.business_info as FullBusinessInfo | null}
           primaryColor={primaryColor}
           accentColor={accentColor}
           id="pc-location"
         />
-      </Reveal>
+      )}
 
       {/* ===== BOTTOM: Inquiry Form (main) or Video 2 (agent) — yamok agent는 상단 hero CTA만, 하단 중복 제거 ===== */}
       {isAgent ? (

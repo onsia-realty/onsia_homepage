@@ -56,7 +56,7 @@ export default function YamokLiveRequests({ pageId }: Props) {
     const seedRandom = () => {
       const out: Row[] = []
       let t = now
-      for (let i = 0; i < 5; i++) {
+      for (let i = 0; i < 7; i++) {
         t -= (2 + Math.floor(Math.random() * 6)) * 60_000 // 2~7분 간격
         out.push(randRow(t))
       }
@@ -65,7 +65,7 @@ export default function YamokLiveRequests({ pageId }: Props) {
     setRows(seedRandom())
     setUpdated(fmtNow())
 
-    fetch(`/api/landing-inquiry/recent?page_id=${encodeURIComponent(pageId)}&limit=5`)
+    fetch(`/api/landing-inquiry/recent?page_id=${encodeURIComponent(pageId)}&limit=7`)
       .then((r) => (r.ok ? r.json() : { items: [] }))
       .then((d) => {
         const items: { name?: string; phone?: string; at?: string }[] = Array.isArray(d?.items) ? d.items : []
@@ -73,8 +73,8 @@ export default function YamokLiveRequests({ pageId }: Props) {
         const real: Row[] = items
           .filter((x) => x?.name && x?.at)
           .map((x) => ({ id: SEQ++, name: x.name as string, phone: x.phone || '010-****-****', at: new Date(x.at as string).getTime() }))
-        // 실제 + 랜덤 병합 후 최신순 5건
-        setRows((prev) => [...real, ...prev].sort((a, b) => b.at - a.at).slice(0, 5))
+        // 실제 + 랜덤 병합 후 최신순 7건
+        setRows((prev) => [...real, ...prev].sort((a, b) => b.at - a.at).slice(0, 7))
       })
       .catch(() => {})
   }, [pageId])
@@ -87,7 +87,7 @@ export default function YamokLiveRequests({ pageId }: Props) {
       const delay = 7000 + Math.floor(Math.random() * 5000)
       timer = setTimeout(() => {
         if (!alive) return
-        setRows((prev) => [randRow(Date.now()), ...prev].slice(0, 5))
+        setRows((prev) => [randRow(Date.now()), ...prev].slice(0, 7))
         setUpdated(fmtNow())
         tick()
       }, delay)
@@ -100,7 +100,7 @@ export default function YamokLiveRequests({ pageId }: Props) {
   }, [])
 
   return (
-    <div className="max-w-[560px] mx-auto rounded-2xl overflow-hidden shadow-lg border border-gray-200 bg-white">
+    <div className="w-full h-full flex flex-col rounded-2xl overflow-hidden shadow-lg border border-gray-200 bg-white">
       {/* 헤더 */}
       <div className="px-5 py-4 text-white" style={{ background: 'linear-gradient(135deg, #0F172A 0%, #1E1B4B 60%, #4338CA 100%)' }}>
         <div className="flex items-center justify-center gap-2">
@@ -121,7 +121,7 @@ export default function YamokLiveRequests({ pageId }: Props) {
       </div>
 
       {/* 리스트 */}
-      <div>
+      <div className="flex-1">
         {rows.map((r, i) => (
           <div
             key={r.id}

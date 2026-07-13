@@ -365,6 +365,25 @@ export default async function LandingPage({ params, searchParams }: Props) {
           </Reveal>
         )}
 
+        {/* 직원 영상 (yamok-grandhill 메인 한정 — VR CTA 위) */}
+        {slug === 'yamok-grandhill' && !agent && (
+          <Reveal enabled>
+          <section className="bg-black">
+            <video
+              src="https://uwddeseqwdsryvuoulsm.supabase.co/storage/v1/object/public/landing/videos/yamok-grandhill-staff.mp4#t=1"
+              poster="https://uwddeseqwdsryvuoulsm.supabase.co/storage/v1/object/public/landing/videos/yamok-grandhill-staff-poster.jpg"
+              controls
+              autoPlay
+              muted
+              loop
+              playsInline
+              preload="auto"
+              className="w-full block min-h-[30vh] object-contain"
+            />
+          </section>
+          </Reveal>
+        )}
+
         {/* E-모델하우스 VR CTA (yamok-grandhill 한정 — 최상단 노출, 풀 폭 다크 그라디언트) — agent 페이지에서는 YamokAgentVrCta가 따로 노출되므로 메인 한정 */}
         {slug === 'yamok-grandhill' && !agent && (
           <Reveal enabled>
@@ -425,25 +444,6 @@ export default async function LandingPage({ params, searchParams }: Props) {
               </div>
             </div>
           </section>
-        )}
-
-        {/* 직원 영상 (yamok-grandhill 메인 한정 — VR CTA 밑) */}
-        {slug === 'yamok-grandhill' && !agent && (
-          <Reveal enabled>
-          <section className="bg-black">
-            <video
-              src="https://uwddeseqwdsryvuoulsm.supabase.co/storage/v1/object/public/landing/videos/yamok-grandhill-staff.mp4#t=1"
-              poster="https://uwddeseqwdsryvuoulsm.supabase.co/storage/v1/object/public/landing/videos/yamok-grandhill-staff-poster.jpg"
-              controls
-              autoPlay
-              muted
-              loop
-              playsInline
-              preload="auto"
-              className="w-full block min-h-[30vh] object-contain"
-            />
-          </section>
-          </Reveal>
         )}
 
         {/* Top: Inquiry Form (main) or Video 1 (agent) — yamok agent는 VR CTA + 영상, 그 외는 영상만 (SHOW_AGENT_VIDEOS 토글) */}
@@ -609,8 +609,8 @@ export default async function LandingPage({ params, searchParams }: Props) {
           </section>
         )}
 
-        {/* 오시는길 (business_info에 location 데이터 있을 때만 표시) */}
-        <Reveal enabled={slug === 'yamok-grandhill'}>
+        {/* 오시는길 — 야목 메인은 숨김(요청). 타 슬러그만 표시 */}
+        {slug !== 'yamok-grandhill' && (
           <LocationSection
             businessInfo={page.business_info}
             primaryColor={primaryColor}
@@ -618,7 +618,7 @@ export default async function LandingPage({ params, searchParams }: Props) {
             id="section-location"
             compact
           />
-        </Reveal>
+        )}
 
         {/* Bottom: Inquiry Form (main) or Video 2 (agent) — yamok agent는 상단 hero CTA만 남기고 하단 카드는 중복이라 제거 */}
         {agent ? (

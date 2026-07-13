@@ -10,7 +10,7 @@ interface Props {
 
 export default function YamokConsultSection({ pageId, slug }: Props) {
   return (
-    <div className="max-w-[1040px] mx-auto grid lg:grid-cols-2 gap-5 lg:gap-6 items-start">
+    <div className="max-w-[1200px] mx-auto grid lg:grid-cols-2 gap-5 lg:gap-6 items-stretch">
       {/* 왼쪽: 접수(상담 신청) 폼 */}
       <YamokConsultForm pageId={pageId} slug={slug} />
       {/* 오른쪽: 실시간 접수 현황 */}

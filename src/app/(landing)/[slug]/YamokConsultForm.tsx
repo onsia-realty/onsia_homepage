@@ -8,16 +8,6 @@ import { useFraudGate } from './FraudGateContext'
 
 const GOLD = '#C9A96E'
 
-// 09:00 ~ 20:00 (30분 간격)
-const TIMES: string[] = (() => {
-  const out: string[] = []
-  for (let h = 9; h <= 20; h++) {
-    out.push(`${String(h).padStart(2, '0')}:00`)
-    if (h < 20) out.push(`${String(h).padStart(2, '0')}:30`)
-  }
-  return out
-})()
-
 interface Props {
   pageId: string
   slug: string
@@ -26,8 +16,6 @@ interface Props {
 export default function YamokConsultForm({ pageId, slug }: Props) {
   const [name, setName] = useState('')
   const [phone, setPhone] = useState('')
-  const [visitDate, setVisitDate] = useState('')
-  const [visitTime, setVisitTime] = useState('')
   const [memo, setMemo] = useState('')
   const [agreed, setAgreed] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -68,11 +56,8 @@ export default function YamokConsultForm({ pageId, slug }: Props) {
         return
       }
     }
-    // 방문예약·비고를 message에 합쳐 저장
-    const parts: string[] = []
-    if (visitDate) parts.push(`방문예약: ${visitDate}${visitTime ? ` ${visitTime}` : ''}`)
-    if (memo.trim()) parts.push(memo.trim())
-    const message = parts.join(' / ') || '[상담 신청]'
+    // 비고를 message에 저장 (방문예약 필드 제거 — DB 미수집 항목)
+    const message = memo.trim() || '[상담 신청]'
 
     const urlParams = new URLSearchParams(window.location.search)
     try {
@@ -138,33 +123,12 @@ export default function YamokConsultForm({ pageId, slug }: Props) {
             />
           </div>
           <div>
-            <label className="block text-[13px] font-bold text-gray-700 mb-1">방문 예약 <span className="text-gray-400 font-normal">(선택)</span></label>
-            <div className="flex gap-2">
-              <input
-                type="date"
-                value={visitDate}
-                onChange={(e) => setVisitDate(e.target.value)}
-                className="flex-1 min-w-0 px-3 py-2.5 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-amber-400 text-gray-900 text-[15px]"
-              />
-              <select
-                value={visitTime}
-                onChange={(e) => setVisitTime(e.target.value)}
-                className="flex-1 min-w-0 px-3 py-2.5 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-amber-400 text-gray-700 text-[15px] bg-white"
-              >
-                <option value="">방문시간</option>
-                {TIMES.map((t) => (
-                  <option key={t} value={t}>{t}</option>
-                ))}
-              </select>
-            </div>
-          </div>
-          <div>
-            <label className="block text-[13px] font-bold text-gray-700 mb-1">비고 <span className="text-gray-400 font-normal">(선택)</span></label>
+            <label className="block text-[13px] font-bold text-gray-700 mb-1">문의 내용 <span className="text-gray-400 font-normal">(선택)</span></label>
             <textarea
               value={memo}
               onChange={(e) => setMemo(e.target.value)}
-              rows={2}
-              placeholder="추가 문의사항이 있으시면 입력해주세요"
+              rows={4}
+              placeholder="문의하실 내용을 입력해주세요"
               className="w-full px-3.5 py-2.5 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-amber-400 text-gray-900 placeholder-gray-400 text-[15px] resize-none"
             />
           </div>
