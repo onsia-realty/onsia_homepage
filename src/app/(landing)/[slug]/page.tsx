@@ -691,11 +691,11 @@ export default async function LandingPage({ params, searchParams }: Props) {
         {slug === 'yamok-grandhill' && (
           <YamokPopupCarousel storageKey="yamok-popup-carousel-m" />
         )}
-        {/* 야목 진입 이벤트 팝업 (모바일 메인 한정) */}
-        {slug === 'yamok-grandhill' && !agent && (
-          <YamokEventPopup pageId={page.id} slug={slug} storageKey="yamok-event-popup-m" />
-        )}
       </div>
+      {/* 야목 진입 이벤트 팝업 (뷰포트 무관 1회 렌더 — body 스크롤 잠금 중복 방지) */}
+      {slug === 'yamok-grandhill' && !agent && (
+        <YamokEventPopup pageId={page.id} slug={slug} storageKey="yamok-event-popup" />
+      )}
     </>
   )
 
