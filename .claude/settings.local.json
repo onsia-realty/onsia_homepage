@@ -30,7 +30,20 @@
       "mcp__playwright__browser_wait_for",
       "mcp__playwright__browser_click",
       "mcp__playwright__browser_close",
-      "mcp__playwright__browser_resize"
+      "mcp__playwright__browser_resize",
+      "Bash(npx tsc *)",
+      "mcp__playwright__browser_run_code_unsafe",
+      "Bash(npx eslint *)",
+      "Bash(taskkill //F //IM node.exe)",
+      "Bash(timeout 300 npx next build --turbopack)",
+      "Bash(git checkout *)",
+      "Bash(git merge *)",
+      "Bash(echo \"=== tsc exit: $? ===\")",
+      "PowerShell(Add-Type -AssemblyName System.Drawing; $src = [System.Drawing.Image]::FromFile\\('D:\\\\claude\\\\홈페이지\\\\onsia_homepage_new\\\\yamok-new-mobile.jpeg'\\); foreach \\($r in @\\(@\\(100,480\\),@\\(430,700\\)\\)\\) { $y=$r[0]; $h=$r[1]-$r[0]; $rect = New-Object System.Drawing.Rectangle\\(0, $y, 375, $h\\); $bmp = New-Object System.Drawing.Bitmap\\(375, $h\\); $g = [System.Drawing.Graphics]::FromImage\\($bmp\\); $g.DrawImage\\($src, \\(New-Object System.Drawing.Rectangle\\(0,0,375,$h\\)\\), $rect, [System.Drawing.GraphicsUnit]::Pixel\\); $bmp.Save\\(\"D:\\\\claude\\\\홈페이지\\\\onsia_homepage_new\\\\_tmp_crop_$y.png\"\\); $g.Dispose\\(\\); $bmp.Dispose\\(\\) }; $src.Dispose\\(\\))",
+      "PowerShell(New-Item *)",
+      "PowerShell(Add-Type -AssemblyName System.Drawing; $src = [System.Drawing.Image]::FromFile\\('D:\\\\claude\\\\홈페이지\\\\onsia_homepage_new\\\\yamok-new-mobile.jpeg'\\); $y=233; $h=337; $rect = New-Object System.Drawing.Rectangle\\(0, $y, 375, $h\\); $bmp = New-Object System.Drawing.Bitmap\\(375, $h\\); $g = [System.Drawing.Graphics]::FromImage\\($bmp\\); $g.DrawImage\\($src, \\(New-Object System.Drawing.Rectangle\\(0,0,375,$h\\)\\), $rect, [System.Drawing.GraphicsUnit]::Pixel\\); $bmp.Save\\('D:\\\\claude\\\\홈페이지\\\\onsia_homepage_new\\\\public\\\\uploads\\\\landing\\\\yamok\\\\coffee-gift.png'\\); $g.Dispose\\(\\); $bmp.Dispose\\(\\); $src.Dispose\\(\\))",
+      "PowerShell(npm run *)",
+      "PowerShell(Get-ChildItem *)"
     ],
     "deny": [],
     "ask": []

@@ -5,15 +5,12 @@ import { EN_TO_KO_SLUG, KO_TO_EN_SLUG, LANDING_DOMAINS, SLUG_TO_DOMAIN } from '@
 
 // 로그인 필요한 상세 페이지 경로 패턴
 const protectedPaths = [
-  '/subscription/[^/]+$',  // /subscription/123 (상세) - /subscription, /subscription/map 제외
   '/properties/[^/]+$',    // /properties/123 (상세)
   '/auctions/[^/]+$',      // /auctions/123 (상세)
 ];
 
 // 예외 경로 (상세가 아닌 페이지)
 const excludedPaths = [
-  '/subscription/map',
-  '/subscription$',
   '/properties$',
   '/auctions$',
 ];

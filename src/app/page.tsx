@@ -1,7 +1,6 @@
 import { LuxeHeroSection } from '@/components/LuxeHeroSection';
 import { FeaturedPropertiesSection } from '@/components/FeaturedPropertiesSection';
 import { FeaturedSubscriptionsSection } from '@/components/FeaturedSubscriptionsSection';
-import { VideoGallerySection } from '@/components/VideoGallerySection';
 import { ParticlesBackground } from '@/components/ParticlesBackground';
 import { Navigation } from '@/components/Navigation';
 
@@ -13,7 +12,7 @@ const homeBreadcrumbJsonLd = {
   '@id': 'https://www.onsia.city/#breadcrumb',
   itemListElement: [
     { '@type': 'ListItem', position: 1, name: '홈', item: 'https://www.onsia.city' },
-    { '@type': 'ListItem', position: 2, name: '분양정보', item: 'https://www.onsia.city/subscription' },
+    { '@type': 'ListItem', position: 2, name: '분양정보', item: 'https://www.onsia.city/subscriptions' },
     { '@type': 'ListItem', position: 3, name: '분양권', item: 'https://www.onsia.city/properties' },
     { '@type': 'ListItem', position: 4, name: '경매정보', item: 'https://www.onsia.city/auctions' },
     { '@type': 'ListItem', position: 5, name: 'AI 부동산시세', item: 'https://www.onsia.city/market' },
@@ -33,7 +32,6 @@ export default function Home() {
         <LuxeHeroSection />
         <FeaturedPropertiesSection />
         <FeaturedSubscriptionsSection />
-        <VideoGallerySection />
       </main>
     </>
   );

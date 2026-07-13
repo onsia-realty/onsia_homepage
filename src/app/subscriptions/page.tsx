@@ -282,6 +282,21 @@ export default function SubscriptionsPage() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8 }}
             >
+              {/* 분양정보 세그먼트 탭 (청약 / 분양권 매물) */}
+              <div className="flex justify-center mb-8">
+                <div className="inline-flex items-center p-1 rounded-full bg-white/5 border border-white/10 backdrop-blur-sm">
+                  <span className="px-6 py-2.5 rounded-full text-sm font-semibold bg-gradient-to-r from-cyan-500 to-blue-500 text-white shadow-lg shadow-cyan-500/30">
+                    청약
+                  </span>
+                  <Link
+                    href="/properties"
+                    className="px-6 py-2.5 rounded-full text-sm font-semibold text-gray-300 hover:text-white hover:bg-white/10 transition-all duration-200"
+                  >
+                    분양권 매물
+                  </Link>
+                </div>
+              </div>
+
               <div className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-cyan-500/20 border border-cyan-400/30 mb-6 backdrop-blur-sm">
                 <Calendar className="w-5 h-5 text-cyan-300" />
                 <span className="text-cyan-200 font-semibold text-sm">청약홈 연동</span>

@@ -109,7 +109,7 @@ export const LuxeHeroSection = () => {
                   </Link>
 
                   <Link
-                    href="/subscription"
+                    href="/subscriptions"
                     className="px-8 py-3 backdrop-blur-xl bg-white/10 border-2 border-white/30 text-white rounded-full font-semibold text-base hover:bg-white/20 hover:border-white/50 transition-all duration-300 text-center"
                   >
                     청약홈 매물 보기

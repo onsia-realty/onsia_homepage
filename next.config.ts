@@ -75,7 +75,23 @@ const nextConfig: NextConfig = {
         hostname: '*.lottecastle.co.kr',
       },
     ]
-  }
+  },
+  async redirects() {
+    return [
+      // 단수 /subscription* → 복수 /subscriptions* 영구 리다이렉트
+      // (색인된 단수 URL + 외부 링크 보존, 미들웨어보다 먼저 실행됨)
+      {
+        source: '/subscription/:path*',
+        destination: '/subscriptions/:path*',
+        permanent: true,
+      },
+      {
+        source: '/subscription',
+        destination: '/subscriptions',
+        permanent: true,
+      },
+    ];
+  },
 };
 
 export default nextConfig;

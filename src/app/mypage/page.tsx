@@ -123,7 +123,7 @@ export default function MyPage() {
 
   const getItemLink = (item: FavoriteItem | ViewHistoryItem) => {
     if (item.property) return `/properties/${item.property.slug}`;
-    if (item.subscription) return `/subscription/${item.subscription.houseManageNo}`;
+    if (item.subscription) return `/subscriptions/${item.subscription.houseManageNo}`;
     if (item.auction) return `/auctions/${item.auction.id}`;
     return "#";
   };

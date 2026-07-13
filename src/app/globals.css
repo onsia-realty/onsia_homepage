@@ -29,7 +29,26 @@
   --color-neon-glow: var(--neon-glow);
   --color-dark-bg: var(--dark-bg);
   --color-dark-secondary: var(--dark-secondary);
-  
+
+  /* ===== 청약 상태 토큰 (의미색) — 온시아잡 @theme 패턴 이식 ===== */
+  --color-sub-open: #10b981;      /* 접수중  Emerald-500 */
+  --color-sub-open-soft: rgba(16, 185, 129, 0.18);
+  --color-sub-upcoming: #f59e0b;  /* 접수예정 Amber-500  */
+  --color-sub-upcoming-soft: rgba(245, 158, 11, 0.18);
+  --color-sub-closed: #94a3b8;    /* 마감    Slate-400  */
+  --color-sub-closed-soft: rgba(148, 163, 184, 0.18);
+
+  /* ===== 청약 일정 이벤트 타입 토큰 ===== */
+  --color-evt-announcement: #60a5fa; /* 공고   Blue-400   */
+  --color-evt-special: #c084fc;      /* 특별공급 Purple-400 */
+  --color-evt-rank1: #4ade80;        /* 1순위  Green-400  */
+  --color-evt-rank2: #22d3ee;        /* 2순위  Cyan-400   */
+  --color-evt-result: #fb923c;       /* 당첨발표 Orange-400 */
+
+  /* ===== 브랜드 액센트 (청약 = 오렌지/앰버 계열) ===== */
+  --color-brand-accent: #fb923c;     /* Orange-400 */
+  --color-brand-accent-strong: #f97316; /* Orange-500 */
+
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
