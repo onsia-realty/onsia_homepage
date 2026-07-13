@@ -17,6 +17,7 @@ import YamokFactStrip from './YamokFactStrip'
 import YamokMobileGallery from './YamokMobileGallery'
 import YamokPopupCarousel from './YamokPopupCarousel'
 import YamokReserveCounter from './YamokReserveCounter'
+import YamokInquiryGift from './YamokInquiryGift'
 import Reveal from './Reveal'
 import { YAMOK_FAQ } from './yamok-faq'
 import BreadcrumbStructuredData from './BreadcrumbStructuredData'
@@ -470,6 +471,7 @@ export default async function LandingPage({ params, searchParams }: Props) {
           <Reveal enabled={slug === 'yamok-grandhill'}>
           <section id="inquiry-top" className="py-8 sm:py-10 px-4" style={{ backgroundColor: primaryColor }}>
             <div className="max-w-lg mx-auto">
+              {slug === 'yamok-grandhill' && <YamokInquiryGift />}
               <h2 className="text-xl sm:text-2xl font-bold text-center text-white mb-4 sm:mb-6">관심고객 등록</h2>
               {slug === 'yamok-grandhill' && (
                 <p className="text-center text-[13px] text-white/85 mb-4 -mt-1">
@@ -625,6 +627,7 @@ export default async function LandingPage({ params, searchParams }: Props) {
           <Reveal enabled={slug === 'yamok-grandhill'}>
           <section id="inquiry-bottom" className="py-8 sm:py-10 px-4" style={{ backgroundColor: primaryColor }}>
             <div className="max-w-lg mx-auto">
+              {slug === 'yamok-grandhill' && <YamokInquiryGift />}
               <h2 className="text-xl sm:text-2xl font-bold text-center text-white mb-4 sm:mb-6">관심고객 등록</h2>
               <InquiryForm pageId={page.id} slug={slug} accentColor={accentColor} agentCode={agentCodeStr} agentName={agent?.name} />
             </div>

@@ -44,16 +44,21 @@ export default function YamokReserveCounter({
 
   return (
     <span className={className}>
-      현재까지 총{' '}
-      <CountUp
-        key={total}
-        end={total}
-        startFrom={baseline}
-        // glow=반짝이는 골드 그라디언트 숫자(call-banner-number), 그 외=단색
-        className={isGlow ? 'call-banner-number font-black text-[17px] align-middle' : 'font-extrabold'}
-        style={isGlow ? undefined : { color: numColor }}
-      />
-      명 <span aria-hidden>✨</span> 예약신청 완료
+      {/* CJK는 글자 사이 어디서나 줄바꿈됨 → 어절 단위 nowrap으로 "예약 신청 완료" 깨짐 방지 */}
+      <span className="whitespace-nowrap">
+        현재까지 총{' '}
+        <CountUp
+          key={total}
+          end={total}
+          startFrom={baseline}
+          // glow=반짝이는 골드 그라디언트 숫자(call-banner-number), 그 외=단색
+          className={isGlow ? 'call-banner-number font-black text-[17px] align-middle' : 'font-extrabold'}
+          style={isGlow ? undefined : { color: numColor }}
+        />
+        명
+      </span>{' '}
+      <span aria-hidden>✨</span>{' '}
+      <span className="whitespace-nowrap">예약 신청 완료</span>
     </span>
   )
 }

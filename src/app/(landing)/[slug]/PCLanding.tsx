@@ -8,6 +8,7 @@ import YamokAgentVrCta from './YamokAgentVrCta'
 import UrbanhomesKeyVisual from './UrbanhomesKeyVisual'
 import YamokReserveCounter from './YamokReserveCounter'
 import YamokStatsBand from './YamokStatsBand'
+import YamokInquiryGift from './YamokInquiryGift'
 import Reveal from './Reveal'
 import type { BusinessInfo as FullBusinessInfo } from '@/lib/supabase-landing'
 
@@ -411,6 +412,7 @@ export default function PCLanding({
       ) : (
         <section id="pc-inquiry" className="py-16 px-8" style={{ backgroundColor: primaryColor }}>
           <div className="max-w-[700px] mx-auto">
+            {isYamok && <YamokInquiryGift />}
             <h2 className="text-3xl font-bold text-center text-white mb-8">관심고객 등록</h2>
             <InquiryForm pageId={page.id} slug={slug} accentColor={accentColor} agentCode={agentCode} agentName={agent?.name} />
           </div>
@@ -554,6 +556,7 @@ export default function PCLanding({
       ) : (
         <section className="py-16 px-8" style={{ backgroundColor: primaryColor }}>
           <div className="max-w-[700px] mx-auto">
+            {isYamok && <YamokInquiryGift />}
             <h2 className="text-3xl font-bold text-center text-white mb-8">관심고객 등록</h2>
             <InquiryForm pageId={page.id} slug={slug} accentColor={accentColor} agentCode={agentCode} agentName={agent?.name} />
           </div>
