@@ -608,25 +608,59 @@ export default function PCLanding({
       {/* ===== FLOATING SIDEBAR (urbanhomes style - always visible) ===== */}
       <div className="fixed right-5 top-1/2 -translate-y-1/2 z-40 flex flex-col items-center gap-4">
         {/* 관심고객 등록 - 메인만 */}
-        {!isAgent && (
+        {!isAgent && (isYamok ? (
+          /* 야목: 네이비+골드 프리미엄 CTA (반짝이 입자 + 골드 글로우 + 반짝이는 카운터) */
           <button
             onClick={() => scrollTo('pc-inquiry')}
-            className={`flex flex-col items-center justify-center ${isYamok ? 'w-[168px] py-5' : 'w-[130px] py-6'} bg-white/90 backdrop-blur-sm text-gray-800 rounded-xl shadow-lg border border-gray-200 transition-all hover:bg-white hover:shadow-xl cursor-pointer`}
+            aria-label="관심고객 등록하기"
+            className="fab-glow relative w-[176px] py-5 px-3 rounded-2xl shadow-xl overflow-hidden cursor-pointer active:scale-[0.98] transition-transform"
+            style={{ background: 'linear-gradient(135deg, #0F172A 0%, #1E1B4B 55%, #4338CA 100%)', border: '1.5px solid #C9A96E' }}
           >
-            <svg xmlns="http://www.w3.org/2000/svg" className={`${isYamok ? 'w-9 h-9 mb-1.5' : 'w-10 h-10 mb-2'} text-gray-700`} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+            {/* 반짝이 입자 */}
+            <span aria-hidden className="call-sparkles">
+              <span className="sparkle sparkle-1" />
+              <span className="sparkle sparkle-2" />
+              <span className="sparkle sparkle-3" />
+              <span className="sparkle sparkle-4" />
+              <span className="sparkle sparkle-5" />
+            </span>
+            {/* 우상단 골드 발광 */}
+            <span
+              aria-hidden
+              className="absolute -top-8 -right-8 w-28 h-28 rounded-full blur-2xl opacity-40 pointer-events-none"
+              style={{ background: 'radial-gradient(circle, #C9A96E 0%, transparent 70%)' }}
+            />
+            <span className="relative flex flex-col items-center">
+              <span className="w-12 h-12 rounded-full bg-white/10 ring-1 ring-white/25 flex items-center justify-center mb-2">
+                <svg xmlns="http://www.w3.org/2000/svg" className="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="#F5D78E" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
+                  <circle cx="9" cy="7" r="4" />
+                  <line x1="19" y1="8" x2="19" y2="14" />
+                  <line x1="22" y1="11" x2="16" y2="11" />
+                </svg>
+              </span>
+              <span className="text-white font-extrabold text-[17px] leading-tight text-center tracking-tight">
+                관심고객<br />등록하기
+              </span>
+              <span className="mt-2.5 pt-2.5 border-t border-white/20 w-full text-center text-[11.5px] leading-snug text-white/85">
+                <YamokReserveCounter pageId={page.id} variant="glow" />
+              </span>
+            </span>
+          </button>
+        ) : (
+          <button
+            onClick={() => scrollTo('pc-inquiry')}
+            className="flex flex-col items-center justify-center w-[130px] py-6 bg-white/90 backdrop-blur-sm text-gray-800 rounded-xl shadow-lg border border-gray-200 transition-all hover:bg-white hover:shadow-xl cursor-pointer"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" className="w-10 h-10 mb-2 text-gray-700" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
               <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
               <circle cx="9" cy="7" r="4" />
               <line x1="19" y1="8" x2="19" y2="14" />
               <line x1="22" y1="11" x2="16" y2="11" />
             </svg>
             <span className="text-[15px] font-bold leading-tight text-center">관심고객<br />등록하기</span>
-            {isYamok && (
-              <span className="mt-2 pt-2 border-t border-gray-200 w-full text-center text-[10.5px] leading-snug text-gray-600">
-                <YamokReserveCounter pageId={page.id} variant="light" />
-              </span>
-            )}
           </button>
-        )}
+        ))}
 
         {/* VR Links - 메인 + agent 모두 */}
         {vrLinks && vrLinks.map((vr, idx) => (

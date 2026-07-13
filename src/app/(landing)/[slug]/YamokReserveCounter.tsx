@@ -12,8 +12,8 @@ export const YAMOK_RESERVE_BASELINE = 387
 interface Props {
   pageId: string
   baseline?: number
-  /** 밝은 배경(흰 버튼)=light / 어두운 배경(네이비 폼)=dark */
-  variant?: 'light' | 'dark'
+  /** 밝은 배경(흰 버튼)=light / 어두운 배경(네이비 폼)=dark / 반짝이는 골드 숫자=glow */
+  variant?: 'light' | 'dark' | 'glow'
   className?: string
 }
 
@@ -39,12 +39,20 @@ export default function YamokReserveCounter({
   }, [pageId])
 
   const total = baseline + count
+  const isGlow = variant === 'glow'
   const numColor = variant === 'light' ? '#B45309' : '#F5D78E' // 흰 배경=앰버 / 어두운 배경=골드
 
   return (
     <span className={className}>
       현재까지 총{' '}
-      <CountUp key={total} end={total} startFrom={baseline} className="font-extrabold" style={{ color: numColor }} />
+      <CountUp
+        key={total}
+        end={total}
+        startFrom={baseline}
+        // glow=반짝이는 골드 그라디언트 숫자(call-banner-number), 그 외=단색
+        className={isGlow ? 'call-banner-number font-black text-[17px] align-middle' : 'font-extrabold'}
+        style={isGlow ? undefined : { color: numColor }}
+      />
       명 <span aria-hidden>✨</span> 예약신청 완료
     </span>
   )
