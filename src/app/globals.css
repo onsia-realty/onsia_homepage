@@ -145,6 +145,55 @@
 .sparkle-4 { top: 30%; left: 70%; animation: sparkle-pop 2s 1.2s infinite; }
 .sparkle-5 { top: 55%; left: 30%; animation: sparkle-pop 2s 1.6s infinite; }
 
+/* ===== 야목 랜딩 비주얼 연출 (yamok-grandhill 전용, 타 슬러그 미사용) ===== */
+/* 스크롤 리빌: SSR/no-JS는 항상 visible, 클라 마운트 후 뷰포트 아래 요소에만 hidden 부여 */
+@keyframes reveal-up {
+  from { opacity: 0; transform: translateY(28px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.reveal-hidden { opacity: 0; }
+.reveal-in { animation: reveal-up 0.7s cubic-bezier(0.22, 1, 0.36, 1) both; }
+
+/* Hero 켄번즈 (transform-only → LCP 무영향). 부모 section에 overflow-hidden 필요 */
+@keyframes yamok-kenburns {
+  from { transform: scale(1); }
+  to   { transform: scale(1.08); }
+}
+.yamok-kenburns { animation: yamok-kenburns 14s ease-out both; transform-origin: 50% 45%; }
+
+/* Hero 오버레이 텍스트 순차 등장 */
+@keyframes yamok-hero-rise {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.yamok-hero-seq > * { animation: yamok-hero-rise 0.8s ease-out both; }
+.yamok-hero-seq > *:nth-child(1) { animation-delay: 0.15s; }
+.yamok-hero-seq > *:nth-child(2) { animation-delay: 0.40s; }
+
+/* 플로팅 예약 버튼 골드 펄스 */
+@keyframes fab-glow {
+  0%, 100% { box-shadow: 0 8px 24px rgba(15, 23, 42, 0.35), 0 0 0 0 rgba(201, 169, 110, 0.45); }
+  50%      { box-shadow: 0 10px 28px rgba(15, 23, 42, 0.45), 0 0 18px 4px rgba(201, 169, 110, 0.55); }
+}
+.fab-glow { animation: fab-glow 2.4s ease-in-out infinite; }
+
+/* 가로 스크롤 스크롤바 숨김 (팝업 캐러셀 · 라이트박스) */
+.scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+.scrollbar-hide::-webkit-scrollbar { display: none; }
+
+/* 접근성: 모션 최소화 사용자에겐 전 연출 일괄 무효화 */
+@media (prefers-reduced-motion: reduce) {
+  .reveal-hidden,
+  .reveal-in,
+  .yamok-kenburns,
+  .yamok-hero-seq > *,
+  .fab-glow {
+    animation: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+  }
+}
+
 /* 파티클 효과를 위한 스타일 */
 .particles-bg {
   position: fixed;

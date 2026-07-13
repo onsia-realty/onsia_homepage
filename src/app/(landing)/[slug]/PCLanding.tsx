@@ -1,11 +1,16 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import dynamic from 'next/dynamic'
 import InquiryForm from './InquiryForm'
 import LocationSection from './LocationSection'
 import YamokAgentVrCta from './YamokAgentVrCta'
 import UrbanhomesKeyVisual from './UrbanhomesKeyVisual'
+import Reveal from './Reveal'
 import type { BusinessInfo as FullBusinessInfo } from '@/lib/supabase-landing'
+
+// 라이트박스는 첫 탭 전까지 번들 미로드 (yamok-grandhill 전용)
+const ImageLightbox = dynamic(() => import('./ImageLightbox'), { ssr: false })
 
 // 야목역 갤러리 alt 키워드 매핑 (네이버 이미지 검색용)
 function getGalleryAlt(slug: string, projectName: string, imgUrl: string, idx: number): string {
@@ -129,6 +134,8 @@ export default function PCLanding({
 
   const isAgent = !!agent
   const navItems = navLinks && navLinks.length > 0 ? navLinks : DEFAULT_NAV_ITEMS
+  const isYamok = slug === 'yamok-grandhill'
+  const [lightboxIdx, setLightboxIdx] = useState<number | null>(null)
 
   return (
     <div className="min-h-screen bg-white">
@@ -219,7 +226,7 @@ export default function PCLanding({
           <img
             src={page.hero_image}
             alt={page.project_name}
-            className="absolute inset-0 w-full h-full object-cover"
+            className={`absolute inset-0 w-full h-full object-cover ${isYamok ? 'yamok-kenburns' : ''}`}
           />
         ) : (
           <div className="absolute inset-0" style={{ background: `linear-gradient(135deg, ${primaryColor}, ${primaryColor}dd)` }} />
@@ -263,6 +270,7 @@ export default function PCLanding({
 
       {/* ===== E-모델하우스 VR CTA (yamok-grandhill 한정 — PC 본문 노출) — agent에서는 YamokAgentVrCta가 따로 노출되므로 메인 한정 ===== */}
       {slug === 'yamok-grandhill' && !isAgent && (
+        <Reveal enabled>
         <section className="py-10 px-8 bg-white">
           <div className="max-w-[1100px] mx-auto">
             <a
@@ -316,6 +324,7 @@ export default function PCLanding({
             </a>
           </div>
         </section>
+        </Reveal>
       )}
 
       {/* ===== YOUTUBE ===== */}
@@ -401,8 +410,8 @@ export default function PCLanding({
 
       {/* ===== CUSTOM SECTIONS ===== */}
       {page.sections && page.sections.length > 0 && page.sections.map((section, i) => (
+        <Reveal enabled={isYamok} key={section.id || i}>
         <section
-          key={section.id || i}
           id={i === 0 ? 'pc-section-info' : i === 1 ? 'pc-section-premium' : undefined}
           className={`py-20 px-8 ${i % 2 === 0 ? 'bg-white' : 'bg-gray-50'}`}
         >
@@ -434,6 +443,7 @@ export default function PCLanding({
             )}
           </div>
         </section>
+        </Reveal>
       ))}
 
       {/* ===== GALLERY ===== */}
@@ -469,8 +479,9 @@ export default function PCLanding({
                         key={idx}
                         src={src}
                         alt={getGalleryAlt(slug, page.project_name, src, idx)}
-                        className="w-full block rounded-lg shadow-sm"
+                        className={`w-full block rounded-lg shadow-sm ${isYamok ? 'cursor-zoom-in' : ''}`}
                         loading="lazy"
+                        onClick={isYamok ? () => setLightboxIdx(idx) : undefined}
                       />
                     ))}
                   </div>
@@ -481,8 +492,9 @@ export default function PCLanding({
                       key={idx}
                       src={src}
                       alt={`${page.project_name} ${idx + 1}`}
-                      className="w-full block rounded-lg shadow-sm"
+                      className={`w-full block rounded-lg shadow-sm ${isYamok ? 'cursor-zoom-in' : ''}`}
                       loading="lazy"
+                      onClick={isYamok ? () => setLightboxIdx(idx) : undefined}
                     />
                   ))
                 )
@@ -492,13 +504,25 @@ export default function PCLanding({
         )
       })()}
 
+      {/* ===== 갤러리 라이트박스 (yamok-grandhill 전용) ===== */}
+      {isYamok && lightboxIdx !== null && page.gallery && (
+        <ImageLightbox
+          images={page.gallery}
+          startIndex={lightboxIdx}
+          alt={(img, i) => getGalleryAlt(slug, page.project_name, img, i)}
+          onClose={() => setLightboxIdx(null)}
+        />
+      )}
+
       {/* ===== LOCATION (오시는길 - business_info에 location 데이터 있을 때) ===== */}
-      <LocationSection
-        businessInfo={page.business_info as FullBusinessInfo | null}
-        primaryColor={primaryColor}
-        accentColor={accentColor}
-        id="pc-location"
-      />
+      <Reveal enabled={isYamok}>
+        <LocationSection
+          businessInfo={page.business_info as FullBusinessInfo | null}
+          primaryColor={primaryColor}
+          accentColor={accentColor}
+          id="pc-location"
+        />
+      </Reveal>
 
       {/* ===== BOTTOM: Inquiry Form (main) or Video 2 (agent) — yamok agent는 상단 hero CTA만, 하단 중복 제거 ===== */}
       {isAgent ? (

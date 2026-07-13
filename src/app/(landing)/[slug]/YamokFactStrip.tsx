@@ -1,8 +1,16 @@
 // 야목역 서희스타힐스 그랜드힐 — 모바일 팩트 스트립
 // CallBanner 바로 아래, 핵심 팩트 4종을 한 줄에 노출 (네이비+골드, 기존 디자인 언어 일치)
 // 메인/직원 페이지 공통. 과장 카피 없이 사실만 (네이버 광고 disclaimer 규정 준수)
+import Reveal from './Reveal'
+import CountUp from './CountUp'
 
-const FACTS = [
+const FACTS: {
+  icon: React.ReactNode
+  n: string
+  l: string
+  countTo?: number
+  suffix?: string
+}[] = [
   {
     icon: (
       // 지하철
@@ -35,6 +43,8 @@ const FACTS = [
     ),
     n: '998세대',
     l: '비봉지구 대단지',
+    countTo: 998,
+    suffix: '세대',
   },
   {
     icon: (
@@ -51,27 +61,29 @@ const FACTS = [
 
 export default function YamokFactStrip() {
   return (
-    <section
-      className="px-2 py-4 sm:py-5"
-      style={{ background: 'linear-gradient(135deg, #0F172A 0%, #1E293B 55%, #1E1B4B 100%)' }}
-      aria-label="야목역 서희스타힐스 그랜드힐 핵심 정보"
-    >
-      <ul className="grid grid-cols-4 gap-0 max-w-2xl mx-auto">
-        {FACTS.map((f, i) => (
-          <li
-            key={f.n}
-            className={`flex flex-col items-center text-center px-1 ${i < FACTS.length - 1 ? 'border-r border-white/10' : ''}`}
-          >
-            <span className="w-6 h-6 sm:w-7 sm:h-7 mb-1.5" style={{ color: '#C9A96E' }}>
-              {f.icon}
-            </span>
-            <span className="font-extrabold text-[14px] sm:text-[16px] leading-none" style={{ color: '#C9A96E' }}>
-              {f.n}
-            </span>
-            <span className="mt-1 text-[9.5px] sm:text-[11px] leading-tight text-white/75">{f.l}</span>
-          </li>
-        ))}
-      </ul>
-    </section>
+    <Reveal enabled>
+      <section
+        className="px-2 py-4 sm:py-5"
+        style={{ background: 'linear-gradient(135deg, #0F172A 0%, #1E293B 55%, #1E1B4B 100%)' }}
+        aria-label="야목역 서희스타힐스 그랜드힐 핵심 정보"
+      >
+        <ul className="grid grid-cols-4 gap-0 max-w-2xl mx-auto">
+          {FACTS.map((f, i) => (
+            <li
+              key={f.n}
+              className={`flex flex-col items-center text-center px-1 ${i < FACTS.length - 1 ? 'border-r border-white/10' : ''}`}
+            >
+              <span className="w-6 h-6 sm:w-7 sm:h-7 mb-1.5" style={{ color: '#C9A96E' }}>
+                {f.icon}
+              </span>
+              <span className="font-extrabold text-[14px] sm:text-[16px] leading-none" style={{ color: '#C9A96E' }}>
+                {f.countTo ? <CountUp end={f.countTo} suffix={f.suffix} /> : f.n}
+              </span>
+              <span className="mt-1 text-[9.5px] sm:text-[11px] leading-tight text-white/75">{f.l}</span>
+            </li>
+          ))}
+        </ul>
+      </section>
+    </Reveal>
   )
 }

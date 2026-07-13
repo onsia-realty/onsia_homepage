@@ -1,8 +1,17 @@
+'use client'
+
 // 야목역 서희스타힐스 그랜드힐 — 모바일 갤러리(섹션화)
 // 기존: 공식 이미지 17장을 간격 0으로 세로 덤프 → "문서"처럼 밋밋
 // 변경: 파일명 키워드로 6개 테마 섹션으로 묶고, 각 앞에 컬러 헤더(스탬프+후킹) 삽입
 //       이미지/alt 전부 보존(SEO 무손실). 입지 섹션 뒤 중간 CTA 1개.
 // 메인/직원 공통. mode로 CTA만 분기(main=관심고객 폼 스크롤 / agent=본인 전화).
+// 이미지 탭 → 전체 17장 라이트박스(가로 스와이프). SectionHeader는 스크롤 리빌.
+import { useState } from 'react'
+import dynamic from 'next/dynamic'
+import Reveal from './Reveal'
+
+// 라이트박스는 첫 탭 전까지 번들 미로드 (dynamic + ssr:false)
+const ImageLightbox = dynamic(() => import('./ImageLightbox'), { ssr: false })
 
 interface Props {
   gallery: string[]
@@ -131,14 +140,16 @@ function groupOf(imgUrl: string): GroupKey {
 
 function SectionHeader({ m }: { m: GroupMeta }) {
   return (
-    <div className="px-5 py-5 sm:py-6 text-center text-white" style={{ background: m.grad }}>
-      <span className="inline-block -rotate-3 border-[1.5px] border-white/80 rounded-full px-2.5 py-0.5 text-[10px] sm:text-[11px] font-extrabold tracking-wide mb-2">
-        {m.stamp}
-      </span>
-      <p className="text-[10px] sm:text-[11px] font-bold tracking-[0.28em] text-white/70">{m.kicker}</p>
-      <h2 className="mt-1 text-[21px] sm:text-[25px] font-black leading-tight">{m.title}</h2>
-      <p className="mt-1.5 text-[12px] sm:text-[13px] text-white/80">{m.sub}</p>
-    </div>
+    <Reveal enabled>
+      <div className="px-5 py-5 sm:py-6 text-center text-white" style={{ background: m.grad }}>
+        <span className="inline-block -rotate-3 border-[1.5px] border-white/80 rounded-full px-2.5 py-0.5 text-[10px] sm:text-[11px] font-extrabold tracking-wide mb-2">
+          {m.stamp}
+        </span>
+        <p className="text-[10px] sm:text-[11px] font-bold tracking-[0.28em] text-white/70">{m.kicker}</p>
+        <h2 className="mt-1 text-[21px] sm:text-[25px] font-black leading-tight">{m.title}</h2>
+        <p className="mt-1.5 text-[12px] sm:text-[13px] text-white/80">{m.sub}</p>
+      </div>
+    </Reveal>
   )
 }
 
@@ -156,7 +167,7 @@ function MidCta({ mode, phone }: { mode: 'main' | 'agent'; phone?: string }) {
       </p>
       <a
         href={href}
-        className="mt-3 inline-flex items-center justify-center gap-2 px-7 py-3 rounded-full font-extrabold text-[14px] sm:text-[15px] shadow-lg active:scale-95 transition-transform"
+        className="fab-glow mt-3 inline-flex items-center justify-center gap-2 px-7 py-3 rounded-full font-extrabold text-[14px] sm:text-[15px] shadow-lg active:scale-95 transition-transform"
         style={{ background: 'linear-gradient(135deg,#0F172A,#4338CA)', color: '#F5D78E' }}
       >
         {isAgent ? '📞 전화상담' : '관심고객 등록하기 ▸'}
@@ -166,6 +177,8 @@ function MidCta({ mode, phone }: { mode: 'main' | 'agent'; phone?: string }) {
 }
 
 export default function YamokMobileGallery({ gallery, mode, phone }: Props) {
+  const [lightboxIdx, setLightboxIdx] = useState<number | null>(null)
+
   if (!gallery || gallery.length === 0) return null
 
   // 연속 그룹으로 블록화 (갤러리 순서가 이미 카테고리별 정렬되어 있음)
@@ -194,12 +207,29 @@ export default function YamokMobileGallery({ gallery, mode, phone }: Props) {
           <div style={{ fontSize: 0, lineHeight: 0 }}>
             {b.items.map(({ url, idx }) => (
               // eslint-disable-next-line @next/next/no-img-element
-              <img key={idx} src={url} alt={yamokAlt(url, idx)} className="w-full block" loading="lazy" decoding="async" />
+              <img
+                key={idx}
+                src={url}
+                alt={yamokAlt(url, idx)}
+                className="w-full block cursor-zoom-in"
+                loading="lazy"
+                decoding="async"
+                onClick={() => setLightboxIdx(idx)}
+              />
             ))}
           </div>
           {bi === ctaAfter && <MidCta mode={mode} phone={phone} />}
         </div>
       ))}
+
+      {lightboxIdx !== null && (
+        <ImageLightbox
+          images={gallery}
+          startIndex={lightboxIdx}
+          alt={yamokAlt}
+          onClose={() => setLightboxIdx(null)}
+        />
+      )}
     </section>
   )
 }
