@@ -189,6 +189,10 @@
 .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
 .scrollbar-hide::-webkit-scrollbar { display: none; }
 
+/* 실시간 접수 티커 새 항목 등장 */
+@keyframes request-enter { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+.request-enter { animation: request-enter 0.5s ease both; }
+
 /* 접근성: 모션 최소화 사용자에겐 전 연출 일괄 무효화 */
 @media (prefers-reduced-motion: reduce) {
   .reveal-hidden,
@@ -198,6 +202,7 @@
   .reveal-in-zoom,
   .yamok-kenburns,
   .yamok-hero-seq > *,
+  .request-enter,
   .fab-glow {
     animation: none !important;
     opacity: 1 !important;

@@ -9,6 +9,8 @@ import UrbanhomesKeyVisual from './UrbanhomesKeyVisual'
 import YamokReserveCounter from './YamokReserveCounter'
 import YamokStatsBand from './YamokStatsBand'
 import YamokInquiryGift from './YamokInquiryGift'
+import YamokEventPopup from './YamokEventPopup'
+import YamokLiveRequests from './YamokLiveRequests'
 import Reveal from './Reveal'
 import type { BusinessInfo as FullBusinessInfo } from '@/lib/supabase-landing'
 
@@ -272,6 +274,15 @@ export default function PCLanding({
       {isYamok && !isAgent && (
         <Reveal enabled variant="up">
           <YamokStatsBand />
+        </Reveal>
+      )}
+
+      {/* 야목 실시간 접수 현황 티커 (PC 메인 한정) */}
+      {isYamok && !isAgent && (
+        <Reveal enabled variant="up">
+          <section className="py-12 px-8 bg-gray-50">
+            <YamokLiveRequests pageId={page.id} />
+          </section>
         </Reveal>
       )}
 
@@ -701,6 +712,11 @@ export default function PCLanding({
           <polyline points="18 15 12 9 6 15" />
         </svg>
       </button>
+
+      {/* 야목 진입 이벤트 팝업 (PC 메인 한정) */}
+      {isYamok && !isAgent && (
+        <YamokEventPopup pageId={page.id} slug={slug} storageKey="yamok-event-popup" />
+      )}
     </div>
   )
 }

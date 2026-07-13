@@ -18,6 +18,8 @@ import YamokMobileGallery from './YamokMobileGallery'
 import YamokPopupCarousel from './YamokPopupCarousel'
 import YamokReserveCounter from './YamokReserveCounter'
 import YamokInquiryGift from './YamokInquiryGift'
+import YamokEventPopup from './YamokEventPopup'
+import YamokLiveRequests from './YamokLiveRequests'
 import Reveal from './Reveal'
 import { YAMOK_FAQ } from './yamok-faq'
 import BreadcrumbStructuredData from './BreadcrumbStructuredData'
@@ -354,6 +356,15 @@ export default async function LandingPage({ params, searchParams }: Props) {
         {/* 야목 모바일 팩트 스트립 (메인/직원 공통) */}
         {slug === 'yamok-grandhill' && <YamokFactStrip />}
 
+        {/* 야목 실시간 접수 현황 티커 (모바일) */}
+        {slug === 'yamok-grandhill' && (
+          <Reveal enabled={slug === 'yamok-grandhill'}>
+            <section className="py-8 px-4 bg-gray-50">
+              <YamokLiveRequests pageId={page.id} />
+            </section>
+          </Reveal>
+        )}
+
         {/* E-모델하우스 VR CTA (yamok-grandhill 한정 — 최상단 노출, 풀 폭 다크 그라디언트) — agent 페이지에서는 YamokAgentVrCta가 따로 노출되므로 메인 한정 */}
         {slug === 'yamok-grandhill' && !agent && (
           <Reveal enabled>
@@ -679,6 +690,10 @@ export default async function LandingPage({ params, searchParams }: Props) {
         {/* yamok-grandhill 진입 임팩트 팝업 캐러셀 (모바일) */}
         {slug === 'yamok-grandhill' && (
           <YamokPopupCarousel storageKey="yamok-popup-carousel-m" />
+        )}
+        {/* 야목 진입 이벤트 팝업 (모바일 메인 한정) */}
+        {slug === 'yamok-grandhill' && !agent && (
+          <YamokEventPopup pageId={page.id} slug={slug} storageKey="yamok-event-popup-m" />
         )}
       </div>
     </>

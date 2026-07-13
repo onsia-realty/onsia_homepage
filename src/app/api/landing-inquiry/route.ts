@@ -5,7 +5,7 @@ import { notifyAdmin } from '@/lib/solapi'
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json()
-    const { page_id, slug, name, phone, agent_code, agent_name, utm_source, utm_medium, utm_campaign } = body
+    const { page_id, slug, name, phone, message, agent_code, agent_name, utm_source, utm_medium, utm_campaign } = body
 
     if (!page_id || !name || !phone) {
       return NextResponse.json({ success: false, error: '필수 항목 누락' }, { status: 400 })
@@ -16,6 +16,7 @@ export async function POST(request: NextRequest) {
       page_id,
       name,
       phone,
+      message,
       agent_code,
       utm_source,
       utm_medium,
