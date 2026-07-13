@@ -204,18 +204,20 @@ export default function YamokMobileGallery({ gallery, mode, phone }: Props) {
       {blocks.map((b, bi) => (
         <div key={`${b.key}-${bi}`}>
           <SectionHeader m={META[b.key]} />
-          <div style={{ fontSize: 0, lineHeight: 0 }}>
+          <div className="overflow-hidden" style={{ fontSize: 0, lineHeight: 0 }}>
             {b.items.map(({ url, idx }) => (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img
-                key={idx}
-                src={url}
-                alt={yamokAlt(url, idx)}
-                className="w-full block cursor-zoom-in"
-                loading="lazy"
-                decoding="async"
-                onClick={() => setLightboxIdx(idx)}
-              />
+              // 이미지별 스크롤 리빌: 좌우 번갈아 슬라이드 (overflow-hidden으로 가로 스크롤 방지)
+              <Reveal key={idx} enabled variant={idx % 2 === 0 ? 'left' : 'right'}>
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={url}
+                  alt={yamokAlt(url, idx)}
+                  className="w-full block cursor-zoom-in"
+                  loading="lazy"
+                  decoding="async"
+                  onClick={() => setLightboxIdx(idx)}
+                />
+              </Reveal>
             ))}
           </div>
           {bi === ctaAfter && <MidCta mode={mode} phone={phone} />}
