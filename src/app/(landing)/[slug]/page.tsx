@@ -16,14 +16,10 @@ import YamokAgentVrCta from './YamokAgentVrCta'
 import YamokFactStrip from './YamokFactStrip'
 import YamokMobileGallery from './YamokMobileGallery'
 import YamokPopupCarousel from './YamokPopupCarousel'
-import YamokReserveFab from './YamokReserveFab'
+import YamokReserveCounter from './YamokReserveCounter'
 import Reveal from './Reveal'
 import { YAMOK_FAQ } from './yamok-faq'
 import BreadcrumbStructuredData from './BreadcrumbStructuredData'
-
-// 야목 방문예약 카운터 시작값 (baseline) — 실제 DB 등록수에 더해 표시하는 마케팅 수치.
-// 조정은 이 한 곳만 수정하면 됨.
-const YAMOK_RESERVE_BASELINE = 387
 
 // 부정클릭 게이트 (yamok-grandhill / urbanhomes 한정) — 다른 슬러그 번들 영향 0
 // (Next 15 server component에선 ssr:false 금지 → 기본 dynamic. FraudGate 자체가 'use client'라 useEffect는 클라이언트에서만 실행됨)
@@ -286,10 +282,6 @@ export default async function LandingPage({ params, searchParams }: Props) {
           navLinks={currentSiteConfig?.navLinks}
           vrLinks={currentSiteConfig?.vrLinks}
         />
-        {/* 야목 방문예약 플로팅 버튼 + 라이브 카운터 (PC, 메인 한정) */}
-        {slug === 'yamok-grandhill' && !agent && (
-          <YamokReserveFab pageId={page.id} baseline={YAMOK_RESERVE_BASELINE} targetId="pc-inquiry" pc />
-        )}
         {slug === 'urbanhomes' && (
           <PopupModal
             imageUrl="https://static.wixstatic.com/media/a5ff46_031e0795c8dc484ebfb8e3b4a1ee9541~mv2.jpg/v1/fill/w_460,h_624,al_c,lg_1,q_80,enc_avif,quality_auto/1_%ED%8C%9D%EC%97%85%EC%B0%BD.jpg"
@@ -479,6 +471,11 @@ export default async function LandingPage({ params, searchParams }: Props) {
           <section id="inquiry-top" className="py-8 sm:py-10 px-4" style={{ backgroundColor: primaryColor }}>
             <div className="max-w-lg mx-auto">
               <h2 className="text-xl sm:text-2xl font-bold text-center text-white mb-4 sm:mb-6">관심고객 등록</h2>
+              {slug === 'yamok-grandhill' && (
+                <p className="text-center text-[13px] text-white/85 mb-4 -mt-1">
+                  <YamokReserveCounter pageId={page.id} variant="dark" />
+                </p>
+              )}
               <InquiryForm pageId={page.id} slug={slug} accentColor={accentColor} agentCode={agentCodeStr} agentName={agent?.name} />
             </div>
           </section>
@@ -664,11 +661,6 @@ export default async function LandingPage({ params, searchParams }: Props) {
         {/* Fixed Bottom Bar (mobile only) */}
         {page.show_bottom_bar && (
           <BottomBar phoneNumber={effectivePhone || null} kakaoUrl={effectiveKakao || null} isAgent={!!agent} />
-        )}
-
-        {/* 야목 방문예약 플로팅 버튼 + 라이브 카운터 (메인 한정, agent 미노출) */}
-        {slug === 'yamok-grandhill' && !agent && (
-          <YamokReserveFab pageId={page.id} baseline={YAMOK_RESERVE_BASELINE} targetId="inquiry-top" />
         )}
 
         {/* Popup Modal 1 - 청약홈 */}

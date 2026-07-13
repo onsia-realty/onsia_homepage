@@ -6,6 +6,8 @@ import InquiryForm from './InquiryForm'
 import LocationSection from './LocationSection'
 import YamokAgentVrCta from './YamokAgentVrCta'
 import UrbanhomesKeyVisual from './UrbanhomesKeyVisual'
+import YamokReserveCounter from './YamokReserveCounter'
+import YamokStatsBand from './YamokStatsBand'
 import Reveal from './Reveal'
 import type { BusinessInfo as FullBusinessInfo } from '@/lib/supabase-landing'
 
@@ -265,6 +267,13 @@ export default function PCLanding({
         </a>
       )}
 
+      {/* 야목 핵심 스탯 밴드 (PC 메인 임팩트) */}
+      {isYamok && !isAgent && (
+        <Reveal enabled variant="up">
+          <YamokStatsBand />
+        </Reveal>
+      )}
+
       {/* ===== 어반홈스 키비주 밴드 (실입주금 6천만원대 / 월세보다 저렴하게 내집마련) ===== */}
       {slug === 'urbanhomes' && <UrbanhomesKeyVisual />}
 
@@ -473,29 +482,31 @@ export default function PCLanding({
               {groups.map((group, gi) =>
                 group.type === 'grid' ? (
                   <div key={gi} className={`grid gap-4 ${group.images.length === 4 ? 'grid-cols-4' : group.images.length === 3 ? 'grid-cols-3' : 'grid-cols-2'}`}>
-                    {group.images.map(({ src, idx }) => (
-                      // eslint-disable-next-line @next/next/no-img-element
-                      <img
-                        key={idx}
-                        src={src}
-                        alt={getGalleryAlt(slug, page.project_name, src, idx)}
-                        className={`w-full block rounded-lg shadow-sm ${isYamok ? 'cursor-zoom-in' : ''}`}
-                        loading="lazy"
-                        onClick={isYamok ? () => setLightboxIdx(idx) : undefined}
-                      />
+                    {group.images.map(({ src, idx }, ci) => (
+                      <Reveal key={idx} enabled={isYamok} variant="zoom" delay={ci * 90}>
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img
+                          src={src}
+                          alt={getGalleryAlt(slug, page.project_name, src, idx)}
+                          className={`w-full block rounded-lg shadow-sm ${isYamok ? 'cursor-zoom-in' : ''}`}
+                          loading="lazy"
+                          onClick={isYamok ? () => setLightboxIdx(idx) : undefined}
+                        />
+                      </Reveal>
                     ))}
                   </div>
                 ) : (
                   group.images.map(({ src, idx }) => (
-                    // eslint-disable-next-line @next/next/no-img-element
-                    <img
-                      key={idx}
-                      src={src}
-                      alt={`${page.project_name} ${idx + 1}`}
-                      className={`w-full block rounded-lg shadow-sm ${isYamok ? 'cursor-zoom-in' : ''}`}
-                      loading="lazy"
-                      onClick={isYamok ? () => setLightboxIdx(idx) : undefined}
-                    />
+                    <Reveal key={idx} enabled={isYamok} variant={idx % 2 === 0 ? 'left' : 'right'}>
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img
+                        src={src}
+                        alt={`${page.project_name} ${idx + 1}`}
+                        className={`w-full block rounded-lg shadow-sm ${isYamok ? 'cursor-zoom-in' : ''}`}
+                        loading="lazy"
+                        onClick={isYamok ? () => setLightboxIdx(idx) : undefined}
+                      />
+                    </Reveal>
                   ))
                 )
               )}
@@ -600,15 +611,20 @@ export default function PCLanding({
         {!isAgent && (
           <button
             onClick={() => scrollTo('pc-inquiry')}
-            className="flex flex-col items-center justify-center w-[130px] py-6 bg-white/90 backdrop-blur-sm text-gray-800 rounded-xl shadow-lg border border-gray-200 transition-all hover:bg-white hover:shadow-xl cursor-pointer"
+            className={`flex flex-col items-center justify-center ${isYamok ? 'w-[168px] py-5' : 'w-[130px] py-6'} bg-white/90 backdrop-blur-sm text-gray-800 rounded-xl shadow-lg border border-gray-200 transition-all hover:bg-white hover:shadow-xl cursor-pointer`}
           >
-            <svg xmlns="http://www.w3.org/2000/svg" className="w-10 h-10 mb-2 text-gray-700" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+            <svg xmlns="http://www.w3.org/2000/svg" className={`${isYamok ? 'w-9 h-9 mb-1.5' : 'w-10 h-10 mb-2'} text-gray-700`} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
               <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
               <circle cx="9" cy="7" r="4" />
               <line x1="19" y1="8" x2="19" y2="14" />
               <line x1="22" y1="11" x2="16" y2="11" />
             </svg>
             <span className="text-[15px] font-bold leading-tight text-center">관심고객<br />등록하기</span>
+            {isYamok && (
+              <span className="mt-2 pt-2 border-t border-gray-200 w-full text-center text-[10.5px] leading-snug text-gray-600">
+                <YamokReserveCounter pageId={page.id} variant="light" />
+              </span>
+            )}
           </button>
         )}
 

@@ -11,9 +11,11 @@ interface Props {
   /** stagger용 지연(ms) */
   delay?: number
   className?: string
+  /** 리빌 방향 variant (default 'up' → 기존 동작 100% 동일) */
+  variant?: 'up' | 'left' | 'right' | 'zoom'
 }
 
-export default function Reveal({ children, enabled = false, delay = 0, className }: Props) {
+export default function Reveal({ children, enabled = false, delay = 0, className, variant = 'up' }: Props) {
   const ref = useRef<HTMLDivElement>(null)
   const [state, setState] = useState<'idle' | 'hidden' | 'in'>('idle')
 
@@ -46,10 +48,19 @@ export default function Reveal({ children, enabled = false, delay = 0, className
 
   if (!enabled) return <>{children}</>
 
+  const revealInClass =
+    variant === 'left'
+      ? 'reveal-in-left'
+      : variant === 'right'
+        ? 'reveal-in-right'
+        : variant === 'zoom'
+          ? 'reveal-in-zoom'
+          : 'reveal-in'
+
   const cls = [
     className,
     state === 'hidden' ? 'reveal-hidden' : '',
-    state === 'in' ? 'reveal-in' : '',
+    state === 'in' ? revealInClass : '',
   ]
     .filter(Boolean)
     .join(' ')

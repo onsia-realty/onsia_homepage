@@ -154,6 +154,14 @@
 .reveal-hidden { opacity: 0; }
 .reveal-in { animation: reveal-up 0.7s cubic-bezier(0.22, 1, 0.36, 1) both; }
 
+/* 방향 리빌 variant (yamok PC 이미지 시퀀스) */
+@keyframes reveal-left  { from { opacity: 0; transform: translateX(-44px); } to { opacity: 1; transform: none; } }
+@keyframes reveal-right { from { opacity: 0; transform: translateX(44px);  } to { opacity: 1; transform: none; } }
+@keyframes reveal-zoom  { from { opacity: 0; transform: scale(0.93);      } to { opacity: 1; transform: none; } }
+.reveal-in-left  { animation: reveal-left  0.8s cubic-bezier(0.22, 1, 0.36, 1) both; }
+.reveal-in-right { animation: reveal-right 0.8s cubic-bezier(0.22, 1, 0.36, 1) both; }
+.reveal-in-zoom  { animation: reveal-zoom  0.9s cubic-bezier(0.22, 1, 0.36, 1) both; }
+
 /* Hero 켄번즈 (transform-only → LCP 무영향). 부모 section에 overflow-hidden 필요 */
 @keyframes yamok-kenburns {
   from { transform: scale(1); }
@@ -185,6 +193,9 @@
 @media (prefers-reduced-motion: reduce) {
   .reveal-hidden,
   .reveal-in,
+  .reveal-in-left,
+  .reveal-in-right,
+  .reveal-in-zoom,
   .yamok-kenburns,
   .yamok-hero-seq > *,
   .fab-glow {

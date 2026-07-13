@@ -72,7 +72,7 @@ export default function YamokPopupCarousel({ storageKey }: Props) {
               borderBottom: `1.5px solid ${GOLD}`,
             }}
           >
-            <div className="mx-auto max-w-6xl flex gap-2.5 px-3 py-3.5 overflow-x-auto snap-x snap-mandatory scrollbar-hide lg:justify-center lg:overflow-visible">
+            <div className="mx-auto flex gap-2 lg:gap-3 px-2 lg:px-4 py-3.5 overflow-x-auto snap-x snap-mandatory scrollbar-hide lg:justify-center lg:overflow-visible">
               {slides.map((s) => (
                 <ZoneCard key={s.key} s={s} onCta={() => setFolded(true)} />
               ))}
@@ -127,7 +127,7 @@ function ZoneCard({ s, onCta }: { s: YamokSlide; onCta: () => void }) {
       {...(isInternal ? {} : { target: '_blank', rel: 'noopener noreferrer' })}
       onClick={onCta}
       aria-label={s.alt}
-      className="relative shrink-0 snap-center w-[68vw] max-w-[220px] lg:w-[186px] rounded-2xl overflow-hidden shadow-lg active:scale-[0.98] transition-transform"
+      className="relative shrink-0 lg:shrink snap-center w-[68vw] max-w-[280px] lg:w-auto lg:max-w-[340px] lg:flex-1 rounded-2xl overflow-hidden shadow-lg active:scale-[0.98] transition-transform"
     >
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img src={s.image} alt={s.alt} draggable={false} className="w-full h-auto block select-none" />
