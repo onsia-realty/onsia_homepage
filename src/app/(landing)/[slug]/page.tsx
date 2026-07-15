@@ -15,6 +15,12 @@ import YamokStructuredData from './YamokStructuredData'
 import YamokAgentVrCta from './YamokAgentVrCta'
 import YamokFactStrip from './YamokFactStrip'
 import YamokMobileGallery from './YamokMobileGallery'
+import YamokPopupCarousel from './YamokPopupCarousel'
+import YamokReserveCounter from './YamokReserveCounter'
+import YamokInquiryGift from './YamokInquiryGift'
+import YamokEventPopup from './YamokEventPopup'
+import YamokConsultSection from './YamokConsultSection'
+import Reveal from './Reveal'
 import { YAMOK_FAQ } from './yamok-faq'
 import BreadcrumbStructuredData from './BreadcrumbStructuredData'
 
@@ -287,23 +293,9 @@ export default async function LandingPage({ params, searchParams }: Props) {
             storageKey="popup-dismissed-1"
           />
         )}
-        {/* yamok-grandhill 팝업 #1 - 스타벅스 기프티콘 이벤트 (PC) */}
+        {/* yamok-grandhill 진입 임팩트 팝업 캐러셀 (PC) */}
         {slug === 'yamok-grandhill' && (
-          <PopupModal
-            imageUrl="/Gemini_Generated_Image_8wu5br8wu5br8wu5.png"
-            linkUrl="/yamok-grandhill/inquiry"
-            alt="LMS 문자 상담시 스타벅스 기프티콘 제공 - 관심고객 등록"
-            storageKey="yamok-popup-starbucks"
-          />
-        )}
-        {/* yamok-grandhill 팝업 #2 - GRAND OPEN (1번 닫은 후 표시, PC) */}
-        {slug === 'yamok-grandhill' && (
-          <PopupModal
-            imageUrl="/uploads/landing/yamok/popup-grand-open.png"
-            alt="GRAND OPEN"
-            storageKey="yamok-popup-grandopen"
-            waitForKey="yamok-popup-starbucks"
-          />
+          <YamokPopupCarousel storageKey="yamok-popup-carousel" />
         )}
       </div>
 
@@ -314,7 +306,7 @@ export default async function LandingPage({ params, searchParams }: Props) {
       >
         {/* Hero Section */}
         {page.hero_image ? (
-          <section className="relative">
+          <section className={`relative ${slug === 'yamok-grandhill' ? 'overflow-hidden' : ''}`}>
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src={page.hero_image}
@@ -323,11 +315,11 @@ export default async function LandingPage({ params, searchParams }: Props) {
                   ? '야목역 서희스타힐스 그랜드힐 — 야목역서희 일반분양 (경기도 화성시 비봉면)'
                   : page.project_name
               }
-              className="w-full block"
+              className={`w-full block ${slug === 'yamok-grandhill' ? 'yamok-kenburns' : ''}`}
             />
             {page.subtitle && (
               <div className="absolute inset-0 flex items-end justify-center pb-6 sm:pb-8 md:pb-12 bg-gradient-to-t from-black/70 via-black/20 to-transparent">
-                <div className="text-center text-white px-4">
+                <div className={`text-center text-white px-4 ${slug === 'yamok-grandhill' ? 'yamok-hero-seq' : ''}`}>
                   <h1 className="text-xl sm:text-3xl md:text-5xl font-bold mb-1 md:mb-2 drop-shadow-lg">{page.project_name}</h1>
                   <p className="text-sm sm:text-lg md:text-2xl font-medium drop-shadow-md opacity-90">{page.subtitle}</p>
                 </div>
@@ -364,8 +356,37 @@ export default async function LandingPage({ params, searchParams }: Props) {
         {/* 야목 모바일 팩트 스트립 (메인/직원 공통) */}
         {slug === 'yamok-grandhill' && <YamokFactStrip />}
 
+        {/* 야목 실시간 접수 현황 티커 (모바일) */}
+        {slug === 'yamok-grandhill' && (
+          <Reveal enabled={slug === 'yamok-grandhill'}>
+            <section className="py-8 px-4 bg-gray-50">
+              <YamokConsultSection pageId={page.id} slug={slug} />
+            </section>
+          </Reveal>
+        )}
+
+        {/* 직원 영상 (yamok-grandhill 메인 한정 — VR CTA 위) */}
+        {slug === 'yamok-grandhill' && !agent && (
+          <Reveal enabled>
+          <section className="bg-black">
+            <video
+              src="https://uwddeseqwdsryvuoulsm.supabase.co/storage/v1/object/public/landing/videos/yamok-grandhill-staff.mp4#t=1"
+              poster="https://uwddeseqwdsryvuoulsm.supabase.co/storage/v1/object/public/landing/videos/yamok-grandhill-staff-poster.jpg"
+              controls
+              autoPlay
+              muted
+              loop
+              playsInline
+              preload="auto"
+              className="w-full block min-h-[30vh] object-contain"
+            />
+          </section>
+          </Reveal>
+        )}
+
         {/* E-모델하우스 VR CTA (yamok-grandhill 한정 — 최상단 노출, 풀 폭 다크 그라디언트) — agent 페이지에서는 YamokAgentVrCta가 따로 노출되므로 메인 한정 */}
         {slug === 'yamok-grandhill' && !agent && (
+          <Reveal enabled>
           <section className="py-5 sm:py-6 px-3 sm:px-4 bg-white">
             <a
               href="/yamok-grandhill/vr"
@@ -405,6 +426,7 @@ export default async function LandingPage({ params, searchParams }: Props) {
               </div>
             </a>
           </section>
+          </Reveal>
         )}
 
         {/* YouTube Video */}
@@ -421,23 +443,6 @@ export default async function LandingPage({ params, searchParams }: Props) {
                 />
               </div>
             </div>
-          </section>
-        )}
-
-        {/* 직원 영상 (yamok-grandhill 메인 한정 — VR CTA 밑) */}
-        {slug === 'yamok-grandhill' && !agent && (
-          <section className="bg-black">
-            <video
-              src="https://uwddeseqwdsryvuoulsm.supabase.co/storage/v1/object/public/landing/videos/yamok-grandhill-staff.mp4#t=1"
-              poster="https://uwddeseqwdsryvuoulsm.supabase.co/storage/v1/object/public/landing/videos/yamok-grandhill-staff-poster.jpg"
-              controls
-              autoPlay
-              muted
-              loop
-              playsInline
-              preload="auto"
-              className="w-full block min-h-[30vh] object-contain"
-            />
           </section>
         )}
 
@@ -474,18 +479,26 @@ export default async function LandingPage({ params, searchParams }: Props) {
             </section>
           ) : null
         ) : (
+          <Reveal enabled={slug === 'yamok-grandhill'}>
           <section id="inquiry-top" className="py-8 sm:py-10 px-4" style={{ backgroundColor: primaryColor }}>
             <div className="max-w-lg mx-auto">
+              {slug === 'yamok-grandhill' && <YamokInquiryGift />}
               <h2 className="text-xl sm:text-2xl font-bold text-center text-white mb-4 sm:mb-6">관심고객 등록</h2>
+              {slug === 'yamok-grandhill' && (
+                <p className="text-center text-[13px] text-white/85 mb-4 -mt-1">
+                  <YamokReserveCounter pageId={page.id} variant="dark" />
+                </p>
+              )}
               <InquiryForm pageId={page.id} slug={slug} accentColor={accentColor} agentCode={agentCodeStr} agentName={agent?.name} />
             </div>
           </section>
+          </Reveal>
         )}
 
         {/* Custom Sections */}
         {page.sections && page.sections.length > 0 && page.sections.map((section, i) => (
+          <Reveal enabled={slug === 'yamok-grandhill'} key={section.id || i}>
           <section
-            key={section.id || i}
             id={i === 0 ? 'section-info' : i === 1 ? 'section-premium' : undefined}
             className={`py-8 sm:py-12 px-4 ${i % 2 === 0 ? 'bg-white' : 'bg-gray-50'}`}
           >
@@ -517,6 +530,7 @@ export default async function LandingPage({ params, searchParams }: Props) {
               )}
             </div>
           </section>
+          </Reveal>
         ))}
 
         {/* Gallery — 야목은 6섹션화(컬러 헤더+중간CTA), 그 외 슬러그는 기존 seamless 스택 */}
@@ -558,9 +572,9 @@ export default async function LandingPage({ params, searchParams }: Props) {
                 { href: '/yamok-grandhill/premium', label: '입지 프리미엄', sub: 'PREMIUM', desc: '야목역 · GTX-F(예정)', d: 'M12 2l2.39 4.84L20 8l-4 3.9.94 5.5L12 14.77 7.06 17.4 8 11.9 4 8l5.61-1.16L12 2z' },
                 { href: '/yamok-grandhill/layout', label: '단지배치도', sub: 'LAYOUT', desc: '동·세대 배치 한눈에', d: 'M3 3h7v7H3zM14 3h7v7h-7zM14 14h7v7h-7zM3 14h7v7H3z' },
                 { href: '/yamok-grandhill/floorplan', label: '평면안내', sub: 'UNIT PLAN', desc: '59㎡A·B·C / 84㎡A·B', d: 'M3 3h18v18H3zM3 12h18M12 3v18M3 7h6v5H3z' },
-              ].map((item) => (
+              ].map((item, ci) => (
+                <Reveal enabled delay={ci * 90} key={item.href}>
                 <a
-                  key={item.href}
                   href={item.href}
                   className="block rounded-2xl overflow-hidden shadow-xl active:opacity-95 transition-all relative"
                   style={{
@@ -589,19 +603,22 @@ export default async function LandingPage({ params, searchParams }: Props) {
                     </svg>
                   </div>
                 </a>
+                </Reveal>
               ))}
             </div>
           </section>
         )}
 
-        {/* 오시는길 (business_info에 location 데이터 있을 때만 표시) */}
-        <LocationSection
-          businessInfo={page.business_info}
-          primaryColor={primaryColor}
-          accentColor={accentColor}
-          id="section-location"
-          compact
-        />
+        {/* 오시는길 — 야목 메인은 숨김(요청). 타 슬러그만 표시 */}
+        {slug !== 'yamok-grandhill' && (
+          <LocationSection
+            businessInfo={page.business_info}
+            primaryColor={primaryColor}
+            accentColor={accentColor}
+            id="section-location"
+            compact
+          />
+        )}
 
         {/* Bottom: Inquiry Form (main) or Video 2 (agent) — yamok agent는 상단 hero CTA만 남기고 하단 카드는 중복이라 제거 */}
         {agent ? (
@@ -618,12 +635,15 @@ export default async function LandingPage({ params, searchParams }: Props) {
             </section>
           ) : null
         ) : (
+          <Reveal enabled={slug === 'yamok-grandhill'}>
           <section id="inquiry-bottom" className="py-8 sm:py-10 px-4" style={{ backgroundColor: primaryColor }}>
             <div className="max-w-lg mx-auto">
+              {slug === 'yamok-grandhill' && <YamokInquiryGift />}
               <h2 className="text-xl sm:text-2xl font-bold text-center text-white mb-4 sm:mb-6">관심고객 등록</h2>
               <InquiryForm pageId={page.id} slug={slug} accentColor={accentColor} agentCode={agentCodeStr} agentName={agent?.name} />
             </div>
           </section>
+          </Reveal>
         )}
 
         {/* Footer */}
@@ -667,25 +687,15 @@ export default async function LandingPage({ params, searchParams }: Props) {
           />
         )}
         {/* UNIT VR 팝업 제거: 원본 호스트(urbanhomes.co.kr) 사망으로 링크 깨짐 — 복구 소스 없음 (2026-06-24) */}
-        {/* yamok-grandhill 팝업 #1 - 스타벅스 기프티콘 이벤트 (모바일) */}
+        {/* yamok-grandhill 진입 임팩트 팝업 캐러셀 (모바일) */}
         {slug === 'yamok-grandhill' && (
-          <PopupModal
-            imageUrl="/Gemini_Generated_Image_8wu5br8wu5br8wu5.png"
-            linkUrl="/yamok-grandhill/inquiry"
-            alt="LMS 문자 상담시 스타벅스 기프티콘 제공 - 관심고객 등록"
-            storageKey="yamok-popup-starbucks-m"
-          />
-        )}
-        {/* yamok-grandhill 팝업 #2 - GRAND OPEN (1번 닫은 후 표시, 모바일) */}
-        {slug === 'yamok-grandhill' && (
-          <PopupModal
-            imageUrl="/uploads/landing/yamok/popup-grand-open.png"
-            alt="GRAND OPEN"
-            storageKey="yamok-popup-grandopen-m"
-            waitForKey="yamok-popup-starbucks-m"
-          />
+          <YamokPopupCarousel storageKey="yamok-popup-carousel-m" />
         )}
       </div>
+      {/* 야목 진입 이벤트 팝업 (뷰포트 무관 1회 렌더 — body 스크롤 잠금 중복 방지) */}
+      {slug === 'yamok-grandhill' && !agent && (
+        <YamokEventPopup pageId={page.id} slug={slug} storageKey="yamok-event-popup" />
+      )}
     </>
   )
 

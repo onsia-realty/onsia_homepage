@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import InquiryForm from '../InquiryForm'
 import BottomBar from '../BottomBar'
+import YamokCoffeeEventBanner from '../YamokCoffeeEventBanner'
 import { YAMOK_FAQ } from '../yamok-faq'
 
 interface Page {
@@ -401,7 +402,10 @@ export default function CategoryPage({
               {category === 'faq' && <YamokFaqContent />}
               {category === 'inquiry' && (
                 <div className="max-w-[700px] mx-auto">
-                  <InquiryForm pageId={page.id} slug={slug} accentColor={accentColor} />
+                  <YamokCoffeeEventBanner />
+                  <div id="inquiry-form" className="rounded-2xl border border-gray-200 shadow-sm">
+                    <InquiryForm pageId={page.id} slug={slug} accentColor={accentColor} />
+                  </div>
                 </div>
               )}
             </>
