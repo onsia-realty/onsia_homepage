@@ -1,23 +1,37 @@
 import { prisma } from '@/lib/prisma';
 import { getAPTSubscriptions, getOfficetelSubscriptions } from '@/lib/cheongyakApi';
+import { getAllGuidePosts, type GuidePost } from '@/lib/guide';
 
 export async function GET() {
   const baseUrl = 'https://www.onsia.city';
 
-  // 매물 목록 조회
-  const properties = await prisma.property.findMany({
-    where: { status: 'AVAILABLE' },
-    orderBy: { createdAt: 'desc' },
-    take: 30,
-    select: {
-      id: true,
-      title: true,
-      description: true,
-      city: true,
-      district: true,
-      createdAt: true,
-    }
-  });
+  // 매물 목록 조회 (DB 장애가 피드 전체를 500으로 만들지 않도록 격리)
+  let properties: Array<{
+    id: string;
+    title: string;
+    description: string | null;
+    city: string | null;
+    district: string | null;
+    createdAt: Date;
+  }> = [];
+
+  try {
+    properties = await prisma.property.findMany({
+      where: { status: 'AVAILABLE' },
+      orderBy: { createdAt: 'desc' },
+      take: 30,
+      select: {
+        id: true,
+        title: true,
+        description: true,
+        city: true,
+        district: true,
+        createdAt: true,
+      }
+    });
+  } catch (error) {
+    console.error('RSS: Failed to fetch properties', error);
+  }
 
   // 청약 정보 조회
   let subscriptions: Array<{
@@ -42,6 +56,28 @@ export async function GET() {
     console.error('RSS: Failed to fetch subscriptions', error);
   }
 
+  // 가이드 글 조회 (content/guide/**/*.mdx)
+  let guidePosts: GuidePost[] = [];
+  try {
+    guidePosts = getAllGuidePosts().slice(0, 50);
+  } catch (error) {
+    console.error('RSS: Failed to load guide posts', error);
+  }
+
+  // 가이드 RSS 아이템
+  const guideItems = guidePosts.map(post => {
+    const url = `${baseUrl}/guide/${encodeURIComponent(post.slug)}`;
+    return `
+    <item>
+      <title><![CDATA[[가이드] ${post.title}]]></title>
+      <link>${url}</link>
+      <guid>${url}</guid>
+      <description><![CDATA[${post.description}]]></description>
+      <pubDate>${new Date(post.publishedAt).toUTCString()}</pubDate>
+      <category>가이드</category>
+    </item>`;
+  }).join('');
+
   // 매물 RSS 아이템
   const propertyItems = properties.map(property => `
     <item>
@@ -57,8 +93,8 @@ export async function GET() {
   const subscriptionItems = subscriptions.map(sub => `
     <item>
       <title><![CDATA[[청약] ${sub.HOUSE_NM}]]></title>
-      <link>${baseUrl}/subscriptions/${sub.HOUSE_MANAGE_NO}</link>
-      <guid>${baseUrl}/subscriptions/${sub.HOUSE_MANAGE_NO}</guid>
+      <link>${baseUrl}/subscription/${sub.HOUSE_MANAGE_NO}</link>
+      <guid>${baseUrl}/subscription/${sub.HOUSE_MANAGE_NO}</guid>
       <description><![CDATA[${sub.SUBSCRPT_AREA_CODE_NM} ${sub.HOUSE_NM} - ${sub.TOT_SUPLY_HSHLDCO}세대, 청약접수: ${sub.RCEPT_BGNDE} ~ ${sub.RCEPT_ENDDE}]]></description>
       <pubDate>${sub.RCRIT_PBLANC_DE ? new Date(sub.RCRIT_PBLANC_DE).toUTCString() : new Date().toUTCString()}</pubDate>
       <category>청약</category>
@@ -73,6 +109,7 @@ export async function GET() {
     <language>ko</language>
     <lastBuildDate>${new Date().toUTCString()}</lastBuildDate>
     <atom:link href="${baseUrl}/rss.xml" rel="self" type="application/rss+xml"/>
+    ${guideItems}
     ${subscriptionItems}
     ${propertyItems}
   </channel>

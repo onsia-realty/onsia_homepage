@@ -2,6 +2,7 @@ import { Metadata } from 'next'
 import dynamic from 'next/dynamic'
 import { headers } from 'next/headers'
 import { notFound } from 'next/navigation'
+import { preload } from 'react-dom'
 import { getLandingPageBySlug, getLandingPages, getAgentByCode, type LandingPage as LandingPageType } from '@/lib/supabase-landing'
 import { landingBaseUrl } from '@/lib/landing-slugs'
 import InquiryForm from './InquiryForm'
@@ -126,6 +127,9 @@ export default async function LandingPage({ params, searchParams }: Props) {
   const page = await getLandingPageBySlug(slug)
 
   if (!page) notFound()
+
+  // LCP 최적화: hero 이미지를 문서 <head>에서 미리 로드 (PC/모바일 공통 — 서버에서 1회)
+  if (page.hero_image) preload(page.hero_image, { as: 'image', fetchPriority: 'high' })
 
   // Agent 조회 (URL ?a=xxx)
   const agentCodeStr = typeof agentCode === 'string' ? agentCode : undefined
@@ -316,14 +320,18 @@ export default async function LandingPage({ params, searchParams }: Props) {
                   : page.project_name
               }
               className={`w-full block ${slug === 'yamok-grandhill' ? 'yamok-kenburns' : ''}`}
+              fetchPriority="high"
+              decoding="async"
             />
-            {page.subtitle && (
+            {page.subtitle ? (
               <div className="absolute inset-0 flex items-end justify-center pb-6 sm:pb-8 md:pb-12 bg-gradient-to-t from-black/70 via-black/20 to-transparent">
                 <div className={`text-center text-white px-4 ${slug === 'yamok-grandhill' ? 'yamok-hero-seq' : ''}`}>
                   <h1 className="text-xl sm:text-3xl md:text-5xl font-bold mb-1 md:mb-2 drop-shadow-lg">{page.project_name}</h1>
                   <p className="text-sm sm:text-lg md:text-2xl font-medium drop-shadow-md opacity-90">{page.subtitle}</p>
                 </div>
               </div>
+            ) : (
+              <h1 className="sr-only">{page.project_name}</h1>
             )}
           </section>
         ) : (
