@@ -6,6 +6,7 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { MDXRemote } from 'next-mdx-remote/rsc'
+import remarkGfm from 'remark-gfm'
 import { getAllGuidePosts, getGuidePostBySlug, getRelatedPosts } from '@/lib/guide'
 import { guideMdxComponents, LandingCTA } from '@/components/guide/mdx-components'
 import { guideHref } from '@/components/guide/GuideList'
@@ -112,10 +113,11 @@ export default async function GuidePostPage({ params }: Props) {
 
         <div>
           {/* blockJS:false — v6 기본값이 JSX 표현식 속성(FactBox items 등)을 제거함. 콘텐츠는 레포 내 신뢰 파일이고 blockDangerousJS는 기본 유지 */}
+          {/* remark-gfm — 표·취소선·자동링크. 없으면 GFM 표가 파이프 텍스트로 그대로 노출된다 */}
           <MDXRemote
             source={post.content}
             components={guideMdxComponents}
-            options={{ blockJS: false }}
+            options={{ blockJS: false, mdxOptions: { remarkPlugins: [remarkGfm] } }}
           />
         </div>
 

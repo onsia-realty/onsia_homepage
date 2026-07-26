@@ -42,7 +42,7 @@ export default function YamokStructuredData({ faq, ogImage, baseUrl = 'https://w
           '야목역 서희스타힐스 그랜드힐 — 수인분당선 야목역 도보권, GTX-F(예정) 더블역세권 화성 비봉 신축 아파트. 야목역서희 모델하우스 위치·분양가·일반분양 안내. 비봉아파트 분양 / 경기도 화성시 아파트 분양.',
         url: baseUrl,
         image: ogImage || 'https://www.onsia.city/images/yamok-og.jpg',
-        numberOfAccommodationUnits: 586,
+        numberOfAccommodationUnits: 998,
         address: {
           '@type': 'PostalAddress',
           streetAddress: '비봉면 구포리 614-18번지 일원',
