@@ -62,7 +62,10 @@ export const metadata: Metadata = {
     },
   },
   verification: {
-    google: "9lrEwNdce4bdybKgjFlxhkeKjV5UQ_4HgCnpNEoxFa8",
+    google: [
+      "9lrEwNdce4bdybKgjFlxhkeKjV5UQ_4HgCnpNEoxFa8", // www.onsia.city
+      "QiQ8mFuJxioqxSC2ia_Sd1rlx7kxKBVs_NopFcFkkUE", // 야목역서희스타힐스.xyz
+    ],
     other: {
       // 도메인별 소유확인 코드 (같은 앱이 여러 도메인 서빙 → 둘 다 내보냄)
       "naver-site-verification": [
