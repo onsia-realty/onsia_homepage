@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
-import { Menu, X, Home, Info, FileText, Play, Mail, Building2, Gavel, TrendingUp, LogIn, LogOut, User, Globe } from 'lucide-react';
+import { Menu, X, Home, Info, FileText, Play, Mail, Building2, Gavel, TrendingUp, LogIn, LogOut, User, Globe, BookOpen } from 'lucide-react';
 import { GlassCard } from './ui/GlassCard';
 import { useSession, signOut } from 'next-auth/react';
 
@@ -27,6 +27,7 @@ export const Navigation = () => {
     { name: '홈페이지', href: '/homepage', icon: Globe },
     { name: '경매', href: '/auctions', icon: Gavel },
     { name: 'AI 부동산시세', href: '/market', icon: TrendingUp },
+    { name: '분양가이드', href: '/guide', icon: BookOpen },
     { name: '회사소개', href: '/about', icon: Info },
   ];
 

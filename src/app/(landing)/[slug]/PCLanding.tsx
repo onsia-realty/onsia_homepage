@@ -225,12 +225,18 @@ export default function PCLanding({
 
       {/* ===== HERO (Full Viewport) ===== */}
       <section className="relative overflow-hidden" style={{ height: '100vh' }}>
+        {/* SEO: PC 히어로는 이미지에 마케팅 문구가 포함되어 텍스트 h1이 없음 → 스크린리더/검색엔진용 h1 (비주얼 영향 없음) */}
+        <h1 className="sr-only">
+          {page.project_name}{page.subtitle ? ` — ${page.subtitle}` : ''}
+        </h1>
         {page.hero_image ? (
           // eslint-disable-next-line @next/next/no-img-element
           <img
             src={page.hero_image}
             alt={page.project_name}
             className={`absolute inset-0 w-full h-full object-cover ${isYamok ? 'yamok-kenburns' : ''}`}
+            fetchPriority="high"
+            decoding="async"
           />
         ) : (
           <div className="absolute inset-0" style={{ background: `linear-gradient(135deg, ${primaryColor}, ${primaryColor}dd)` }} />

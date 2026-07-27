@@ -4,6 +4,7 @@ import { notFound } from 'next/navigation'
 import { getLandingPageBySlug } from '@/lib/supabase-landing'
 import { landingBaseUrl } from '@/lib/landing-slugs'
 import CategoryPage from './CategoryPage'
+import { YAMOK_FAQ } from '../yamok-faq'
 
 // 카테고리 정의 (sitemap.ts에서도 import해서 sub-page 동적 등록)
 export const CATEGORIES: Record<string, Record<string, { title: string; subtitle?: string }>> = {
@@ -213,15 +214,63 @@ export default async function LandingCategoryPage({ params }: Props) {
   const primaryColor = page.primary_color || '#1E3A5F'
   const accentColor = page.accent_color || '#C9A96E'
 
+  // 독립 도메인(야목역서희스타힐스.xyz) 접속 시 JSON-LD 기준 URL도 그 도메인으로
+  const baseUrl = landingBaseUrl((await headers()).get('host'), slug)
+
+  // 서브페이지 구조화 데이터: 빵부스러기(홈 → 카테고리) + 야목 FAQ 페이지 한정 FAQPage
+  const graph: Record<string, unknown>[] = [
+    {
+      '@type': 'BreadcrumbList',
+      '@id': `${baseUrl}/${category}#breadcrumb`,
+      itemListElement: [
+        {
+          '@type': 'ListItem',
+          position: 1,
+          name: page.project_name,
+          item: baseUrl,
+        },
+        {
+          '@type': 'ListItem',
+          position: 2,
+          name: cat.title,
+          item: `${baseUrl}/${category}`,
+        },
+      ],
+    },
+  ]
+
+  if (slug === 'yamok-grandhill' && category === 'faq') {
+    graph.push({
+      '@type': 'FAQPage',
+      '@id': `${baseUrl}/faq#faq`,
+      mainEntity: YAMOK_FAQ.map((item) => ({
+        '@type': 'Question',
+        name: item.q,
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: item.a,
+        },
+      })),
+    })
+  }
+
   return (
-    <CategoryPage
-      page={page}
-      slug={slug}
-      category={category}
-      categoryTitle={cat.title}
-      categorySubtitle={cat.subtitle}
-      primaryColor={primaryColor}
-      accentColor={accentColor}
-    />
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({ '@context': 'https://schema.org', '@graph': graph }),
+        }}
+      />
+      <CategoryPage
+        page={page}
+        slug={slug}
+        category={category}
+        categoryTitle={cat.title}
+        categorySubtitle={cat.subtitle}
+        primaryColor={primaryColor}
+        accentColor={accentColor}
+      />
+    </>
   )
 }
