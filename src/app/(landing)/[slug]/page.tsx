@@ -24,6 +24,7 @@ import YamokConsultSection from './YamokConsultSection'
 import Reveal from './Reveal'
 import { YAMOK_FAQ } from './yamok-faq'
 import BreadcrumbStructuredData from './BreadcrumbStructuredData'
+import { getAgentFooter } from './agent-footer'
 
 // 부정클릭 게이트 (yamok-grandhill / urbanhomes 한정) — 다른 슬러그 번들 영향 0
 // (Next 15 server component에선 ssr:false 금지 → 기본 dynamic. FraudGate 자체가 'use client'라 useEffect는 클라이언트에서만 실행됨)
@@ -134,6 +135,9 @@ export default async function LandingPage({ params, searchParams }: Props) {
   // Agent 조회 (URL ?a=xxx)
   const agentCodeStr = typeof agentCode === 'string' ? agentCode : undefined
   const agent = agentCodeStr ? await getAgentByCode(page.id, agentCodeStr) : null
+
+  // 광고 심사용 사업주체 표기 (해당 직원 페이지에만 푸터 노출)
+  const agentFooter = agent ? getAgentFooter(slug, agentCodeStr) : undefined
 
   // 독립 도메인 접속 시 JSON-LD 등의 기준 URL도 그 도메인으로
   const pageBaseUrl = landingBaseUrl((await headers()).get('host'), slug)
@@ -656,16 +660,27 @@ export default async function LandingPage({ params, searchParams }: Props) {
 
         {/* Footer */}
         <footer className="py-6 sm:py-8 px-4 bg-gray-900 text-gray-400 text-center text-xs sm:text-sm leading-relaxed">
-          {!agent && page.business_info && (
+          {(!agent || agentFooter) && page.business_info && (
             <div className="mb-3 sm:mb-4">
               {page.business_info.company_name && (
                 <p className="font-medium text-gray-300">{page.business_info.company_name}</p>
               )}
+              {agentFooter && (
+                <>
+                  {page.business_info.address && (
+                    <p className="mt-1.5 text-gray-500 text-[11px] sm:text-xs">{page.business_info.address}</p>
+                  )}
+                  {agentFooter.lines.map((line) => (
+                    <p key={line} className="mt-1 text-gray-500 text-[11px] sm:text-xs">{line}</p>
+                  ))}
+                </>
+              )}
             </div>
           )}
-          {!agent && (
+          {(!agent || agentFooter) && (
             <p className="text-gray-500 max-w-2xl mx-auto text-xs sm:text-sm whitespace-pre-line">
-              {page.business_info?.disclaimer ||
+              {agentFooter?.disclaimer ||
+                page.business_info?.disclaimer ||
                 '본 홍보물의 내용은 소비자의 이해를 돕기 위해 제작된 것으로, 개발·분양사의 사정에 따라 변경될 수 있으며 법적 효력이 없습니다. 계약 시에는 반드시 모집공고문과 계약서를 기준으로 확인하시기 바랍니다.'}
             </p>
           )}

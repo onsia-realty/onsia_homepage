@@ -12,6 +12,7 @@ import YamokInquiryGift from './YamokInquiryGift'
 import YamokConsultSection from './YamokConsultSection'
 import Reveal from './Reveal'
 import type { BusinessInfo as FullBusinessInfo } from '@/lib/supabase-landing'
+import { getAgentFooter } from './agent-footer'
 
 // 라이트박스는 첫 탭 전까지 번들 미로드 (yamok-grandhill 전용)
 const ImageLightbox = dynamic(() => import('./ImageLightbox'), { ssr: false })
@@ -55,6 +56,7 @@ interface Section {
 
 interface BusinessInfo {
   company_name?: string
+  address?: string
   disclaimer?: string
   location_image?: string
   modelhouse_address?: string
@@ -137,6 +139,8 @@ export default function PCLanding({
   }
 
   const isAgent = !!agent
+  // 광고 심사용 사업주체 표기 (해당 직원 페이지에만 푸터 노출)
+  const agentFooter = isAgent ? getAgentFooter(slug, agentCode) : undefined
   const navItems = navLinks && navLinks.length > 0 ? navLinks : DEFAULT_NAV_ITEMS
   const isYamok = slug === 'yamok-grandhill'
   const [lightboxIdx, setLightboxIdx] = useState<number | null>(null)
@@ -590,18 +594,37 @@ export default function PCLanding({
             <p className="text-xl font-bold mb-6" style={{ color: primaryColor }}>{page.project_name}</p>
           )}
 
-          {/* Disclaimer - agent 페이지는 통째 숨김 (직원 명함 OG 깔끔) */}
-          {!isAgent && (
-            <p className="text-[13px] text-gray-500 leading-relaxed mb-5">
-              {page.business_info?.disclaimer ||
-                '※ 본 사이트의 이미지는 소비자의 이해를 돕기 위해 제작된 것으로 실제 시공 시 다를 수 있습니다.'}
-            </p>
+          {/* Company Info - agent는 숨김 (단, 광고 심사용 사업주체 표기가 있으면 노출) */}
+          {(!isAgent || agentFooter) && (
+            <>
+              {page.business_info?.company_name && (
+                <p className="text-[13px] text-gray-400 leading-loose">
+                  {page.business_info.company_name}
+                </p>
+              )}
+              {agentFooter && (
+                <>
+                  {page.business_info?.address && (
+                    <p className="text-[12px] text-gray-400 leading-loose">
+                      {page.business_info.address}
+                    </p>
+                  )}
+                  {agentFooter.lines.map((line) => (
+                    <p key={line} className="text-[12px] text-gray-400 leading-loose">
+                      {line}
+                    </p>
+                  ))}
+                </>
+              )}
+            </>
           )}
 
-          {/* Company Info - agent는 숨김 */}
-          {!isAgent && page.business_info?.company_name && (
-            <p className="text-[13px] text-gray-400 leading-loose">
-              {page.business_info.company_name}
+          {/* Disclaimer - agent 페이지는 통째 숨김 (직원 명함 OG 깔끔) */}
+          {(!isAgent || agentFooter) && (
+            <p className="mt-5 text-[13px] text-gray-500 leading-relaxed whitespace-pre-line">
+              {agentFooter?.disclaimer ||
+                page.business_info?.disclaimer ||
+                '※ 본 사이트의 이미지는 소비자의 이해를 돕기 위해 제작된 것으로 실제 시공 시 다를 수 있습니다.'}
             </p>
           )}
 
