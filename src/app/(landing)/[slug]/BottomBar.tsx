@@ -10,18 +10,10 @@ interface Props {
 }
 
 export default function BottomBar({ phoneNumber, kakaoUrl, isAgent, inquiryHref }: Props) {
-  const { reportClick, tier, enabled } = useFraudGate()
+  const { reportClick, enabled } = useFraudGate()
 
-  const guardedClick = (
-    e: React.MouseEvent<HTMLAnchorElement>,
-    label: string,
-    targetUrl?: string
-  ) => {
+  const guardedClick = (label: string, targetUrl?: string) => {
     if (!enabled) return
-    if (tier === 'block') {
-      e.preventDefault()
-      return
-    }
     reportClick('cta_click', { targetText: label, targetUrl }).catch(() => {})
   }
 
@@ -31,7 +23,7 @@ export default function BottomBar({ phoneNumber, kakaoUrl, isAgent, inquiryHref 
         {phoneNumber && (
           <a
             href={`tel:${phoneNumber}`}
-            onClick={(e) => guardedClick(e, '전화상담', `tel:${phoneNumber}`)}
+            onClick={() => guardedClick('전화상담', `tel:${phoneNumber}`)}
             className="flex-1 flex items-center justify-center gap-1.5 lg:gap-2 h-10 lg:h-12 text-sm lg:text-base font-bold text-white bg-blue-600 rounded-lg active:opacity-80 hover:bg-blue-700 transition-colors"
           >
             <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4 lg:w-5 lg:h-5" viewBox="0 0 24 24" fill="currentColor">
@@ -45,7 +37,7 @@ export default function BottomBar({ phoneNumber, kakaoUrl, isAgent, inquiryHref 
             href={kakaoUrl}
             target="_blank"
             rel="noopener noreferrer"
-            onClick={(e) => guardedClick(e, '카카오톡 문의', kakaoUrl)}
+            onClick={() => guardedClick('카카오톡 문의', kakaoUrl)}
             className="flex-1 flex items-center justify-center gap-1.5 lg:gap-2 h-10 lg:h-12 text-sm lg:text-base font-bold text-gray-900 bg-[#FEE500] rounded-lg active:opacity-80 hover:bg-[#F5DC00] transition-colors"
           >
             <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4 lg:w-5 lg:h-5" viewBox="0 0 24 24" fill="currentColor">
@@ -58,10 +50,6 @@ export default function BottomBar({ phoneNumber, kakaoUrl, isAgent, inquiryHref 
           <a
             href={inquiryHref || '#inquiry-bottom'}
             onClick={(e) => {
-              if (enabled && tier === 'block') {
-                e.preventDefault()
-                return
-              }
               if (!inquiryHref) {
                 e.preventDefault()
                 document.getElementById('inquiry-bottom')?.scrollIntoView({ behavior: 'smooth' })

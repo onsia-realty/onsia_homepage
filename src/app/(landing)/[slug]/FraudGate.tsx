@@ -1,13 +1,12 @@
 'use client'
 
-import { ReactNode, useCallback, useEffect, useRef, useState } from 'react'
-import { OnsiaFraudTracker, type FraudState } from '@/lib/onsia-tracker'
+import { ReactNode, useCallback, useEffect, useRef } from 'react'
+import { OnsiaFraudTracker } from '@/lib/onsia-tracker'
 import {
   FraudGateContext,
   FRAUD_NOOP_VALUE,
   type FraudGateContextValue,
 } from './FraudGateContext'
-import FraudWarningHost from './FraudWarningHost'
 
 interface FraudGateProps {
   siteId: string
@@ -44,7 +43,6 @@ function ActiveFraudGate({
   children,
 }: FraudGateProps & { endpoint: string }) {
   const trackerRef = useRef<OnsiaFraudTracker | null>(null)
-  const [state, setState] = useState<FraudState>({ tier: 'ok', riskScore: 0, reasons: [] })
 
   useEffect(() => {
     const tracker = new OnsiaFraudTracker({
@@ -55,11 +53,9 @@ function ActiveFraudGate({
     })
     trackerRef.current = tracker
 
-    const unsubscribe = tracker.onStateChange(setState)
     tracker.init()
 
     return () => {
-      unsubscribe()
       tracker.destroy()
       trackerRef.current = null
     }
@@ -67,24 +63,14 @@ function ActiveFraudGate({
 
   const reportClick = useCallback<FraudGateContextValue['reportClick']>(async (eventType, opts) => {
     const tracker = trackerRef.current
-    if (!tracker) return { allow: true, tier: 'ok' }
+    if (!tracker) return
     await tracker.reportClick(eventType, opts)
-    const t = tracker.getState().tier
-    return { allow: t !== 'block', tier: t }
   }, [])
 
   const value: FraudGateContextValue = {
-    tier: state.tier,
-    riskScore: state.riskScore,
-    reasons: state.reasons,
     enabled: true,
     reportClick,
   }
 
-  return (
-    <FraudGateContext.Provider value={value}>
-      {children}
-      <FraudWarningHost />
-    </FraudGateContext.Provider>
-  )
+  return <FraudGateContext.Provider value={value}>{children}</FraudGateContext.Provider>
 }

@@ -12,17 +12,11 @@ export default function CallBanner({ phone, agentName }: Props) {
   const isAgent = !!agentName
   const displayNumber = isAgent ? phone.replace(/^010-?/, '') : phone
 
-  const { reportClick, tier, enabled } = useFraudGate()
+  const { reportClick, enabled } = useFraudGate()
 
-  const handleClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
+  const handleClick = () => {
     // 부정클릭 게이트 비활성 → 기존 동작 100% 유지
     if (!enabled) return
-
-    // 이미 차단 상태 → 통화 차단
-    if (tier === 'block') {
-      e.preventDefault()
-      return
-    }
 
     // 광고 클릭으로 보고 (서버에서 fraud 판정 후 응답)
     reportClick('cta_click', { targetText: '전화상담', targetUrl: `tel:${phone}` }).catch(() => {})

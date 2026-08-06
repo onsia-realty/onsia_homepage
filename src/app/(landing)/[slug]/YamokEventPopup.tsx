@@ -97,12 +97,7 @@ export default function YamokEventPopup({ pageId, slug, storageKey }: Props) {
     }
     setIsSubmitting(true)
     if (fraudGate.enabled) {
-      const gate = await fraudGate.reportClick('inquiry_submit', { targetText: '이벤트 접수' })
-      if (!gate.allow) {
-        setError('현재 접속에서 비정상 패턴이 감지되어 접수가 차단되었습니다. 1668-5257로 문의해주세요.')
-        setIsSubmitting(false)
-        return
-      }
+      fraudGate.reportClick('inquiry_submit', { targetText: '이벤트 접수' }).catch(() => {})
     }
     const urlParams = new URLSearchParams(window.location.search)
     try {

@@ -55,16 +55,9 @@ export default function InquiryForm({ pageId, slug, accentColor, agentCode, agen
 
     setIsSubmitting(true)
 
-    // 부정클릭 게이트 체크 (활성 시) — block tier면 submit 차단
+    // 부정클릭 트래킹 보고 (제출은 차단하지 않음)
     if (fraudGate.enabled) {
-      const gate = await fraudGate.reportClick('inquiry_submit', {
-        targetText: '관심고객 등록',
-      })
-      if (!gate.allow) {
-        setError('현재 접속에서 비정상 패턴이 감지되어 등록이 차단되었습니다. 1668-5257로 직접 문의해주세요.')
-        setIsSubmitting(false)
-        return
-      }
+      fraudGate.reportClick('inquiry_submit', { targetText: '관심고객 등록' }).catch(() => {})
     }
 
     const urlParams = new URLSearchParams(window.location.search)

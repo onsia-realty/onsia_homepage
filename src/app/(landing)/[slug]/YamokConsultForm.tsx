@@ -49,12 +49,7 @@ export default function YamokConsultForm({ pageId, slug }: Props) {
     }
     setIsSubmitting(true)
     if (fraudGate.enabled) {
-      const gate = await fraudGate.reportClick('inquiry_submit', { targetText: '상담 신청' })
-      if (!gate.allow) {
-        setError('현재 접속에서 비정상 패턴이 감지되어 접수가 차단되었습니다. 1668-5257로 문의해주세요.')
-        setIsSubmitting(false)
-        return
-      }
+      fraudGate.reportClick('inquiry_submit', { targetText: '상담 신청' }).catch(() => {})
     }
     // 비고를 message에 저장 (방문예약 필드 제거 — DB 미수집 항목)
     const message = memo.trim() || '[상담 신청]'
