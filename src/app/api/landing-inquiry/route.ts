@@ -34,7 +34,7 @@ export async function POST(request: NextRequest) {
       projectName = page?.project_name || slug
     }
     try {
-      const smsResult = await notifyAdmin({ name, phone, projectName, agentName: agent_name })
+      const smsResult = await notifyAdmin({ name, phone, projectName, agentName: agent_name, slug, agentCode: agent_code })
       console.log('SMS 발송 결과:', smsResult)
     } catch (err) {
       console.error('SMS 발송 실패:', err)
