@@ -21,6 +21,7 @@ import YamokReserveCounter from './YamokReserveCounter'
 import YamokInquiryGift from './YamokInquiryGift'
 import YamokEventPopup from './YamokEventPopup'
 import YamokConsultSection from './YamokConsultSection'
+import YamokYsHeroCopy from './YamokYsHeroCopy'
 import Reveal from './Reveal'
 import { YAMOK_FAQ } from './yamok-faq'
 import BreadcrumbStructuredData from './BreadcrumbStructuredData'
@@ -336,6 +337,10 @@ export default async function LandingPage({ params, searchParams }: Props) {
               </div>
             ) : (
               <h1 className="sr-only">{page.project_name}</h1>
+            )}
+            {/* 윤상(?a=ys) 전용 히어로 카피 — 광고 심사용 "4억원대" 텍스트 노출 (하단 subtitle 오버레이와 겹치지 않게 상단 배치) */}
+            {slug === 'yamok-grandhill' && agentCodeStr === 'ys' && (
+              <YamokYsHeroCopy variant="mobile" />
             )}
           </section>
         ) : (

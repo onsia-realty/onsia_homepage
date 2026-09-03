@@ -10,6 +10,7 @@ import YamokReserveCounter from './YamokReserveCounter'
 import YamokStatsBand from './YamokStatsBand'
 import YamokInquiryGift from './YamokInquiryGift'
 import YamokConsultSection from './YamokConsultSection'
+import YamokYsHeroCopy from './YamokYsHeroCopy'
 import Reveal from './Reveal'
 import type { BusinessInfo as FullBusinessInfo } from '@/lib/supabase-landing'
 import { getAgentFooter } from './agent-footer'
@@ -143,6 +144,8 @@ export default function PCLanding({
   const agentFooter = isAgent ? getAgentFooter(slug, agentCode) : undefined
   const navItems = navLinks && navLinks.length > 0 ? navLinks : DEFAULT_NAV_ITEMS
   const isYamok = slug === 'yamok-grandhill'
+  // 윤상(?a=ys) 전용 히어로 카피 — 광고 심사용 "4억원대" 텍스트 노출
+  const isYamokYs = isYamok && agentCode === 'ys'
   const [lightboxIdx, setLightboxIdx] = useState<number | null>(null)
 
   return (
@@ -246,6 +249,8 @@ export default function PCLanding({
           <div className="absolute inset-0" style={{ background: `linear-gradient(135deg, ${primaryColor}, ${primaryColor}dd)` }} />
         )}
         {/* No text overlay - the hero image contains its own marketing text */}
+        {/* 예외: 윤상(?a=ys) 페이지만 히어로 위에 실제 HTML 텍스트 카피를 얹는다 (켄번즈 확대 영향 없는 별도 레이어) */}
+        {isYamokYs && <YamokYsHeroCopy variant="pc" />}
       </section>
 
       {/* ===== CALL BANNER ===== */}
