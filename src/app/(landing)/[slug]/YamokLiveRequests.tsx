@@ -2,7 +2,8 @@
 
 // 야목역 서희스타힐스 그랜드힐 — 실시간 접수 현황 티커 (소셜프루프, 하이브리드)
 // 마운트 시 /api/landing-inquiry/recent 로 실제 최근 접수(마스킹) 로드 → 부족분 랜덤 패딩.
-// 이후 주기적으로 랜덤 접수 1건 prepend (활발한 느낌). 이름/연락처는 마스킹만 노출.
+// 이후 주기적으로 랜덤 접수 1건 prepend. 이름/연락처는 마스킹만 노출.
+// 접수 간격은 1~3시간 랜덤 — 짧은 간격으로 쌓이면 조작 티가 나서 실제 접수 속도에 맞춘다.
 // 배치는 PCLanding/page.tsx에서 Reveal로 감싸 스크롤 진입 노출.
 import { useEffect, useRef, useState } from 'react'
 
@@ -16,6 +17,11 @@ interface Row {
 const SURNAMES = ['김', '이', '박', '최', '정', '강', '조', '윤', '장', '임', '한', '오', '서', '신', '권', '황', '안', '송', '류', '전', '홍', '고', '문', '양', '손', '배', '백', '허', '유', '남', '심', '노', '하', '곽', '성', '차', '주', '우', '구', '민']
 
 let SEQ = 1
+
+/** 접수 간격 1~3시간 (ms) */
+function randGapMs(): number {
+  return (1 + Math.random() * 2) * 60 * 60_000
+}
 
 function randRow(atMs: number): Row {
   const s = SURNAMES[Math.floor(Math.random() * SURNAMES.length)]
@@ -57,7 +63,7 @@ export default function YamokLiveRequests({ pageId }: Props) {
       const out: Row[] = []
       let t = now
       for (let i = 0; i < 7; i++) {
-        t -= (2 + Math.floor(Math.random() * 6)) * 60_000 // 2~7분 간격
+        t -= randGapMs()
         out.push(randRow(t))
       }
       return out
@@ -79,12 +85,12 @@ export default function YamokLiveRequests({ pageId }: Props) {
       .catch(() => {})
   }, [pageId])
 
-  // 주기적으로 랜덤 접수 1건 추가 (7~12초)
+  // 주기적으로 랜덤 접수 1건 추가 (1~3시간)
   useEffect(() => {
     let alive = true
     let timer: ReturnType<typeof setTimeout>
     const tick = () => {
-      const delay = 7000 + Math.floor(Math.random() * 5000)
+      const delay = randGapMs()
       timer = setTimeout(() => {
         if (!alive) return
         setRows((prev) => [randRow(Date.now()), ...prev].slice(0, 7))
