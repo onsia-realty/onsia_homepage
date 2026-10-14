@@ -6,11 +6,6 @@ const nextConfig: NextConfig = {
   typescript: {
     ignoreBuildErrors: true,
   },
-  // sitemap/rss는 런타임에 content/guide의 MDX를 fs로 읽음 → 서버 번들에 포함
-  outputFileTracingIncludes: {
-    '/sitemap.xml': ['./content/guide/**/*'],
-    '/rss.xml': ['./content/guide/**/*'],
-  },
   images: {
     qualities: [25, 50, 75, 100],
     formats: ['image/webp', 'image/avif'],
@@ -95,6 +90,11 @@ const nextConfig: NextConfig = {
         destination: '/subscriptions',
         permanent: true,
       },
+      // 폐지된 섹션(경매·AI 부동산시세·분양가이드) → 홈으로 영구 리다이렉트
+      ...['/auctions', '/market', '/guide'].flatMap((p) => [
+        { source: p, destination: '/', permanent: true },
+        { source: `${p}/:path*`, destination: '/', permanent: true },
+      ]),
     ];
   },
 };

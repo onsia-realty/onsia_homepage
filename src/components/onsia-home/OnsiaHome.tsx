@@ -1,26 +1,10 @@
 'use client';
 
 // Ported from public/preview/main.html (approved mockup). Markup/CSS/behaviour kept 1:1.
-import { useEffect, useRef, useState } from 'react';
-import { Cormorant_Garamond } from 'next/font/google';
+import { useEffect, useRef } from 'react';
 import s from './OnsiaHome.module.css';
-
-const cormorant = Cormorant_Garamond({
-  weight: ['300', '400', '500'],
-  style: ['normal', 'italic'],
-  subsets: ['latin'],
-  variable: '--font-en',
-  display: 'swap',
-});
-
-const NAV = [
-  ['#about', 'About'],
-  ['#business', 'Business'],
-  ['#creative', 'Creative'],
-  ['#residences', 'Residences'],
-  ['#pr', 'PR Center'],
-  ['#contact', 'Contact'],
-] as const;
+import SiteHeader, { cormorant } from './SiteHeader';
+import SiteFooter from './SiteFooter';
 
 const HERO_SCENES = [
   { label: <>Real Estate &times; Technology</>, h1: <>부동산의 가치를,<br />기술로 증명합니다</> },
@@ -67,7 +51,6 @@ const reduced = () => matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 export default function OnsiaHome() {
   const root = useRef<HTMLDivElement>(null);
-  const header = useRef<HTMLElement>(null);
   const hero = useRef<HTMLElement>(null);
   const pin = useRef<HTMLDivElement>(null);
   const vid = useRef<HTMLVideoElement>(null);
@@ -80,7 +63,6 @@ export default function OnsiaHome() {
   const slider = useRef<HTMLDivElement>(null);
   const cur = useRef<HTMLElement>(null);
   const bar = useRef<HTMLElement>(null);
-  const [open, setOpen] = useState(false);
 
   // smooth anchor scrolling (mockup: html{scroll-behavior:smooth})
   useEffect(() => {
@@ -88,20 +70,6 @@ export default function OnsiaHome() {
     el.style.scrollBehavior = 'smooth';
     return () => { el.style.scrollBehavior = ''; };
   }, []);
-
-  // header solid after hero
-  useEffect(() => {
-    const onScroll = () => header.current!.classList.toggle(s.solid, scrollY > hero.current!.offsetHeight - 88);
-    addEventListener('scroll', onScroll, { passive: true });
-    onScroll();
-    return () => removeEventListener('scroll', onScroll);
-  }, []);
-
-  // mobile menu: lock body scroll
-  useEffect(() => {
-    document.body.style.overflow = open ? 'hidden' : '';
-    return () => { document.body.style.overflow = ''; };
-  }, [open]);
 
   // hero scrub (scroll-world scrub-engine core: blob src, lerped currentTime, coalesced seeks)
   useEffect(() => {
@@ -241,17 +209,7 @@ export default function OnsiaHome() {
       // 시안용 빈 링크(href="#")는 맨 위로 튀지 않게 막음 — 실제 페이지 경로가 생기면 href만 바꾸면 됨
       onClick={e => { if ((e.target as Element).closest('a[href="#"]')) e.preventDefault(); }}
     >
-      <header ref={header} className={`${s.header}${open ? ` ${s.open}` : ''}`}>
-        <div className={s.wrap}>
-          <a href="#" className={s.logo} aria-label="ONSIA">ONSIA</a>
-          <button className={s.burger} aria-label="메뉴 열기" aria-expanded={open} onClick={() => setOpen(o => !o)}><span></span><span></span></button>
-          <nav className={s.nav}>
-            <ul>
-              {NAV.map(([href, t]) => <li key={href}><a href={href} onClick={() => setOpen(false)}>{t}</a></li>)}
-            </ul>
-          </nav>
-        </div>
-      </header>
+      <SiteHeader hero={hero} />
 
       {/* 1. HERO — 스크롤 스크럽 플라이스루 (/media/home/hero.mp4, 5 scenes) */}
       <section ref={hero} className={`${s.sec} ${s.hero}`} id="hero">
@@ -316,7 +274,7 @@ export default function OnsiaHome() {
                 <img src="/media/home/biz/biz_06.jpg" alt="" loading="lazy" />
                 <video src="/media/home/biz/biz_06.mp4" muted loop playsInline preload="none"></video>
               </div>
-              <i className={s.go}>&rarr;</i><span>Inquiry</span><h3>사업 문의하기</h3><p>대표전화 1555-1245 · 현장 마케팅 · 제휴 문의</p>
+              <i className={s.go}>&rarr;</i><span>Inquiry</span><h3>사업 문의하기</h3><p>현장 마케팅 · 제휴 문의</p>
             </a>
           </div>
         </div>
@@ -410,24 +368,7 @@ export default function OnsiaHome() {
         </div>
       </section>
 
-      <footer className={s.footer}>
-        <div className={s.wrap}>
-          <div className={s.foot}>
-            <div>
-              <span className={s.logo}>ONSIA</span>
-              <p className={s.tag}>부동산을 가장 잘 아는 IT 기업</p>
-            </div>
-            <dl>
-              <div><dt>상호</dt><dd>온시아 주식회사</dd></div>
-              <div><dt>대표</dt><dd>연대겸</dd></div>
-              <div><dt>사업자등록번호</dt><dd>243-88-01749</dd></div>
-              <div><dt>주소</dt><dd>서울특별시 송파구 중대로 197</dd></div>
-              <div><dt>대표전화</dt><dd>1555-1245</dd></div>
-            </dl>
-          </div>
-          <div className={s.copy}><span>&copy; 2026 ONSIA. ALL RIGHTS RESERVED.</span><a href="#">Admin</a></div>
-        </div>
-      </footer>
+      <SiteFooter />
     </div>
   );
 }

@@ -22,9 +22,7 @@ export default function RemndrSubscriptionsPage() {
     <SubscriptionListClient
       defaultType="remndr"
       title="무순위/잔여세대 청약"
-      subtitle="REMNDR"
       description="무순위 및 잔여세대 청약 일정을 확인하세요"
-      colorTheme="green"
     />
   );
 }

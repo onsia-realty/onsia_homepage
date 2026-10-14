@@ -1,6 +1,5 @@
 import { prisma } from '@/lib/prisma';
 import { getAPTSubscriptions, getOfficetelSubscriptions } from '@/lib/cheongyakApi';
-import { getAllGuidePosts, type GuidePost } from '@/lib/guide';
 
 export async function GET() {
   const baseUrl = 'https://www.onsia.city';
@@ -56,28 +55,6 @@ export async function GET() {
     console.error('RSS: Failed to fetch subscriptions', error);
   }
 
-  // 가이드 글 조회 (content/guide/**/*.mdx)
-  let guidePosts: GuidePost[] = [];
-  try {
-    guidePosts = getAllGuidePosts().slice(0, 50);
-  } catch (error) {
-    console.error('RSS: Failed to load guide posts', error);
-  }
-
-  // 가이드 RSS 아이템
-  const guideItems = guidePosts.map(post => {
-    const url = `${baseUrl}/guide/${encodeURIComponent(post.slug)}`;
-    return `
-    <item>
-      <title><![CDATA[[가이드] ${post.title}]]></title>
-      <link>${url}</link>
-      <guid>${url}</guid>
-      <description><![CDATA[${post.description}]]></description>
-      <pubDate>${new Date(post.publishedAt).toUTCString()}</pubDate>
-      <category>가이드</category>
-    </item>`;
-  }).join('');
-
   // 매물 RSS 아이템
   const propertyItems = properties.map(property => `
     <item>
@@ -105,11 +82,10 @@ export async function GET() {
   <channel>
     <title>ONSIA - 부동산 AI 플랫폼</title>
     <link>${baseUrl}</link>
-    <description>AI 기반 부동산 정보 플랫폼. 분양권, 경매, 청약 정보를 한눈에 확인하세요.</description>
+    <description>AI 기반 부동산 정보 플랫폼. 분양권, 청약 정보를 한눈에 확인하세요.</description>
     <language>ko</language>
     <lastBuildDate>${new Date().toUTCString()}</lastBuildDate>
     <atom:link href="${baseUrl}/rss.xml" rel="self" type="application/rss+xml"/>
-    ${guideItems}
     ${subscriptionItems}
     ${propertyItems}
   </channel>

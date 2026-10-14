@@ -124,7 +124,7 @@ export default function MyPage() {
   const getItemLink = (item: FavoriteItem | ViewHistoryItem) => {
     if (item.property) return `/properties/${item.property.slug}`;
     if (item.subscription) return `/subscriptions/${item.subscription.houseManageNo}`;
-    if (item.auction) return `/auctions/${item.auction.id}`;
+    // 경매 기능 제거됨(docs/archive/경매-기능-설계.md) — 경매 항목은 링크 없음
     return "#";
   };
 

@@ -22,9 +22,7 @@ export default function APTSubscriptionsPage() {
     <SubscriptionListClient
       defaultType="apt"
       title="아파트 청약"
-      subtitle="APT"
       description="전국 아파트 청약 일정을 확인하세요"
-      colorTheme="blue"
     />
   );
 }

@@ -14,3 +14,11 @@ prisma/dev.db-journal
 .playwright-mcp/
 scripts/
 crawl-*.log
+
+# 시안·문서·작업용 캡처 (배포 불필요, docs/mockup/raw 원본 영상만 ~200MB)
+docs/
+/*.png
+/*.jpg
+/*.jpeg
+.next/
+.vercel/output/

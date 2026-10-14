@@ -4,7 +4,6 @@ import { prisma } from '@/lib/prisma';
 import { getLandingPages } from '@/lib/supabase-landing';
 import { CATEGORIES } from '@/app/(landing)/[slug]/[category]/page';
 import { toKoreanSlug, LANDING_DOMAINS, SLUG_TO_DOMAIN } from '@/lib/landing-slugs';
-import { getAllGuidePosts, CLUSTER_LABELS } from '@/lib/guide';
 
 // 사이트맵 전용 청약 API 호출 (캐시 허용)
 async function fetchSubscriptionsForSitemap() {
@@ -90,20 +89,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     // 분양권 매물
     {
       url: `${baseUrl}/properties`,
-      lastModified: new Date(),
-      changeFrequency: 'daily',
-      priority: 0.9,
-    },
-    // 경매
-    {
-      url: `${baseUrl}/auctions`,
-      lastModified: new Date(),
-      changeFrequency: 'daily',
-      priority: 0.9,
-    },
-    // AI 부동산시세
-    {
-      url: `${baseUrl}/market`,
       lastModified: new Date(),
       changeFrequency: 'daily',
       priority: 0.9,
@@ -194,36 +179,5 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     console.error('Sitemap: Failed to fetch subscriptions', error);
   }
 
-  // /guide 콘텐츠 허브 (목록 + 클러스터 토픽)
-  // 페이지네이션(/guide/page/N)은 제외 — 크롤러가 목록 링크로 발견
-  const guidePages: MetadataRoute.Sitemap = [
-    {
-      url: `${baseUrl}/guide`,
-      lastModified: new Date(),
-      changeFrequency: 'daily',
-      priority: 0.8,
-    },
-    ...Object.keys(CLUSTER_LABELS).map((cluster) => ({
-      url: `${baseUrl}/guide/topic/${cluster}`,
-      lastModified: new Date(),
-      changeFrequency: 'weekly' as const,
-      priority: 0.6,
-    })),
-  ];
-
-  // 동적 가이드 글 (content/guide/**/*.mdx)
-  let guidePostPages: MetadataRoute.Sitemap = [];
-  try {
-    // 한글 slug는 sitemap 표준(RFC 3986)에 맞춰 percent-encoding
-    guidePostPages = getAllGuidePosts().map((post) => ({
-      url: `${baseUrl}/guide/${encodeURIComponent(post.slug)}`,
-      lastModified: new Date(post.updatedAt),
-      changeFrequency: 'weekly' as const,
-      priority: 0.8,
-    }));
-  } catch (error) {
-    console.error('Sitemap: Failed to load guide posts', error);
-  }
-
-  return [...staticPages, ...guidePages, ...landingPages, ...propertyPages, ...subscriptionPages, ...guidePostPages];
+  return [...staticPages, ...landingPages, ...propertyPages, ...subscriptionPages];
 }

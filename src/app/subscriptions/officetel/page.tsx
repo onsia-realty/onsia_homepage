@@ -22,9 +22,7 @@ export default function OfficetelSubscriptionsPage() {
     <SubscriptionListClient
       defaultType="officetel"
       title="오피스텔 청약"
-      subtitle="OFFICETEL"
       description="전국 오피스텔 및 도시형생활주택 청약 일정을 확인하세요"
-      colorTheme="purple"
     />
   );
 }

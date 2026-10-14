@@ -1,16 +1,11 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
-import {
-  Search, Calendar, Building2, MapPin, Users,
-  ChevronLeft, ChevronRight, ExternalLink, Clock,
-  CheckCircle, XCircle
-} from 'lucide-react';
-import { Navigation } from '@/components/Navigation';
-import { GlassCard } from '@/components/ui/GlassCard';
-import { ParticlesBackground } from '@/components/ParticlesBackground';
+import { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
+import h from '@/components/onsia-home/OnsiaHome.module.css';
+import s from './sub.module.css';
+import SiteHeader, { cormorant } from '@/components/onsia-home/SiteHeader';
+import SiteFooter from '@/components/onsia-home/SiteFooter';
 
 interface SubscriptionProperty {
   HOUSE_MANAGE_NO: string;
@@ -24,12 +19,9 @@ interface SubscriptionProperty {
   RCEPT_BGNDE: string;
   RCEPT_ENDDE: string;
   PRZWNER_PRESNATN_DE: string;
-  CNTRCT_CNCLS_BGNDE: string;
-  CNTRCT_CNCLS_ENDDE: string;
   SUBSCRPT_AREA_CODE_NM: string;
   CNSTRCT_ENTRPS_NM: string;
   PBLANC_URL: string;
-  HMPG_ADRES: string;
   SPSPLY_RCEPT_BGNDE: string | null;
   GNRL_RNK1_CRSPAREA_RCPTDE: string | null;
   GNRL_RNK2_CRSPAREA_RCPTDE: string | null;
@@ -38,787 +30,290 @@ interface SubscriptionProperty {
   dDay: number | null;
 }
 
-interface SubscriptionStats {
-  total: number;
-  upcoming: number;
-  open: number;
-  closed: number;
+type Type = '' | 'apt' | 'officetel' | 'remndr';
+
+interface Props {
+  defaultType?: Exclude<Type, ''>;
+  title?: string;
+  description?: string;
 }
 
-interface CalendarEvent {
-  date: string;
-  type: 'announcement' | 'application' | 'result' | 'special' | 'rank1' | 'rank2';
-  title: string;
-  houseName: string;
-  subscription: SubscriptionProperty;
-}
+const ITEMS_PER_PAGE = 12;
+const REGIONS = ['서울', '경기', '인천', '부산', '대구', '광주', '대전', '울산', '세종', '강원', '충북', '충남', '전북', '전남', '경북', '경남', '제주'];
+const TABS: [Type, string][] = [['', '전체'], ['apt', 'APT'], ['officetel', '오피스텔'], ['remndr', '무순위·잔여']];
+const EVENTS: [keyof SubscriptionProperty, string][] = [
+  ['RCRIT_PBLANC_DE', '공고'], ['SPSPLY_RCEPT_BGNDE', '특별공급'], ['GNRL_RNK1_CRSPAREA_RCPTDE', '1순위'],
+  ['GNRL_RNK2_CRSPAREA_RCPTDE', '2순위'], ['PRZWNER_PRESNATN_DE', '당첨발표'],
+];
 
-interface SubscriptionListClientProps {
-  defaultType: 'apt' | 'officetel' | 'remndr';
-  title: string;
-  subtitle: string;
-  description: string;
-  colorTheme: 'blue' | 'purple' | 'green' | 'orange';
-}
+// 청약홈 링크: 공공데이터의 공고상세URL(PBLANC_URL) 우선, 없으면 청약홈 메인
+export const applyHomeUrl = (sub: { PBLANC_URL?: string }) =>
+  sub.PBLANC_URL?.startsWith('http') ? sub.PBLANC_URL : 'https://www.applyhome.co.kr';
 
-const colorThemes = {
-  blue: {
-    badge: 'bg-blue-500/20 border-blue-400/30 text-blue-200',
-    gradient: 'from-blue-400 via-cyan-300 to-blue-500',
-    button: 'from-blue-500 to-cyan-500',
-    shadow: 'shadow-blue-500/30',
-  },
-  purple: {
-    badge: 'bg-purple-500/20 border-purple-400/30 text-purple-200',
-    gradient: 'from-purple-400 via-pink-300 to-purple-500',
-    button: 'from-purple-500 to-pink-500',
-    shadow: 'shadow-purple-500/30',
-  },
-  green: {
-    badge: 'bg-green-500/20 border-green-400/30 text-green-200',
-    gradient: 'from-green-400 via-teal-300 to-green-500',
-    button: 'from-green-500 to-teal-500',
-    shadow: 'shadow-green-500/30',
-  },
-  orange: {
-    badge: 'bg-orange-500/20 border-orange-400/30 text-orange-200',
-    gradient: 'from-orange-400 via-amber-300 to-orange-500',
-    button: 'from-orange-500 to-amber-500',
-    shadow: 'shadow-orange-500/30',
-  },
+const ymd = (d: Date) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+const fmt = (v: string | null, full = false) => {
+  if (!v) return '-';
+  const d = new Date(v);
+  if (isNaN(d.getTime())) return '-';
+  const md = `${String(d.getMonth() + 1).padStart(2, '0')}.${String(d.getDate()).padStart(2, '0')}`;
+  return full ? `${d.getFullYear()}.${md}` : md;
 };
+const dday = (n: number | null) => n === null ? '' : n === 0 ? 'D-DAY' : n > 0 ? `D-${n}` : `D+${-n}`;
 
-const getSubscriptionUrl = (sub: SubscriptionProperty): string => {
-  if (sub.PBLANC_URL && sub.PBLANC_URL.startsWith('http')) {
-    return sub.PBLANC_URL;
-  }
-  return `https://www.applyhome.co.kr/ai/aia/selectAPTLttotPblancDetail.do?houseManageNo=${sub.HOUSE_MANAGE_NO}&pblancNo=${sub.PBLANC_NO}`;
-};
+// 원격 이미지는 동일 출처 프록시로 (핫링크 차단·mixed content 회피)
+export const proxied = (url: string) => `/api/img?u=${encodeURIComponent(url)}`;
 
-export default function SubscriptionListClient({
-  defaultType,
-  title,
-  subtitle,
-  description,
-  colorTheme,
-}: SubscriptionListClientProps) {
-  const [subscriptions, setSubscriptions] = useState<SubscriptionProperty[]>([]);
-  const [stats, setStats] = useState<SubscriptionStats>({ total: 0, upcoming: 0, open: 0, closed: 0 });
-  const [loading, setLoading] = useState(true);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
-  const [searchTerm, setSearchTerm] = useState('');
-  const [selectedRegion, setSelectedRegion] = useState('');
-  const [calendarEvents, setCalendarEvents] = useState<CalendarEvent[]>([]);
-  const [selectedCalendarDate, setSelectedCalendarDate] = useState<Date | null>(null);
+/** 단지 대표 이미지(없으면 단지명 첫 글자 플레이스홀더). 16:10 고정 박스라 레이아웃 시프트 없음 */
+export function Thumb({ name, url, children, className }: { name: string; url: string | null | undefined; children?: React.ReactNode; className?: string }) {
+  const [loaded, setLoaded] = useState(false);
+  return (
+    <div className={`${s.thumb}${className ? ` ${className}` : ''}`}>
+      <span className={s.ph} aria-hidden="true"><b>{name.trim().charAt(0)}</b><small>ONSIA</small></span>
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      {url && <img src={proxied(url)} alt={`${name} 대표 이미지`} loading="lazy" decoding="async" className={loaded ? s.shown : ''} onLoad={() => setLoaded(true)} />}
+      {children}
+    </div>
+  );
+}
 
-  const theme = colorThemes[colorTheme];
-  const ITEMS_PER_PAGE = 12;
-
-  const regions = ['서울', '경기', '인천', '부산', '대구', '광주', '대전', '울산', '세종', '강원', '충북', '충남', '전북', '전남', '경북', '경남', '제주'];
-
-  const [selectedDate, setSelectedDate] = useState<Date>(new Date());
-
+/** 렌더된 단지들의 썸네일을 배치로 조회 (캐시 미스는 서버가 소량씩 해석) */
+function useThumbs(ids: string[]) {
+  const [thumbs, setThumbs] = useState<Record<string, string | null>>({});
+  const key = ids.join(',');
   useEffect(() => {
-    const fetchSubscriptions = async () => {
-      setLoading(true);
-      try {
-        const params = new URLSearchParams({
-          page: currentPage.toString(),
-          perPage: ITEMS_PER_PAGE.toString(),
-          type: defaultType,
-        });
-
-        if (selectedRegion) params.append('region', selectedRegion);
-
-        const response = await fetch(`/api/subscriptions?${params}`);
-        const data = await response.json();
-
-        if (data.data) {
-          setSubscriptions(data.data);
-          setStats(data.stats);
-          setTotalPages(data.pagination.totalPages);
-
-          const events: CalendarEvent[] = [];
-          data.data.forEach((sub: SubscriptionProperty) => {
-            if (sub.RCRIT_PBLANC_DE) {
-              events.push({
-                date: sub.RCRIT_PBLANC_DE,
-                type: 'announcement',
-                title: '공고',
-                houseName: sub.HOUSE_NM,
-                subscription: sub
-              });
-            }
-            if (sub.SPSPLY_RCEPT_BGNDE) {
-              events.push({
-                date: sub.SPSPLY_RCEPT_BGNDE,
-                type: 'special',
-                title: '특별공급',
-                houseName: sub.HOUSE_NM,
-                subscription: sub
-              });
-            }
-            if (sub.GNRL_RNK1_CRSPAREA_RCPTDE) {
-              events.push({
-                date: sub.GNRL_RNK1_CRSPAREA_RCPTDE,
-                type: 'rank1',
-                title: '1순위',
-                houseName: sub.HOUSE_NM,
-                subscription: sub
-              });
-            }
-            if (sub.GNRL_RNK2_CRSPAREA_RCPTDE) {
-              events.push({
-                date: sub.GNRL_RNK2_CRSPAREA_RCPTDE,
-                type: 'rank2',
-                title: '2순위',
-                houseName: sub.HOUSE_NM,
-                subscription: sub
-              });
-            }
-            if (sub.PRZWNER_PRESNATN_DE) {
-              events.push({
-                date: sub.PRZWNER_PRESNATN_DE,
-                type: 'result',
-                title: '당첨발표',
-                houseName: sub.HOUSE_NM,
-                subscription: sub
-              });
-            }
-          });
-          setCalendarEvents(events);
-        }
-      } catch (error) {
-        console.error('Failed to fetch subscriptions:', error);
-        setSubscriptions([]);
-      } finally {
-        setLoading(false);
+    let alive = true;
+    const todo = key ? key.split(',').filter(id => !(id in thumbs)) : [];
+    if (!todo.length) return;
+    (async () => {
+      for (let i = 0; i < todo.length; i += 40) {
+        try {
+          const r = await fetch(`/api/subscriptions/thumbnails?ids=${todo.slice(i, i + 40).join(',')}`).then(r => r.json());
+          if (alive && r.data) setThumbs(t => ({ ...t, ...r.data }));
+        } catch (e) { console.error('썸네일 조회 실패:', e); }
       }
-    };
+    })();
+    return () => { alive = false; };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [key]);
+  return thumbs;
+}
 
-    fetchSubscriptions();
-  }, [currentPage, selectedRegion, defaultType]);
+function Card({ sub, thumb }: { sub: SubscriptionProperty; thumb: string | null | undefined }) {
+  return (
+    <article className={`${s.card}${sub.status === 'open' ? ` ${s.open}` : ''}`}>
+      <Thumb name={sub.HOUSE_NM} url={thumb}>
+        <span className={`${s.dday}${sub.status === 'closed' ? ` ${s.closed}` : ''}`}>{sub.status === 'closed' ? 'CLOSED' : dday(sub.dDay)}</span>
+      </Thumb>
+      <div className={s.top}>
+        <span className={s.tag}>{sub.SUBSCRPT_AREA_CODE_NM} · {sub.HOUSE_SECD_NM}</span>
+      </div>
+      <span className={`${s.status}${sub.status === 'open' ? ` ${s.open}` : ''}`}>{sub.statusText}</span>
+      <h3>{sub.HOUSE_NM}</h3>
+      <p className={s.where}>{sub.HSSPLY_ADRES}</p>
+      <dl className={s.rows}>
+        <div><dt>접수 기간</dt><dd className={s.num}>{fmt(sub.RCEPT_BGNDE)} – {fmt(sub.RCEPT_ENDDE)}</dd></div>
+        <div><dt>당첨발표</dt><dd className={s.num}>{fmt(sub.PRZWNER_PRESNATN_DE, true)}</dd></div>
+        <div><dt>세대수</dt><dd className={s.num}>{sub.TOT_SUPLY_HSHLDCO?.toLocaleString() || '-'}</dd></div>
+        <div><dt>시공사</dt><dd>{sub.CNSTRCT_ENTRPS_NM || '-'}</dd></div>
+      </dl>
+      <div className={s.acts}>
+        <Link href={`/subscriptions/${sub.HOUSE_MANAGE_NO}`}>상세보기</Link>
+        <a href={applyHomeUrl(sub)} target="_blank" rel="noopener noreferrer" className={s.ext}>청약홈 바로가기 ↗</a>
+      </div>
+    </article>
+  );
+}
 
-  const filteredSubscriptions = subscriptions.filter(sub => {
-    const matchesSearch = sub.HOUSE_NM.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         sub.HSSPLY_ADRES.toLowerCase().includes(searchTerm.toLowerCase());
-    return matchesSearch;
-  });
+export default function SubscriptionListClient({ defaultType, title = '청약 일정', description = '청약홈 공공데이터로 전국 아파트 청약 일정을 매일 업데이트합니다.' }: Props) {
+  const [all, setAll] = useState<SubscriptionProperty[]>([]);
+  const [list, setList] = useState<SubscriptionProperty[]>([]);
+  const [total, setTotal] = useState(0);
+  const [loading, setLoading] = useState(true);
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [search, setSearch] = useState('');
+  const [region, setRegion] = useState('');
+  const [type, setType] = useState<Type>(defaultType ?? '');
+  const [month, setMonth] = useState(() => { const d = new Date(); d.setDate(1); return d; });
+  const [selDate, setSelDate] = useState<Date | null>(null);
 
-  const formatDate = (dateStr: string) => {
-    if (!dateStr) return '-';
-    const date = new Date(dateStr);
-    return `${date.getMonth() + 1}/${date.getDate()}`;
-  };
+  // 상단 섹션 + 캘린더용: 현재 유형의 전체 목록 (API 상한 100건/유형)
+  useEffect(() => {
+    const p = new URLSearchParams({ page: '1', perPage: '300' });
+    if (defaultType) p.set('type', defaultType);
+    fetch(`/api/subscriptions?${p}`).then(r => r.json()).then(d => setAll(d.data ?? [])).catch(e => console.error('청약 전체 조회 실패:', e));
+  }, [defaultType]);
 
-  const formatFullDate = (dateStr: string) => {
-    if (!dateStr) return '-';
-    const date = new Date(dateStr);
-    return `${date.getFullYear()}.${String(date.getMonth() + 1).padStart(2, '0')}.${String(date.getDate()).padStart(2, '0')}`;
-  };
+  // 목록(페이지네이션 + 필터)
+  useEffect(() => {
+    let alive = true;
+    setLoading(true);
+    const p = new URLSearchParams({ page: String(page), perPage: String(ITEMS_PER_PAGE) });
+    if (region) p.set('region', region);
+    if (type) p.set('type', type);
+    fetch(`/api/subscriptions?${p}`).then(r => r.json()).then(d => {
+      if (!alive) return;
+      setList(d.data ?? []); setTotal(d.stats?.total ?? 0); setTotalPages(d.pagination?.totalPages ?? 1);
+    }).catch(e => { console.error('청약 목록 조회 실패:', e); if (alive) setList([]); })
+      .finally(() => { if (alive) setLoading(false); });
+    return () => { alive = false; };
+  }, [page, region, type]);
 
-  const getEventsForDate = (date: Date) => {
-    const dateStr = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
-    return calendarEvents.filter(e => e.date === dateStr);
-  };
+  const today = ymd(new Date());
+  const weekEnd = ymd(new Date(Date.now() + 7 * 864e5));
+  const openNow = useMemo(() => all.filter(x => x.status === 'open'), [all]);
+  const thisWeek = useMemo(() => all.filter(x => x.status === 'upcoming' && x.RCEPT_BGNDE > today && x.RCEPT_BGNDE <= weekEnd), [all, today, weekEnd]);
+  const thumbs = useThumbs(useMemo(() => [...new Set([...openNow, ...thisWeek, ...list].map(x => x.HOUSE_MANAGE_NO))], [openNow, thisWeek, list]));
 
-  const getSubscriptionsForSelectedDate = () => {
-    if (!selectedCalendarDate) return [];
-    const events = getEventsForDate(selectedCalendarDate);
-    const uniqueSubs = new Map<string, { sub: SubscriptionProperty; events: CalendarEvent[] }>();
+  // 날짜별 이벤트 맵
+  const events = useMemo(() => {
+    const m = new Map<string, { sub: SubscriptionProperty; labels: string[] }[]>();
+    all.forEach(sub => EVENTS.forEach(([k, label]) => {
+      const d = sub[k] as string | null;
+      if (!d) return;
+      const arr = m.get(d) ?? [];
+      const hit = arr.find(e => e.sub.HOUSE_MANAGE_NO === sub.HOUSE_MANAGE_NO);
+      if (hit) hit.labels.push(label); else arr.push({ sub, labels: [label] });
+      m.set(d, arr);
+    }));
+    return m;
+  }, [all]);
 
-    events.forEach(event => {
-      const key = `${event.subscription.HOUSE_MANAGE_NO}-${event.subscription.PBLANC_NO}`;
-      if (uniqueSubs.has(key)) {
-        uniqueSubs.get(key)!.events.push(event);
-      } else {
-        uniqueSubs.set(key, { sub: event.subscription, events: [event] });
-      }
-    });
+  const q = search.trim().toLowerCase();
+  const shown = q ? list.filter(x => x.HOUSE_NM.toLowerCase().includes(q) || x.HSSPLY_ADRES.toLowerCase().includes(q)) : list;
 
-    return Array.from(uniqueSubs.values()).slice(0, 4);
-  };
-
-  const selectedDateSubscriptions = getSubscriptionsForSelectedDate();
-  const selectedDateStr = selectedCalendarDate
-    ? `${selectedCalendarDate.getFullYear()}년 ${selectedCalendarDate.getMonth() + 1}월 ${selectedCalendarDate.getDate()}일`
-    : '';
-
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'open':
-        return 'bg-green-500/20 text-green-400 border-green-500/30';
-      case 'upcoming':
-        return 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30';
-      case 'closed':
-        return 'bg-gray-500/20 text-gray-400 border-gray-500/30';
-      default:
-        return 'bg-gray-500/20 text-gray-400 border-gray-500/30';
-    }
-  };
-
-  const typeLabels: Record<string, string> = {
-    apt: '아파트',
-    officetel: '오피스텔',
-    remndr: '무순위/잔여',
-  };
+  // 캘린더 셀
+  const y = month.getFullYear(), mo = month.getMonth();
+  const first = new Date(y, mo, 1).getDay(), days = new Date(y, mo + 1, 0).getDate();
+  const selKey = selDate ? ymd(selDate) : '';
+  const selEvents = selKey ? events.get(selKey) ?? [] : [];
+  const pages = Array.from({ length: Math.min(5, totalPages) }, (_, i) =>
+    totalPages <= 5 ? i + 1 : page <= 3 ? i + 1 : page >= totalPages - 2 ? totalPages - 4 + i : page - 2 + i);
 
   return (
-    <>
-      <Navigation />
-      <main className="relative min-h-screen">
-        <ParticlesBackground />
-
-        {/* 페이지 헤더 */}
-        <section className="relative pt-20 pb-8">
-          <div className="container mx-auto px-6">
-            <motion.div
-              className="max-w-4xl mx-auto text-center mb-12"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8 }}
-            >
-              <div className={`inline-flex items-center gap-2 px-6 py-3 rounded-full ${theme.badge} border mb-6 backdrop-blur-sm`}>
-                <Calendar className="w-5 h-5" />
-                <span className="font-semibold text-sm">{typeLabels[defaultType]} 청약</span>
-              </div>
-
-              <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-6">
-                <span className={`bg-gradient-to-r ${theme.gradient} bg-clip-text text-transparent`}>
-                  {title}
-                </span>
-              </h1>
-
-              <p className="text-lg text-gray-300 leading-relaxed mb-8">
-                {description}
-              </p>
-
-              {/* 다른 카테고리 링크 */}
-              <div className="flex flex-wrap justify-center gap-3">
-                <Link href="/subscriptions">
-                  <button className="px-6 py-3 rounded-full font-semibold text-sm bg-white/10 text-gray-300 hover:bg-white/20 hover:text-white border border-white/10 transition-all duration-300">
-                    전체
-                  </button>
-                </Link>
-                <Link href="/subscriptions/apt">
-                  <button className={`px-6 py-3 rounded-full font-semibold text-sm transition-all duration-300 ${
-                    defaultType === 'apt'
-                      ? 'bg-gradient-to-r from-blue-500 to-cyan-500 text-white shadow-lg shadow-blue-500/30'
-                      : 'bg-white/10 text-gray-300 hover:bg-white/20 hover:text-white border border-white/10'
-                  }`}>
-                    APT
-                  </button>
-                </Link>
-                <Link href="/subscriptions/officetel">
-                  <button className={`px-6 py-3 rounded-full font-semibold text-sm transition-all duration-300 ${
-                    defaultType === 'officetel'
-                      ? 'bg-gradient-to-r from-purple-500 to-pink-500 text-white shadow-lg shadow-purple-500/30'
-                      : 'bg-white/10 text-gray-300 hover:bg-white/20 hover:text-white border border-white/10'
-                  }`}>
-                    오피스텔
-                  </button>
-                </Link>
-                <Link href="/subscriptions/remndr">
-                  <button className={`px-6 py-3 rounded-full font-semibold text-sm transition-all duration-300 ${
-                    defaultType === 'remndr'
-                      ? 'bg-gradient-to-r from-green-500 to-teal-500 text-white shadow-lg shadow-green-500/30'
-                      : 'bg-white/10 text-gray-300 hover:bg-white/20 hover:text-white border border-white/10'
-                  }`}>
-                    무순위/잔여
-                  </button>
-                </Link>
-              </div>
-            </motion.div>
+    <div className={`${h.root} ${cormorant.variable}`}>
+      <SiteHeader />
+      <main className={s.page}>
+        {/* 1. hero */}
+        <section className={`${s.sec} ${s.hero}`}>
+          <div className={h.wrap}>
+            <div className={h.label}>Subscription</div>
+            <h1>{title}</h1>
+            <p>{description}</p>
           </div>
         </section>
 
-        {/* 캘린더 섹션 */}
-        <section className="relative pb-12">
-          <div className="container mx-auto px-6">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.1 }}
-            >
-              <GlassCard className="p-4 md:p-6 mb-8">
-                <div className="flex flex-col md:flex-row md:items-center justify-between mb-4 gap-3">
-                  <div className="flex items-center gap-3">
-                    <div className={`w-10 h-10 rounded-xl bg-gradient-to-br ${theme.button} flex items-center justify-center shadow-lg ${theme.shadow}`}>
-                      <Calendar className="w-5 h-5 text-white" />
-                    </div>
-                    <div>
-                      <h2 className="text-lg md:text-xl font-bold text-white">{title} 일정</h2>
-                      <p className="text-gray-400 text-xs">날짜를 클릭하면 해당일 청약 정보를 확인할 수 있습니다</p>
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <button
-                      onClick={() => {
-                        const newDate = new Date(selectedDate);
-                        newDate.setMonth(newDate.getMonth() - 1);
-                        setSelectedDate(newDate);
-                      }}
-                      className="p-2 rounded-lg bg-white/10 hover:bg-white/20 transition-colors"
-                    >
-                      <ChevronLeft className="w-4 h-4 text-white" />
-                    </button>
-                    <div className="text-base font-bold text-white min-w-[110px] text-center">
-                      {selectedDate.getFullYear()}년 {selectedDate.getMonth() + 1}월
-                    </div>
-                    <button
-                      onClick={() => {
-                        const newDate = new Date(selectedDate);
-                        newDate.setMonth(newDate.getMonth() + 1);
-                        setSelectedDate(newDate);
-                      }}
-                      className="p-2 rounded-lg bg-white/10 hover:bg-white/20 transition-colors"
-                    >
-                      <ChevronRight className="w-4 h-4 text-white" />
-                    </button>
-                  </div>
-                </div>
-
-                {/* 요일 헤더 */}
-                <div className="grid grid-cols-7 gap-1 mb-1">
-                  {['일', '월', '화', '수', '목', '금', '토'].map((day, i) => (
-                    <div key={day} className={`text-center py-1.5 text-xs font-bold ${
-                      i === 0 ? 'text-red-400' : i === 6 ? 'text-blue-400' : 'text-gray-400'
-                    }`}>
-                      {day}
-                    </div>
-                  ))}
-                </div>
-
-                {/* 월간 캘린더 그리드 */}
-                <div className="grid grid-cols-7 gap-1 mb-4">
-                  {(() => {
-                    const year = selectedDate.getFullYear();
-                    const month = selectedDate.getMonth();
-                    const firstDay = new Date(year, month, 1);
-                    const lastDay = new Date(year, month + 1, 0);
-                    const daysInMonth = lastDay.getDate();
-                    const startingDay = firstDay.getDay();
-                    const today = new Date();
-
-                    const cells = [];
-
-                    for (let i = 0; i < startingDay; i++) {
-                      cells.push(<div key={`empty-${i}`} className="h-12 md:h-16" />);
-                    }
-
-                    for (let day = 1; day <= daysInMonth; day++) {
-                      const currentDate = new Date(year, month, day);
-                      const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
-                      const dayEvents = calendarEvents.filter(e => e.date === dateStr);
-                      const hasEvents = dayEvents.length > 0;
-                      const isTodayDate = today.getFullYear() === year && today.getMonth() === month && today.getDate() === day;
-                      const isSelected = selectedCalendarDate?.toDateString() === currentDate.toDateString();
-                      const dayOfWeek = (startingDay + day - 1) % 7;
-
-                      cells.push(
-                        <button
-                          key={day}
-                          onClick={() => hasEvents && setSelectedCalendarDate(isSelected ? null : currentDate)}
-                          className={`h-12 md:h-16 p-0.5 rounded-lg flex flex-col items-center justify-center transition-all ${
-                            isSelected
-                              ? `bg-gradient-to-br ${theme.button} border border-white/30 shadow-md ${theme.shadow}`
-                              : isTodayDate
-                              ? 'bg-cyan-500/30 border border-cyan-400'
-                              : hasEvents
-                              ? 'bg-white/10 border border-white/20 hover:bg-white/20 cursor-pointer'
-                              : 'bg-white/5 border border-white/5'
-                          }`}
-                        >
-                          <span className={`text-xs md:text-sm font-semibold ${
-                            isSelected ? 'text-white' :
-                            isTodayDate ? 'text-white' :
-                            dayOfWeek === 0 ? 'text-red-400' :
-                            dayOfWeek === 6 ? 'text-blue-400' : 'text-gray-300'
-                          }`}>
-                            {day}
-                          </span>
-                          {hasEvents && (
-                            <div className="flex gap-0.5 mt-0.5">
-                              {dayEvents.slice(0, 3).map((event, idx) => (
-                                <div
-                                  key={idx}
-                                  className={`w-1 h-1 rounded-full ${
-                                    isSelected ? 'bg-white' :
-                                    event.type === 'announcement' ? 'bg-blue-400' :
-                                    event.type === 'special' ? 'bg-purple-400' :
-                                    event.type === 'rank1' ? 'bg-green-400' :
-                                    event.type === 'rank2' ? 'bg-cyan-400' : 'bg-orange-400'
-                                  }`}
-                                />
-                              ))}
-                            </div>
-                          )}
-                          {isTodayDate && !isSelected && (
-                            <span className="text-[8px] text-cyan-400">오늘</span>
-                          )}
-                        </button>
-                      );
-                    }
-
-                    return cells;
-                  })()}
-                </div>
-
-                {/* 범례 */}
-                <div className="flex flex-wrap justify-center gap-2 md:gap-3 text-xs border-t border-white/10 pt-3">
-                  <div className="flex items-center gap-1">
-                    <div className="w-2 h-2 rounded-full bg-blue-400" />
-                    <span className="text-gray-400">공고</span>
-                  </div>
-                  <div className="flex items-center gap-1">
-                    <div className="w-2 h-2 rounded-full bg-purple-400" />
-                    <span className="text-gray-400">특별공급</span>
-                  </div>
-                  <div className="flex items-center gap-1">
-                    <div className="w-2 h-2 rounded-full bg-green-400" />
-                    <span className="text-gray-400">1순위</span>
-                  </div>
-                  <div className="flex items-center gap-1">
-                    <div className="w-2 h-2 rounded-full bg-cyan-400" />
-                    <span className="text-gray-400">2순위</span>
-                  </div>
-                  <div className="flex items-center gap-1">
-                    <div className="w-2 h-2 rounded-full bg-orange-400" />
-                    <span className="text-gray-400">당첨발표</span>
-                  </div>
-                </div>
-
-                {/* 선택된 날짜 일정 */}
-                {selectedCalendarDate && (
-                  <div className={`mt-4 p-4 bg-gradient-to-br ${theme.badge} rounded-xl border`}>
-                    <div className="flex items-center justify-between mb-3">
-                      <h4 className="text-sm font-bold text-white flex items-center gap-2">
-                        <Calendar className="w-4 h-4" />
-                        {selectedDateStr} 청약 일정
-                      </h4>
-                      <button
-                        onClick={() => setSelectedCalendarDate(null)}
-                        className="px-2 py-0.5 text-xs text-gray-400 hover:text-white hover:bg-white/10 rounded-lg transition-colors"
-                      >
-                        닫기 ✕
-                      </button>
-                    </div>
-                    {getEventsForDate(selectedCalendarDate).length > 0 ? (
-                      <div className="space-y-2">
-                        {getEventsForDate(selectedCalendarDate).map((event, idx) => (
-                          <a
-                            key={idx}
-                            href={getSubscriptionUrl(event.subscription)}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="flex items-center gap-2 p-2 bg-white/5 rounded-lg text-sm hover:bg-white/10 transition-colors cursor-pointer group"
-                          >
-                            <div className={`w-2 h-2 rounded-full flex-shrink-0 ${
-                              event.type === 'announcement' ? 'bg-blue-400' :
-                              event.type === 'special' ? 'bg-purple-400' :
-                              event.type === 'rank1' ? 'bg-green-400' :
-                              event.type === 'rank2' ? 'bg-cyan-400' : 'bg-orange-400'
-                            }`} />
-                            <span className={`font-semibold min-w-[50px] text-xs ${
-                              event.type === 'announcement' ? 'text-blue-400' :
-                              event.type === 'special' ? 'text-purple-400' :
-                              event.type === 'rank1' ? 'text-green-400' :
-                              event.type === 'rank2' ? 'text-cyan-400' : 'text-orange-400'
-                            }`}>{event.title}</span>
-                            <span className="text-white text-xs truncate group-hover:text-cyan-300 transition-colors flex-1">{event.houseName}</span>
-                            <ExternalLink className="w-3 h-3 text-gray-500 group-hover:text-cyan-400 transition-colors flex-shrink-0" />
-                          </a>
-                        ))}
-                      </div>
-                    ) : (
-                      <p className="text-gray-400 text-center py-2 text-sm">해당 날짜에 청약 일정이 없습니다.</p>
-                    )}
-                  </div>
-                )}
-              </GlassCard>
-            </motion.div>
-          </div>
-        </section>
-
-        {/* 선택된 날짜의 청약 매물 표시 */}
-        {selectedCalendarDate && selectedDateSubscriptions.length > 0 && (
-          <section className="relative pb-8">
-            <div className="container mx-auto px-6">
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5 }}
-              >
-                <div className="flex items-center gap-3 mb-6">
-                  <Calendar className="w-5 h-5 text-orange-400" />
-                  <h3 className="text-xl font-bold text-white">
-                    {selectedDateStr} 청약 매물
-                  </h3>
-                  <span className={`px-3 py-1 ${theme.badge} text-sm rounded-full`}>
-                    {selectedDateSubscriptions.length}건
-                  </span>
-                </div>
-
-                <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-                  {selectedDateSubscriptions.map(({ sub, events }, index) => (
-                    <motion.div
-                      key={`${sub.HOUSE_MANAGE_NO}-${sub.PBLANC_NO}`}
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ duration: 0.4, delay: index * 0.1 }}
-                    >
-                      <GlassCard className="p-4 h-full cursor-pointer group" hover>
-                        <div className="flex flex-wrap gap-1 mb-3">
-                          {events.map((event, idx) => (
-                            <span
-                              key={idx}
-                              className={`px-2 py-0.5 rounded text-xs font-semibold ${
-                                event.type === 'announcement' ? 'bg-blue-500/20 text-blue-400' :
-                                event.type === 'application' ? 'bg-green-500/20 text-green-400' : 'bg-orange-500/20 text-orange-400'
-                              }`}
-                            >
-                              {event.title}
-                            </span>
-                          ))}
-                        </div>
-
-                        <h4 className="text-base font-bold text-white mb-2 group-hover:text-orange-300 transition-colors line-clamp-2">
-                          {sub.HOUSE_NM}
-                        </h4>
-
-                        <div className="flex items-center gap-2 text-gray-400 text-xs mb-3">
-                          <MapPin className="w-3 h-3" />
-                          <span className="line-clamp-1">{sub.SUBSCRPT_AREA_CODE_NM}</span>
-                        </div>
-
-                        <div className="flex items-center gap-2 text-gray-400 text-xs mb-3">
-                          <Users className="w-3 h-3" />
-                          <span>{sub.TOT_SUPLY_HSHLDCO?.toLocaleString() || '-'}세대</span>
-                        </div>
-
-                        <a
-                          href={getSubscriptionUrl(sub)}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className={`w-full px-3 py-2 bg-gradient-to-r ${theme.button}/30 text-white rounded-lg hover:opacity-80 transition-all text-xs font-medium flex items-center justify-center gap-2 border border-white/20`}
-                        >
-                          <ExternalLink className="w-3 h-3" />
-                          청약홈에서 보기
-                        </a>
-                      </GlassCard>
-                    </motion.div>
-                  ))}
-                </div>
-              </motion.div>
+        {/* 2. 오늘 접수 중 */}
+        <section className={s.sec}>
+          <div className={h.wrap}>
+            <div className={s.head}>
+              <div><div className={h.label}>Open Today</div><h2>오늘 접수 중</h2></div>
+              <span className={s.count}>{String(openNow.length).padStart(2, '0')}<small>UNITS</small></span>
             </div>
-          </section>
-        )}
-
-        {/* 검색 및 필터 */}
-        <section className="relative pb-8">
-          <div className="container mx-auto px-6">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.3 }}
-            >
-              <GlassCard className="p-6 mb-8">
-                <div className="flex flex-col lg:flex-row gap-4">
-                  <div className="flex-1 relative">
-                    <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
-                    <input
-                      type="text"
-                      placeholder="단지명 또는 지역으로 검색..."
-                      value={searchTerm}
-                      onChange={(e) => setSearchTerm(e.target.value)}
-                      className="w-full pl-12 pr-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-gray-400 focus:border-cyan-400/50 focus:outline-none transition-colors"
-                    />
-                  </div>
-
-                  <select
-                    value={selectedRegion}
-                    onChange={(e) => {
-                      setSelectedRegion(e.target.value);
-                      setCurrentPage(1);
-                    }}
-                    className="px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white focus:border-cyan-400/50 focus:outline-none"
-                  >
-                    <option value="">전체 지역</option>
-                    {regions.map(region => (
-                      <option key={region} value={region} className="text-black">
-                        {region}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-              </GlassCard>
-            </motion.div>
+            {openNow.length ? <div className={`${s.cards} ${s.cards4}`}>{openNow.map(x => <Card key={x.HOUSE_MANAGE_NO} sub={x} thumb={thumbs[x.HOUSE_MANAGE_NO]} />)}</div>
+              : <p className={s.empty}>오늘 접수 중인 청약이 없습니다.</p>}
           </div>
         </section>
 
-        {/* 청약 매물 목록 */}
-        <section className="relative pb-20">
-          <div className="container mx-auto px-6">
-            <div className="flex justify-between items-center mb-8">
-              <p className="text-gray-300">
-                총 <span className="text-white font-semibold">{stats.total}</span>개의 {typeLabels[defaultType]} 청약 중
-                <span className="text-cyan-400 font-semibold ml-1">{filteredSubscriptions.length}</span>개 표시
-              </p>
+        {/* 3. 이번 주 접수 예정 */}
+        <section className={s.sec}>
+          <div className={h.wrap}>
+            <div className={s.head}>
+              <div><div className={h.label}>This Week</div><h2>이번 주 접수 예정</h2></div>
+              <span className={s.count}>{String(thisWeek.length).padStart(2, '0')}<small>UNITS</small></span>
             </div>
+            {thisWeek.length ? <div className={`${s.cards} ${s.cards4}`}>{thisWeek.map(x => <Card key={x.HOUSE_MANAGE_NO} sub={x} thumb={thumbs[x.HOUSE_MANAGE_NO]} />)}</div>
+              : <p className={s.empty}>이번 주 접수 예정인 청약이 없습니다.</p>}
+          </div>
+        </section>
 
-            {loading && (
-              <div className="text-center py-20">
-                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-cyan-400 mx-auto mb-4"></div>
-                <p className="text-gray-400">청약 정보를 불러오는 중...</p>
+        {/* 4. calendar */}
+        <section className={s.sec}>
+          <div className={h.wrap}>
+            <div className={s.head}>
+              <div><div className={h.label}>Calendar</div><h2>청약 캘린더</h2></div>
+            </div>
+            <div className={s.calHead}>
+              <b>{y}<em>.{String(mo + 1).padStart(2, '0')}</em></b>
+              <div className={s.calNav}>
+                <button aria-label="이전 달" onClick={() => { setMonth(new Date(y, mo - 1, 1)); setSelDate(null); }}>&larr;</button>
+                <button aria-label="다음 달" onClick={() => { setMonth(new Date(y, mo + 1, 1)); setSelDate(null); }}>&rarr;</button>
               </div>
-            )}
-
-            {!loading && (
-              <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-                {filteredSubscriptions.map((sub, index) => (
-                  <motion.div
-                    key={sub.HOUSE_MANAGE_NO}
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.6, delay: index * 0.05 }}
-                  >
-                    <Link href={`/subscriptions/${sub.HOUSE_MANAGE_NO}`}>
-                    <GlassCard className="overflow-hidden h-full flex flex-col cursor-pointer" hover glow={sub.status === 'open'}>
-                      <div className="p-4 border-b border-white/10">
-                        <div className="flex items-center justify-between mb-2">
-                          <span className={`px-3 py-1 rounded-full text-xs font-semibold border ${getStatusColor(sub.status)}`}>
-                            {sub.statusText}
-                          </span>
-                          {sub.dDay !== null && (
-                            <span className={`text-sm font-bold ${sub.status === 'open' ? 'text-green-400' : 'text-yellow-400'}`}>
-                              D{sub.dDay > 0 ? `-${sub.dDay}` : sub.dDay === 0 ? '-Day' : `+${Math.abs(sub.dDay)}`}
-                            </span>
-                          )}
-                        </div>
-                        <div className="text-xs text-gray-400">
-                          {sub.HOUSE_SECD_NM} · {sub.HOUSE_DTL_SECD_NM}
-                        </div>
+            </div>
+            <div className={s.cal}>
+              {['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'].map(d => <div key={d} className={s.dow}>{d}</div>)}
+              {Array.from({ length: first }, (_, i) => <div key={`e${i}`} />)}
+              {Array.from({ length: days }, (_, i) => {
+                const d = new Date(y, mo, i + 1), key = ymd(d), ev = events.get(key);
+                const cls = [s.day, ev && s.has, key === today && s.today, key === selKey && s.sel].filter(Boolean).join(' ');
+                return (
+                  <button key={key} className={cls} onClick={() => ev && setSelDate(key === selKey ? null : d)} disabled={!ev} aria-label={`${key} 청약 일정 ${ev?.length ?? 0}건`}>
+                    {i + 1}
+                    {ev && <i>{ev.slice(0, 3).map((_, j) => <b key={j} />)}</i>}
+                    {key === today && <small>TODAY</small>}
+                  </button>
+                );
+              })}
+            </div>
+            {selDate && (
+              <div className={s.selDay}>
+                <h4><span>{selKey.replace(/-/g, '.')} · {selEvents.length}건</span><button onClick={() => setSelDate(null)}>닫기</button></h4>
+                <ul>
+                  {selEvents.map(({ sub, labels }) => (
+                    <li key={sub.HOUSE_MANAGE_NO}>
+                      <div style={{ display: 'block' }}><span>{labels.join(' · ')} · {sub.SUBSCRPT_AREA_CODE_NM}</span><b>{sub.HOUSE_NM}</b></div>
+                      <div>
+                        <Link href={`/subscriptions/${sub.HOUSE_MANAGE_NO}`}>상세보기 →</Link>
+                        <a href={applyHomeUrl(sub)} target="_blank" rel="noopener noreferrer">청약홈 ↗</a>
                       </div>
-
-                      <div className="p-4 flex flex-col flex-1">
-                        <h3 className="text-lg font-bold text-white mb-2 line-clamp-2">
-                          {sub.HOUSE_NM}
-                        </h3>
-
-                        <div className="flex items-center gap-2 text-gray-400 mb-4">
-                          <MapPin className="w-4 h-4 flex-shrink-0" />
-                          <span className="text-sm line-clamp-1">{sub.SUBSCRPT_AREA_CODE_NM}</span>
-                        </div>
-
-                        <div className="space-y-2 text-sm mb-4 flex-1">
-                          <div className="flex justify-between">
-                            <span className="text-gray-400">청약접수</span>
-                            <span className="text-white">
-                              {formatDate(sub.RCEPT_BGNDE)} ~ {formatDate(sub.RCEPT_ENDDE)}
-                            </span>
-                          </div>
-                          <div className="flex justify-between">
-                            <span className="text-gray-400">당첨발표</span>
-                            <span className="text-white">{formatFullDate(sub.PRZWNER_PRESNATN_DE)}</span>
-                          </div>
-                          <div className="flex justify-between">
-                            <span className="text-gray-400">총 세대</span>
-                            <span className="text-cyan-400 font-semibold">
-                              {sub.TOT_SUPLY_HSHLDCO?.toLocaleString() || '-'}세대
-                            </span>
-                          </div>
-                          <div className="flex justify-between">
-                            <span className="text-gray-400">시공사</span>
-                            <span className="text-blue-400 text-xs line-clamp-1">
-                              {sub.CNSTRCT_ENTRPS_NM || '-'}
-                            </span>
-                          </div>
-                        </div>
-
-                        <div
-                          className={`w-full px-4 py-2.5 bg-gradient-to-r ${theme.button}/30 text-white rounded-lg hover:opacity-80 transition-all text-sm font-medium flex items-center justify-center gap-2 border border-white/20 mt-auto`}
-                        >
-                          상세보기
-                        </div>
-                      </div>
-                    </GlassCard>
-                    </Link>
-                  </motion.div>
-                ))}
+                    </li>
+                  ))}
+                </ul>
               </div>
             )}
+          </div>
+        </section>
 
-            {!loading && filteredSubscriptions.length === 0 && (
-              <div className="text-center py-20">
-                <Building2 className="w-16 h-16 text-gray-500 mx-auto mb-4" />
-                <p className="text-gray-400 text-lg">검색 조건에 맞는 {typeLabels[defaultType]} 청약이 없습니다.</p>
-              </div>
-            )}
-
-            {/* 페이지네이션 */}
+        {/* 5. 전체 목록 */}
+        <section className={s.sec}>
+          <div className={h.wrap}>
+            <div className={s.head}>
+              <div><div className={h.label}>All Listings</div><h2>전체 청약 목록</h2></div>
+              <span className={s.count}>{total.toLocaleString()}<small>TOTAL</small></span>
+            </div>
+            <nav className={s.tabs} aria-label="유형">
+              {TABS.map(([t, label]) => (
+                <Link key={t} href={t ? `/subscriptions/${t}` : '/subscriptions'} className={(defaultType ?? '') === t ? s.on : ''}>{label}</Link>
+              ))}
+            </nav>
+            <div className={s.filters}>
+              <input type="search" placeholder="단지명 또는 주소 검색" value={search} onChange={e => setSearch(e.target.value)} aria-label="검색" />
+              <select value={region} onChange={e => { setRegion(e.target.value); setPage(1); }} aria-label="지역">
+                <option value="">전체 지역</option>
+                {REGIONS.map(r => <option key={r} value={r}>{r}</option>)}
+              </select>
+              <select value={type} onChange={e => { setType(e.target.value as Type); setPage(1); }} aria-label="유형">
+                <option value="">전체 유형</option>
+                <option value="apt">아파트</option>
+                <option value="officetel">오피스텔</option>
+                <option value="remndr">무순위/잔여</option>
+              </select>
+            </div>
+            <p className={s.summary}>총 <b>{total.toLocaleString()}</b>건 중 <b>{shown.length}</b>건 표시</p>
+            {loading ? <p className={s.loading}>Loading</p>
+              : shown.length ? <div className={s.cards}>{shown.map(x => <Card key={x.HOUSE_MANAGE_NO} sub={x} thumb={thumbs[x.HOUSE_MANAGE_NO]} />)}</div>
+              : <p className={s.empty}>검색 조건에 맞는 청약이 없습니다.</p>}
             {!loading && totalPages > 1 && (
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="flex justify-center items-center gap-2 mt-12"
-              >
-                <button
-                  onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
-                  disabled={currentPage === 1}
-                  className={`p-3 rounded-xl border transition-all ${
-                    currentPage === 1
-                      ? 'border-white/10 text-gray-600 cursor-not-allowed'
-                      : 'border-white/20 text-white hover:bg-white/10 hover:border-cyan-400/50'
-                  }`}
-                >
-                  <ChevronLeft className="w-5 h-5" />
-                </button>
-
-                <div className="flex gap-2">
-                  {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
-                    let pageNum;
-                    if (totalPages <= 5) {
-                      pageNum = i + 1;
-                    } else if (currentPage <= 3) {
-                      pageNum = i + 1;
-                    } else if (currentPage >= totalPages - 2) {
-                      pageNum = totalPages - 4 + i;
-                    } else {
-                      pageNum = currentPage - 2 + i;
-                    }
-                    return (
-                      <button
-                        key={pageNum}
-                        onClick={() => setCurrentPage(pageNum)}
-                        className={`w-10 h-10 rounded-xl font-semibold transition-all ${
-                          currentPage === pageNum
-                            ? `bg-gradient-to-r ${theme.button} text-white shadow-lg ${theme.shadow}`
-                            : 'border border-white/20 text-gray-400 hover:text-white hover:bg-white/10'
-                        }`}
-                      >
-                        {pageNum}
-                      </button>
-                    );
-                  })}
-                </div>
-
-                <button
-                  onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
-                  disabled={currentPage === totalPages}
-                  className={`p-3 rounded-xl border transition-all ${
-                    currentPage === totalPages
-                      ? 'border-white/10 text-gray-600 cursor-not-allowed'
-                      : 'border-white/20 text-white hover:bg-white/10 hover:border-cyan-400/50'
-                  }`}
-                >
-                  <ChevronRight className="w-5 h-5" />
-                </button>
-              </motion.div>
+              <div className={s.pager}>
+                <button onClick={() => setPage(p => Math.max(1, p - 1))} disabled={page === 1} aria-label="이전">&larr;</button>
+                {pages.map(n => <button key={n} className={n === page ? s.on : ''} onClick={() => setPage(n)}>{n}</button>)}
+                <button onClick={() => setPage(p => Math.min(totalPages, p + 1))} disabled={page === totalPages} aria-label="다음">&rarr;</button>
+              </div>
             )}
           </div>
         </section>
       </main>
-    </>
+      <SiteFooter />
+    </div>
   );
 }
