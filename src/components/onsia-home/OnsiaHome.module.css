@@ -115,6 +115,7 @@
 .short{display:block}
 .frame{aspect-ratio:9/16;position:relative;border:1px solid var(--ln);overflow:hidden;transition:border-color .5s;background:linear-gradient(180deg,#1b1915 0%,#101010 60%,#0b0b0b 100%)}
 .frame::before{content:"";position:absolute;inset:0;background:repeating-linear-gradient(90deg,transparent 0 47px,rgba(255,255,255,.025) 47px 48px),repeating-linear-gradient(0deg,transparent 0 47px,rgba(255,255,255,.025) 47px 48px)}
+.frame video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
 .short:hover .frame{border-color:var(--gd)}
 .play{position:absolute;top:50%;left:50%;width:52px;height:52px;margin:-26px 0 0 -26px;border:1px solid rgba(242,240,235,.45);border-radius:50%;transition:border-color .4s,transform .5s var(--ease)}
 .play::after{content:"";position:absolute;left:21px;top:18px;border-left:12px solid var(--tx);border-top:8px solid transparent;border-bottom:8px solid transparent;transition:border-left-color .4s}
