@@ -5,6 +5,7 @@ import { getLandingPages } from '@/lib/supabase-landing'
 export const metadata: Metadata = {
   title: '분양 홈페이지 | ONSIA',
   description: '분양 현장별 홈페이지 모음. 관심고객 등록 및 분양 상담.',
+  alternates: { canonical: '/homepage' },
 }
 
 export const revalidate = 3600

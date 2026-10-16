@@ -100,9 +100,11 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       '분양',
       subscription.CNSTRCT_ENTRPS_NM,
     ].filter(Boolean),
+    alternates: { canonical: `/subscriptions/${id}` },
     openGraph: {
       title,
       description,
+      url: `/subscriptions/${id}`,
       type: 'website',
       siteName: 'ONSIA',
       locale: 'ko_KR',
