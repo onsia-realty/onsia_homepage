@@ -124,7 +124,6 @@
 .short .cap{padding-top:20px}
 .short .cap small{display:block;font:400 11px/1 var(--en);letter-spacing:.3em;text-transform:uppercase;color:var(--mu)}
 .short .cap h4{font-weight:400;font-size:16px;margin-top:10px;letter-spacing:-.01em}
-.note{margin-top:40px;font-size:12px;color:var(--mu)}
 
 /* numbers */
 .nums{display:grid;grid-template-columns:repeat(4,1fr);margin-top:72px}

@@ -24,7 +24,7 @@ const BIZ = [
 
 const SHORTS = ['한강을 마주한 저녁', '압구정, 새로운 기준', '숲과 강 사이의 집', '여의도 스카이라인'];
 // 제작 완료된 카드만 영상 연결 (/media/home/creative/{name}.mp4 + .jpg)
-const SHORT_MEDIA: Record<string, string> = { '한강을 마주한 저녁': 'banpo', '압구정, 새로운 기준': 'apgujeong', '숲과 강 사이의 집': 'sylva' };
+const SHORT_MEDIA: Record<string, string> = { '한강을 마주한 저녁': 'banpo', '압구정, 새로운 기준': 'apgujeong', '숲과 강 사이의 집': 'sylva', '여의도 스카이라인': 'yeouido' };
 const DRIFT = ['.04', '.08', '.04', '.08'];
 
 const NUMS: [number, string, string][] = [
@@ -290,7 +290,6 @@ export default function OnsiaHome() {
             <a href="#" className={`${s.more} ${s.rv}`}>View All</a>
           </div>
           <div className={s.shorts}>
-            {/* 각 .frame 은 추후 <video autoplay muted loop playsinline> 로 교체 */}
             {SHORTS.map((t, i) => {
               const m = SHORT_MEDIA[t];
               return (
@@ -305,7 +304,6 @@ export default function OnsiaHome() {
               );
             })}
           </div>
-          <p className={`${s.note} ${s.rv}`}>* 시안용 자리표시입니다. 실제 페이지에서는 제작 영상이 자동 재생됩니다.</p>
         </div>
       </section>
 
