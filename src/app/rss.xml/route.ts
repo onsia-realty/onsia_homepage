@@ -1,36 +1,8 @@
-import { prisma } from '@/lib/prisma';
 import { getAPTSubscriptions, getOfficetelSubscriptions } from '@/lib/cheongyakApi';
 
+// 분양권 매물 상세(/properties/[id])는 로그인 필수라 피드에서 제외 — 청약 정보만 노출
 export async function GET() {
   const baseUrl = 'https://www.onsia.co.kr';
-
-  // 매물 목록 조회 (DB 장애가 피드 전체를 500으로 만들지 않도록 격리)
-  let properties: Array<{
-    id: string;
-    title: string;
-    description: string | null;
-    city: string | null;
-    district: string | null;
-    createdAt: Date;
-  }> = [];
-
-  try {
-    properties = await prisma.property.findMany({
-      where: { status: 'AVAILABLE' },
-      orderBy: { createdAt: 'desc' },
-      take: 30,
-      select: {
-        id: true,
-        title: true,
-        description: true,
-        city: true,
-        district: true,
-        createdAt: true,
-      }
-    });
-  } catch (error) {
-    console.error('RSS: Failed to fetch properties', error);
-  }
 
   // 청약 정보 조회
   let subscriptions: Array<{
@@ -55,18 +27,6 @@ export async function GET() {
     console.error('RSS: Failed to fetch subscriptions', error);
   }
 
-  // 매물 RSS 아이템
-  const propertyItems = properties.map(property => `
-    <item>
-      <title><![CDATA[[분양권] ${property.title}]]></title>
-      <link>${baseUrl}/properties/${property.id}</link>
-      <guid>${baseUrl}/properties/${property.id}</guid>
-      <description><![CDATA[${property.city} ${property.district} - ${property.description?.slice(0, 200) || '분양권 매물 정보'}]]></description>
-      <pubDate>${new Date(property.createdAt).toUTCString()}</pubDate>
-      <category>분양권</category>
-    </item>`).join('');
-
-  // 청약 RSS 아이템
   const subscriptionItems = subscriptions.map(sub => `
     <item>
       <title><![CDATA[[청약] ${sub.HOUSE_NM}]]></title>
@@ -80,14 +40,13 @@ export async function GET() {
   const rss = `<?xml version="1.0" encoding="UTF-8"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>ONSIA - 부동산 AI 플랫폼</title>
+    <title>온시아 ONSIA | 부동산 IT 전문기업</title>
     <link>${baseUrl}</link>
-    <description>AI 기반 부동산 정보 플랫폼. 분양권, 청약 정보를 한눈에 확인하세요.</description>
+    <description>부동산 IT 전문기업 온시아 — 전국 아파트·오피스텔 청약 일정과 분양 정보</description>
     <language>ko</language>
     <lastBuildDate>${new Date().toUTCString()}</lastBuildDate>
     <atom:link href="${baseUrl}/rss.xml" rel="self" type="application/rss+xml"/>
     ${subscriptionItems}
-    ${propertyItems}
   </channel>
 </rss>`;
 
