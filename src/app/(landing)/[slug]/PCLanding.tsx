@@ -142,6 +142,8 @@ export default function PCLanding({
   const isAgent = !!agent
   // 광고 심사용 사업주체 표기 (해당 직원 페이지에만 푸터 노출)
   const agentFooter = isAgent ? getAgentFooter(slug, agentCode) : undefined
+  // 사업자 정보가 있으면 agent 페이지에도 푸터 기본 노출 (광고 심사 대응)
+  const showFooter = !isAgent || !!agentFooter || !!page.business_info?.company_name
   const navItems = navLinks && navLinks.length > 0 ? navLinks : DEFAULT_NAV_ITEMS
   const isYamok = slug === 'yamok-grandhill'
   // 윤상(?a=ys) 전용 히어로 카피 — 광고 심사용 "4억원대" 텍스트 노출
@@ -600,7 +602,7 @@ export default function PCLanding({
           )}
 
           {/* Company Info - agent는 숨김 (단, 광고 심사용 사업주체 표기가 있으면 노출) */}
-          {(!isAgent || agentFooter) && (
+          {showFooter && (
             <>
               {page.business_info?.company_name && (
                 <p className="text-[13px] text-gray-400 leading-loose">
@@ -625,7 +627,7 @@ export default function PCLanding({
           )}
 
           {/* Disclaimer - agent 페이지는 통째 숨김 (직원 명함 OG 깔끔) */}
-          {(!isAgent || agentFooter) && (
+          {showFooter && (
             <p className="mt-5 text-[13px] text-gray-500 leading-relaxed whitespace-pre-line">
               {agentFooter?.disclaimer ||
                 page.business_info?.disclaimer ||

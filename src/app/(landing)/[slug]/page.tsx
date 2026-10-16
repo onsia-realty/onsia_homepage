@@ -139,6 +139,8 @@ export default async function LandingPage({ params, searchParams }: Props) {
 
   // 광고 심사용 사업주체 표기 (해당 직원 페이지에만 푸터 노출)
   const agentFooter = agent ? getAgentFooter(slug, agentCodeStr) : undefined
+  // 사업자 정보가 있으면 agent 페이지에도 푸터 기본 노출 (광고 심사 대응)
+  const showFooter = !agent || !!agentFooter || !!page.business_info?.company_name
 
   // 독립 도메인 접속 시 JSON-LD 등의 기준 URL도 그 도메인으로
   const pageBaseUrl = landingBaseUrl((await headers()).get('host'), slug)
@@ -665,7 +667,7 @@ export default async function LandingPage({ params, searchParams }: Props) {
 
         {/* Footer */}
         <footer className="py-6 sm:py-8 px-4 bg-gray-900 text-gray-400 text-center text-xs sm:text-sm leading-relaxed">
-          {(!agent || agentFooter) && page.business_info && (
+          {showFooter && page.business_info && (
             <div className="mb-3 sm:mb-4">
               {page.business_info.company_name && (
                 <p className="font-medium text-gray-300">{page.business_info.company_name}</p>
@@ -682,7 +684,7 @@ export default async function LandingPage({ params, searchParams }: Props) {
               )}
             </div>
           )}
-          {(!agent || agentFooter) && (
+          {showFooter && (
             <p className="text-gray-500 max-w-2xl mx-auto text-xs sm:text-sm whitespace-pre-line">
               {agentFooter?.disclaimer ||
                 page.business_info?.disclaimer ||

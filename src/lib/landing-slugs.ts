@@ -7,6 +7,9 @@ export const EN_TO_KO_SLUG: Record<string, string> = {
   'yamok-grandhill': '야목역서희스타힐스',
   'urbanhomes': '왕십리역어반홈스',
   'cluster-yongin-honorsville': '클러스터용인경남아너스빌',
+  'cheongna-arcone': '청라아크원푸르지오',
+  'osan-heritage-xi': '병점역오산헤리티지자이',
+  'hwaseo-honorsville': '화서역호수공원아너스빌',
 }
 
 export const KO_TO_EN_SLUG: Record<string, string> = Object.fromEntries(
