@@ -63,13 +63,12 @@ export const metadata: Metadata = {
   },
   verification: {
     google: [
-      "9lrEwNdce4bdybKgjFlxhkeKjV5UQ_4HgCnpNEoxFa8", // www.onsia.city
       "QiQ8mFuJxioqxSC2ia_Sd1rlx7kxKBVs_NopFcFkkUE", // 야목역서희스타힐스.xyz
     ],
     other: {
       // 도메인별 소유확인 코드 (같은 앱이 여러 도메인 서빙 → 둘 다 내보냄)
       "naver-site-verification": [
-        "747b33e6d2c3b922c544372795143926dfc0ad82", // www.onsia.city
+        "6550eb6c0c0c5f65f0186931cd6cbcd25a6c2c54", // www.onsia.co.kr
         "3e44e1c8228771e5567e1820290fe8d7a1537544", // 야목역서희스타힐스.xyz
       ],
     },

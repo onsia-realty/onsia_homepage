@@ -324,8 +324,8 @@ export default function OnsiaHome() {
       <section className={s.sec} id="residences">
         <div className={s.wrap}>
           <div className={s.head}>
-            <div className={s.rv}><div className={s.label}>Premium Residences</div><h2>ONSIA가 함께한<br />하이엔드 레지던스</h2></div>
-            <a href="#" className={`${s.more} ${s.rv}`}>View Portfolios</a>
+            <div className={s.rv}><div className={s.label}>Premium Residences</div><h2>ONSIA가 주목하는<br />하이엔드 레지던스</h2></div>
+            <a href="#" className={`${s.more} ${s.rv}`}>View Residences</a>
           </div>
         </div>
         <div ref={slider} className={`${s.slider} ${s.rv}`} onScroll={upd}>
