@@ -24,14 +24,14 @@ export const metadata: Metadata = {
   authors: [{ name: "온시아(ONSIA)" }],
   creator: "온시아(ONSIA)",
   publisher: "온시아(ONSIA)",
-  metadataBase: new URL("https://www.onsia.city"),
+  metadataBase: new URL("https://www.onsia.co.kr"),
   alternates: {
     canonical: "/",
   },
   openGraph: {
     type: "website",
     locale: "ko_KR",
-    url: "https://www.onsia.city",
+    url: "https://www.onsia.co.kr",
     siteName: "온시아(ONSIA)",
     title: "온시아(ONSIA) - 부동산 AI 플랫폼 | 분양 청약 경매",
     description: "온시아는 AI 기반 부동산 정보 플랫폼입니다. 아파트 분양권 거래, 청약 일정, 법원경매 물건, AI 시세분석까지 한눈에 확인하세요.",
@@ -80,13 +80,13 @@ const jsonLd = {
   "@graph": [
     {
       "@type": "Organization",
-      "@id": "https://www.onsia.city/#organization",
+      "@id": "https://www.onsia.co.kr/#organization",
       "name": "온시아(ONSIA)",
       "alternateName": ["온시아", "ONSIA", "onsia"],
-      "url": "https://www.onsia.city",
+      "url": "https://www.onsia.co.kr",
       "logo": {
         "@type": "ImageObject",
-        "url": "https://www.onsia.city/logo.png",
+        "url": "https://www.onsia.co.kr/logo.png",
         "width": 512,
         "height": 512
       },
@@ -103,31 +103,31 @@ const jsonLd = {
     },
     {
       "@type": "WebSite",
-      "@id": "https://www.onsia.city/#website",
-      "url": "https://www.onsia.city",
+      "@id": "https://www.onsia.co.kr/#website",
+      "url": "https://www.onsia.co.kr",
       "name": "온시아(ONSIA) - 부동산 AI 플랫폼",
       "alternateName": "온시아",
       "description": "온시아는 AI 기반 부동산 정보 플랫폼입니다. 아파트 분양권 거래, 청약 일정, 법원경매 물건, AI 시세분석까지 한눈에 확인하세요.",
       "publisher": {
-        "@id": "https://www.onsia.city/#organization"
+        "@id": "https://www.onsia.co.kr/#organization"
       },
       "inLanguage": "ko-KR",
       "potentialAction": {
         "@type": "SearchAction",
         "target": {
           "@type": "EntryPoint",
-          "urlTemplate": "https://www.onsia.city/subscription?q={search_term_string}"
+          "urlTemplate": "https://www.onsia.co.kr/subscriptions?q={search_term_string}"
         },
         "query-input": "required name=search_term_string"
       }
     },
     {
       "@type": "RealEstateAgent",
-      "@id": "https://www.onsia.city/#business",
+      "@id": "https://www.onsia.co.kr/#business",
       "name": "온시아(ONSIA)",
       "alternateName": "온시아",
-      "url": "https://www.onsia.city",
-      "image": "https://www.onsia.city/og-image.png",
+      "url": "https://www.onsia.co.kr",
+      "image": "https://www.onsia.co.kr/og-image.png",
       "priceRange": "$$",
       "telephone": "+82-1668-5257",
       "address": {

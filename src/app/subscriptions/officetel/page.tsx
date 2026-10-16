@@ -8,7 +8,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: '오피스텔 청약 일정 | ONSIA',
     description: '전국 오피스텔 및 도시형생활주택 청약 일정을 한눈에 확인하세요.',
-    url: 'https://www.onsia.city/subscriptions/officetel',
+    url: 'https://www.onsia.co.kr/subscriptions/officetel',
     type: 'website',
     locale: 'ko_KR',
   },

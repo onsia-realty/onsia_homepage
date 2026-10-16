@@ -2,7 +2,7 @@ import { prisma } from '@/lib/prisma';
 import { getAPTSubscriptions, getOfficetelSubscriptions } from '@/lib/cheongyakApi';
 
 export async function GET() {
-  const baseUrl = 'https://www.onsia.city';
+  const baseUrl = 'https://www.onsia.co.kr';
 
   // 매물 목록 조회 (DB 장애가 피드 전체를 500으로 만들지 않도록 격리)
   let properties: Array<{
@@ -70,8 +70,8 @@ export async function GET() {
   const subscriptionItems = subscriptions.map(sub => `
     <item>
       <title><![CDATA[[청약] ${sub.HOUSE_NM}]]></title>
-      <link>${baseUrl}/subscription/${sub.HOUSE_MANAGE_NO}</link>
-      <guid>${baseUrl}/subscription/${sub.HOUSE_MANAGE_NO}</guid>
+      <link>${baseUrl}/subscriptions/${sub.HOUSE_MANAGE_NO}</link>
+      <guid>${baseUrl}/subscriptions/${sub.HOUSE_MANAGE_NO}</guid>
       <description><![CDATA[${sub.SUBSCRPT_AREA_CODE_NM} ${sub.HOUSE_NM} - ${sub.TOT_SUPLY_HSHLDCO}세대, 청약접수: ${sub.RCEPT_BGNDE} ~ ${sub.RCEPT_ENDDE}]]></description>
       <pubDate>${sub.RCRIT_PBLANC_DE ? new Date(sub.RCRIT_PBLANC_DE).toUTCString() : new Date().toUTCString()}</pubDate>
       <category>청약</category>
@@ -93,7 +93,7 @@ export async function GET() {
 
   return new Response(rss, {
     headers: {
-      'Content-Type': 'application/xml; charset=utf-8',
+      'Content-Type': 'application/rss+xml; charset=utf-8',
       'Cache-Control': 'public, max-age=3600',
     },
   });

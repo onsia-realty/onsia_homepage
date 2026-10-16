@@ -7,13 +7,13 @@ export const metadata: Metadata = {
   openGraph: {
     title: '청약 일정 - 전국 아파트 청약 캘린더 | 온시아(ONSIA)',
     description: '전국 아파트, 오피스텔, 무순위 청약 일정을 캘린더로 한눈에!',
-    url: 'https://www.onsia.city/subscriptions',
+    url: 'https://www.onsia.co.kr/subscriptions',
     siteName: '온시아(ONSIA)',
     locale: 'ko_KR',
     type: 'website',
   },
   alternates: {
-    canonical: 'https://www.onsia.city/subscriptions',
+    canonical: 'https://www.onsia.co.kr/subscriptions',
   },
 };
 

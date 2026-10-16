@@ -8,7 +8,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: '아파트 청약 일정 | ONSIA',
     description: '전국 아파트 청약 일정을 한눈에 확인하세요. 실시간 APT 분양 정보 제공.',
-    url: 'https://www.onsia.city/subscriptions/apt',
+    url: 'https://www.onsia.co.kr/subscriptions/apt',
     type: 'website',
     locale: 'ko_KR',
   },

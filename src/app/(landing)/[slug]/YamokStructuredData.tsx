@@ -11,11 +11,11 @@ export interface YamokFaqItem {
 interface Props {
   faq: YamokFaqItem[]
   ogImage?: string
-  /** 페이지 기준 URL — onsia.city 한글 URL 또는 독립 도메인(야목역서희스타힐스.xyz) 루트 */
+  /** 페이지 기준 URL — onsia.co.kr 한글 URL 또는 독립 도메인(야목역서희스타힐스.xyz) 루트 */
   baseUrl?: string
 }
 
-export default function YamokStructuredData({ faq, ogImage, baseUrl = 'https://www.onsia.city/야목역서희스타힐스' }: Props) {
+export default function YamokStructuredData({ faq, ogImage, baseUrl = 'https://www.onsia.co.kr/야목역서희스타힐스' }: Props) {
   const data = {
     '@context': 'https://schema.org',
     '@graph': [
@@ -41,7 +41,7 @@ export default function YamokStructuredData({ faq, ogImage, baseUrl = 'https://w
         description:
           '야목역 서희스타힐스 그랜드힐 — 수인분당선 야목역 도보권, GTX-F(예정) 더블역세권 화성 비봉 신축 아파트. 야목역서희 모델하우스 위치·분양가·일반분양 안내. 비봉아파트 분양 / 경기도 화성시 아파트 분양.',
         url: baseUrl,
-        image: ogImage || 'https://www.onsia.city/images/yamok-og.jpg',
+        image: ogImage || 'https://www.onsia.co.kr/images/yamok-og.jpg',
         numberOfAccommodationUnits: 998,
         address: {
           '@type': 'PostalAddress',
@@ -162,7 +162,7 @@ export default function YamokStructuredData({ faq, ogImage, baseUrl = 'https://w
             '@type': 'ListItem',
             position: 1,
             name: '홈',
-            item: 'https://www.onsia.city',
+            item: 'https://www.onsia.co.kr',
           },
           {
             '@type': 'ListItem',

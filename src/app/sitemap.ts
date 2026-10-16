@@ -1,6 +1,5 @@
 import { MetadataRoute } from 'next';
 import { headers } from 'next/headers';
-import { prisma } from '@/lib/prisma';
 import { getLandingPages } from '@/lib/supabase-landing';
 import { CATEGORIES } from '@/app/(landing)/[slug]/[category]/page';
 import { toKoreanSlug, LANDING_DOMAINS, SLUG_TO_DOMAIN } from '@/lib/landing-slugs';
@@ -63,7 +62,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     return entries;
   }
 
-  const baseUrl = 'https://www.onsia.city';
+  const baseUrl = 'https://www.onsia.co.kr';
 
   // 정적 페이지
   const staticPages: MetadataRoute.Sitemap = [
@@ -73,19 +72,19 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       changeFrequency: 'daily',
       priority: 1,
     },
-    // 분양 페이지
+    // 청약 페이지 (목록 + 유형별)
     {
-      url: `${baseUrl}/subscription`,
+      url: `${baseUrl}/subscriptions`,
       lastModified: new Date(),
       changeFrequency: 'daily',
       priority: 0.95,
     },
-    {
-      url: `${baseUrl}/subscription/map`,
+    ...['apt', 'officetel', 'remndr'].map((type) => ({
+      url: `${baseUrl}/subscriptions/${type}`,
       lastModified: new Date(),
-      changeFrequency: 'daily',
+      changeFrequency: 'daily' as const,
       priority: 0.9,
-    },
+    })),
     // 분양권 매물
     {
       url: `${baseUrl}/properties`,
@@ -114,7 +113,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   try {
     const pages = await getLandingPages();
     pages.forEach((p) => {
-      // 전용 도메인 보유 슬러그(야목 등)는 onsia.city에서 xyz로 301 → onsia 사이트맵에서 제외
+      // 전용 도메인 보유 슬러그(야목 등)는 onsia.co.kr에서 xyz로 301 → onsia 사이트맵에서 제외
       // (리다이렉트 URL을 사이트맵에 넣지 않음 / 색인 권한을 xyz 사이트맵으로 단일화)
       if (SLUG_TO_DOMAIN[p.slug]) return;
       // 한글 slug는 sitemap 표준(RFC 3986)에 맞춰 percent-encoding
@@ -142,27 +141,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     console.error('Sitemap: Failed to fetch landing pages', error);
   }
 
-  // 동적 매물 페이지
-  let propertyPages: MetadataRoute.Sitemap = [];
-  try {
-    const properties = await prisma.property.findMany({
-      where: { status: 'AVAILABLE' },
-      select: {
-        id: true,
-        updatedAt: true,
-      },
-      orderBy: { updatedAt: 'desc' },
-    });
-
-    propertyPages = properties.map((property) => ({
-      url: `${baseUrl}/properties/${property.id}`,
-      lastModified: property.updatedAt,
-      changeFrequency: 'weekly' as const,
-      priority: 0.8,
-    }));
-  } catch (error) {
-    console.error('Sitemap: Failed to fetch properties', error);
-  }
+  // 매물 상세(/properties/[id])는 middleware에서 로그인 필수(307 → /auth/signin)라 사이트맵 제외
 
   // 동적 청약 페이지
   let subscriptionPages: MetadataRoute.Sitemap = [];
@@ -170,7 +149,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     const allSubscriptions = await fetchSubscriptionsForSitemap();
 
     subscriptionPages = allSubscriptions.map((sub: { HOUSE_MANAGE_NO: string; RCRIT_PBLANC_DE?: string }) => ({
-      url: `${baseUrl}/subscription/${sub.HOUSE_MANAGE_NO}`,
+      url: `${baseUrl}/subscriptions/${sub.HOUSE_MANAGE_NO}`,
       lastModified: sub.RCRIT_PBLANC_DE ? new Date(sub.RCRIT_PBLANC_DE) : new Date(),
       changeFrequency: 'daily' as const,
       priority: 0.85,
@@ -179,5 +158,5 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     console.error('Sitemap: Failed to fetch subscriptions', error);
   }
 
-  return [...staticPages, ...landingPages, ...propertyPages, ...subscriptionPages];
+  return [...staticPages, ...landingPages, ...subscriptionPages];
 }

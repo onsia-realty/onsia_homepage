@@ -5,7 +5,7 @@
 interface Props {
   /** 검색 결과에 표시될 단지명 (예: "왕십리역 어반홈스") */
   projectName: string
-  /** 한글 canonical URL (예: "https://www.onsia.city/왕십리역어반홈스") */
+  /** 한글 canonical URL (예: "https://www.onsia.co.kr/왕십리역어반홈스") */
   pageUrl: string
 }
 
@@ -19,7 +19,7 @@ export default function BreadcrumbStructuredData({ projectName, pageUrl }: Props
         '@type': 'ListItem',
         position: 1,
         name: '홈',
-        item: 'https://www.onsia.city',
+        item: 'https://www.onsia.co.kr',
       },
       {
         '@type': 'ListItem',

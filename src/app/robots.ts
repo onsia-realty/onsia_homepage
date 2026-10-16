@@ -3,11 +3,11 @@ import { headers } from 'next/headers';
 import { LANDING_DOMAINS } from '@/lib/landing-slugs';
 
 export default async function robots(): Promise<MetadataRoute.Robots> {
-  // 접속 도메인 기준 baseUrl 결정 (전용 랜딩 도메인 → 자기 도메인 / 그 외 → onsia.city)
+  // 접속 도메인 기준 baseUrl 결정 (전용 랜딩 도메인 → 자기 도메인 / 그 외 → onsia.co.kr)
   const host = ((await headers()).get('host') || '').toLowerCase().split(':')[0];
   const apex = host.replace(/^www\./, '');
   const isLandingDomain = apex in LANDING_DOMAINS;
-  const baseUrl = isLandingDomain ? `https://${apex}` : 'https://www.onsia.city';
+  const baseUrl = isLandingDomain ? `https://${apex}` : 'https://www.onsia.co.kr';
 
   return {
     rules: [

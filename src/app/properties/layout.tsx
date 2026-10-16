@@ -7,13 +7,13 @@ export const metadata: Metadata = {
   openGraph: {
     title: '분양권 매물 - 전국 분양권 거래 정보 | 온시아(ONSIA)',
     description: '전국 분양권 매물 정보를 한눈에! 프리미엄, 계약금 등 분양권 거래 정보.',
-    url: 'https://www.onsia.city/properties',
+    url: 'https://www.onsia.co.kr/properties',
     siteName: '온시아(ONSIA)',
     locale: 'ko_KR',
     type: 'website',
   },
   alternates: {
-    canonical: 'https://www.onsia.city/properties',
+    canonical: 'https://www.onsia.co.kr/properties',
   },
 };
 

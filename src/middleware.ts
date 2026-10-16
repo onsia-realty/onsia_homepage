@@ -70,9 +70,9 @@ export async function middleware(request: NextRequest) {
   }
 
   // ============================================================
-  // 0.5) 메인 도메인(onsia.city)에서 전용 도메인 보유 슬러그 접속
+  // 0.5) 메인 도메인(onsia.co.kr)에서 전용 도메인 보유 슬러그 접속
   //      → 전용 랜딩 도메인으로 301 (중복 콘텐츠 제거, SEO 단일화)
-  //      예) onsia.city/야목역서희스타힐스?a=kim → 야목역서희스타힐스.xyz/?a=kim
+  //      예) onsia.co.kr/야목역서희스타힐스?a=kim → 야목역서희스타힐스.xyz/?a=kim
   //      (직원 링크의 ?a= 쿼리는 그대로 보존 → 실적 추적 유지)
   // ============================================================
   for (const [slug, domain] of Object.entries(SLUG_TO_DOMAIN)) {

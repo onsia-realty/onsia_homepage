@@ -8,7 +8,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: '무순위/잔여세대 청약 일정 | ONSIA',
     description: '전국 무순위 및 잔여세대 청약 일정을 한눈에 확인하세요. 줍줍 청약 정보.',
-    url: 'https://www.onsia.city/subscriptions/remndr',
+    url: 'https://www.onsia.co.kr/subscriptions/remndr',
     type: 'website',
     locale: 'ko_KR',
   },
