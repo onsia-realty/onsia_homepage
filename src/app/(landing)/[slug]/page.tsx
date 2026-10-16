@@ -26,6 +26,8 @@ import Reveal from './Reveal'
 import { YAMOK_FAQ } from './yamok-faq'
 import BreadcrumbStructuredData from './BreadcrumbStructuredData'
 import { getAgentFooter } from './agent-footer'
+import { getTplConfig } from '@/landing-sites'
+import TplLanding, { buildTplMetadata } from './tpl/TplLanding'
 
 // 부정클릭 게이트 (yamok-grandhill / urbanhomes 한정) — 다른 슬러그 번들 영향 0
 // (Next 15 server component에선 ssr:false 금지 → 기본 dynamic. FraudGate 자체가 'use client'라 useEffect는 클라이언트에서만 실행됨)
@@ -84,6 +86,10 @@ export async function generateMetadata({ params, searchParams }: Props): Promise
   // Agent별 OG 타이틀: "{프로젝트명} {직원명}" — 모든 슬러그 동일 패턴
   const agentCodeStr = typeof agentCode === 'string' ? agentCode : undefined
   const agent = agentCodeStr ? await getAgentByCode(page.id, agentCodeStr) : null
+
+  // 템플릿(tpl) 현장 — config.seo 기반 메타데이터 (기존 현장은 아래 코드 그대로)
+  const tpl = getTplConfig(slug)
+  if (tpl) return buildTplMetadata(tpl, { agent, agentCode: agentCodeStr, baseUrl: landingBaseUrl((await headers()).get('host'), slug) })
 
   const baseOgTitle = page.seo_title || page.project_name
   const ogTitle = agent
@@ -157,6 +163,23 @@ export default async function LandingPage({ params, searchParams }: Props) {
   // 유효 전화번호/카톡 결정 (agent 우선, 없으면 대표)
   const effectivePhone = agent?.phone || page.phone_number
   const effectiveKakao = agent?.kakao_url || page.kakao_chat_url
+
+  // 템플릿(tpl) 현장 — 야목 기반 템플릿으로 조기 반환 (preview/agent 해석은 위에서 완료). 기존 현장은 아래 코드 그대로.
+  const tpl = getTplConfig(slug)
+  if (tpl) {
+    return (
+      <TplLanding
+        config={tpl}
+        pageId={page.id}
+        agent={agent}
+        agentCode={agentCodeStr}
+        isPreview={isPreview}
+        baseUrl={pageBaseUrl}
+        effectivePhone={effectivePhone || undefined}
+        effectiveKakao={effectiveKakao || undefined}
+      />
+    )
+  }
 
   const primaryColor = page.primary_color || '#1E3A5F'
   const accentColor = page.accent_color || '#C9A96E'

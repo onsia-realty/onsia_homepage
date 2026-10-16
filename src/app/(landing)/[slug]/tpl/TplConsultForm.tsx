@@ -1,0 +1,149 @@
+'use client'
+
+// YamokConsultForm 복제 — 간편 상담 신청 폼 (실시간 접수 현황 옆).
+// 차이: 동의 3분리(ConsentCheckboxes) + /api/landing-inquiry 비-legacy 계약(consent_* + page_url) 사용.
+import { useState } from 'react'
+import { useFraudGate } from '../FraudGateContext'
+import ConsentCheckboxes, { EMPTY_CONSENTS, type Consents } from '../ConsentCheckboxes'
+
+const GOLD = '#C9A96E'
+
+interface Props {
+  pageId: string
+  slug: string
+  agentCode?: string
+  agentName?: string
+}
+
+export default function TplConsultForm({ pageId, slug, agentCode, agentName }: Props) {
+  const [name, setName] = useState('')
+  const [phone, setPhone] = useState('')
+  const [memo, setMemo] = useState('')
+  const [consents, setConsents] = useState<Consents>(EMPTY_CONSENTS)
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [submitted, setSubmitted] = useState(false)
+  const [error, setError] = useState('')
+  const fraudGate = useFraudGate()
+
+  const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const digits = e.target.value.replace(/\D/g, '').slice(0, 11)
+    let f = digits
+    if (digits.length > 3 && digits.length <= 7) f = `${digits.slice(0, 3)}-${digits.slice(3)}`
+    else if (digits.length > 7) f = `${digits.slice(0, 3)}-${digits.slice(3, 7)}-${digits.slice(7)}`
+    setPhone(f)
+  }
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setError('')
+    if (!name.trim() || !phone.trim()) {
+      setError('성함과 연락처를 입력해주세요.')
+      return
+    }
+    const digits = phone.replace(/\D/g, '')
+    if (digits.length !== 11 || !digits.startsWith('010')) {
+      setError('올바른 연락처를 입력해주세요. (010-XXXX-XXXX)')
+      return
+    }
+    if (!consents.privacy || !consents.third_party) {
+      setError('필수 항목(개인정보 수집·이용, 제3자 제공)에 동의해주세요.')
+      return
+    }
+    setIsSubmitting(true)
+    if (fraudGate.enabled) {
+      fraudGate.reportClick('inquiry_submit', { targetText: '상담 신청' }).catch(() => {})
+    }
+    const message = memo.trim() || '[상담 신청]'
+    const urlParams = new URLSearchParams(window.location.search)
+    try {
+      const res = await fetch('/api/landing-inquiry', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          page_id: pageId,
+          slug,
+          name: name.trim(),
+          phone: phone.trim(),
+          message,
+          agent_code: agentCode || urlParams.get('a') || urlParams.get('agent') || undefined,
+          agent_name: agentName,
+          utm_source: urlParams.get('utm_source') || undefined,
+          utm_medium: urlParams.get('utm_medium') || undefined,
+          utm_campaign: urlParams.get('utm_campaign') || undefined,
+          consent_privacy: consents.privacy,
+          consent_third_party: consents.third_party,
+          consent_marketing: consents.marketing,
+          consent_marketing_night: consents.marketing_night,
+          page_url: window.location.href,
+        }),
+      })
+      const result = await res.json()
+      if (result.success) setSubmitted(true)
+      else setError('접수 중 오류가 발생했습니다. 다시 시도해주세요.')
+    } catch {
+      setError('접수 중 오류가 발생했습니다. 다시 시도해주세요.')
+    }
+    setIsSubmitting(false)
+  }
+
+  return (
+    <div className="rounded-2xl overflow-hidden shadow-lg border border-gray-200 bg-white h-full">
+      <div className="px-5 py-4 text-white" style={{ background: 'linear-gradient(135deg, #0F172A 0%, #1E1B4B 60%, #4338CA 100%)' }}>
+        <h3 className="text-center font-extrabold text-[17px] tracking-tight">간편 상담 신청</h3>
+        <p className="text-center text-[12px] text-white/70 mt-1">성함과 연락처만 남기면 상담해 드립니다</p>
+      </div>
+
+      {submitted ? (
+        <div className="p-8 text-center">
+          <div className="text-4xl mb-2 text-green-500">&#10003;</div>
+          <h4 className="text-lg font-bold text-gray-900 mb-1">접수 완료</h4>
+          <p className="text-gray-600 text-sm">빠른 시간 내에 연락드리겠습니다.</p>
+        </div>
+      ) : (
+        <form onSubmit={handleSubmit} className="p-5 space-y-3">
+          <div>
+            <label className="block text-[13px] font-bold text-gray-700 mb-1">성함 <span className="text-red-500">*</span></label>
+            <input
+              type="text"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              placeholder="성함을 입력해주세요"
+              className="w-full px-3.5 py-2.5 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-amber-400 text-gray-900 placeholder-gray-400 text-[15px]"
+            />
+          </div>
+          <div>
+            <label className="block text-[13px] font-bold text-gray-700 mb-1">연락처 <span className="text-red-500">*</span></label>
+            <input
+              type="tel"
+              value={phone}
+              onChange={handlePhoneChange}
+              maxLength={13}
+              placeholder="연락처를 입력해주세요"
+              className="w-full px-3.5 py-2.5 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-amber-400 text-gray-900 placeholder-gray-400 text-[15px]"
+            />
+          </div>
+          <div>
+            <label className="block text-[13px] font-bold text-gray-700 mb-1">문의 내용 <span className="text-gray-400 font-normal">(선택)</span></label>
+            <textarea
+              value={memo}
+              onChange={(e) => setMemo(e.target.value)}
+              rows={3}
+              placeholder="문의하실 내용을 입력해주세요"
+              className="w-full px-3.5 py-2.5 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-amber-400 text-gray-900 placeholder-gray-400 text-[15px] resize-none"
+            />
+          </div>
+          <ConsentCheckboxes value={consents} onChange={setConsents} accentColor={GOLD} compact />
+          {error && <p className="text-red-500 text-[12px]">{error}</p>}
+          <button
+            type="submit"
+            disabled={isSubmitting}
+            className="w-full py-3.5 rounded-lg font-extrabold text-[16px] flex items-center justify-center gap-1.5 disabled:opacity-50 active:opacity-80 transition-opacity"
+            style={{ background: GOLD, color: '#0F172A' }}
+          >
+            {isSubmitting ? '접수 중...' : '상담 신청하기'}
+          </button>
+        </form>
+      )}
+    </div>
+  )
+}
