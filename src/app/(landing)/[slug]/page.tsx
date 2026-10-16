@@ -4,7 +4,7 @@ import { headers } from 'next/headers'
 import { notFound } from 'next/navigation'
 import { preload } from 'react-dom'
 import { getLandingPageBySlug, getLandingPages, getAgentByCode, type LandingPage as LandingPageType } from '@/lib/supabase-landing'
-import { landingBaseUrl } from '@/lib/landing-slugs'
+import { landingBaseUrl, isLegacyLanding } from '@/lib/landing-slugs'
 import InquiryForm from './InquiryForm'
 import BottomBar from './BottomBar'
 import CallBanner from './CallBanner'
@@ -148,8 +148,8 @@ export default async function LandingPage({ params, searchParams }: Props) {
 
   // 광고 심사용 사업주체 표기 (해당 직원 페이지에만 푸터 노출)
   const agentFooter = agent ? getAgentFooter(slug, agentCodeStr) : undefined
-  // 사업자 정보가 있으면 agent 페이지에도 푸터 기본 노출 (광고 심사 대응)
-  const showFooter = !agent || !!agentFooter || !!page.business_info?.company_name
+  // 사업자 정보가 있으면 agent 페이지에도 푸터 기본 노출 (광고 심사 대응) — 기존 현장은 이전 조건 그대로
+  const showFooter = !agent || !!agentFooter || (!isLegacyLanding(slug) && !!page.business_info?.company_name)
 
   // 독립 도메인 접속 시 JSON-LD 등의 기준 URL도 그 도메인으로
   const pageBaseUrl = landingBaseUrl((await headers()).get('host'), slug)

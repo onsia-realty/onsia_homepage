@@ -12,6 +12,14 @@ export const EN_TO_KO_SLUG: Record<string, string> = {
   'hwaseo-honorsville': '화서역호수공원아너스빌',
 }
 
+// 기존 현장 — 7248f67 이전 동작(단일 동의 체크박스, agent 페이지 푸터 숨김) 고정.
+// 동의 3분리·사업자 푸터 등 신규 템플릿 동작은 이 목록 밖의 slug에만 적용.
+export const LEGACY_LANDING_SLUGS = new Set(['yamok-grandhill', 'urbanhomes', 'cluster-yongin-honorsville'])
+
+export function isLegacyLanding(slug: string | undefined | null): boolean {
+  return !!slug && LEGACY_LANDING_SLUGS.has(slug)
+}
+
 export const KO_TO_EN_SLUG: Record<string, string> = Object.fromEntries(
   Object.entries(EN_TO_KO_SLUG).map(([en, ko]) => [ko, en])
 )

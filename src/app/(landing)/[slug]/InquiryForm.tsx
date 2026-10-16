@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { useFraudGate } from './FraudGateContext'
 import ConsentCheckboxes, { EMPTY_CONSENTS, type Consents } from './ConsentCheckboxes'
+import { isLegacyLanding } from '@/lib/landing-slugs'
 
 interface Props {
   pageId: string
@@ -15,6 +16,9 @@ interface Props {
 export default function InquiryForm({ pageId, slug, accentColor, agentCode, agentName }: Props) {
   const [name, setName] = useState('')
   const [phone, setPhone] = useState('')
+  // 기존 현장(야목·어반홈스·아너스빌)은 단일 동의 체크박스 그대로, 신규 템플릿만 동의 3분리
+  const legacy = isLegacyLanding(slug)
+  const [agreed, setAgreed] = useState(false)
   const [consents, setConsents] = useState<Consents>(EMPTY_CONSENTS)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [submitted, setSubmitted] = useState(false)
@@ -49,7 +53,12 @@ export default function InquiryForm({ pageId, slug, accentColor, agentCode, agen
       return
     }
 
-    if (!consents.privacy || !consents.third_party) {
+    if (legacy) {
+      if (!agreed) {
+        setError('개인정보 수집 및 이용에 동의해주세요.')
+        return
+      }
+    } else if (!consents.privacy || !consents.third_party) {
       setError('필수 항목(개인정보 수집·이용, 제3자 제공)에 동의해주세요.')
       return
     }
@@ -77,11 +86,15 @@ export default function InquiryForm({ pageId, slug, accentColor, agentCode, agen
           utm_source: urlParams.get('utm_source') || undefined,
           utm_medium: urlParams.get('utm_medium') || undefined,
           utm_campaign: urlParams.get('utm_campaign') || undefined,
-          consent_privacy: consents.privacy,
-          consent_third_party: consents.third_party,
-          consent_marketing: consents.marketing,
-          consent_marketing_night: consents.marketing_night,
-          page_url: window.location.href,
+          ...(legacy
+            ? {}
+            : {
+                consent_privacy: consents.privacy,
+                consent_third_party: consents.third_party,
+                consent_marketing: consents.marketing,
+                consent_marketing_night: consents.marketing_night,
+                page_url: window.location.href,
+              }),
         }),
       })
       const result = await res.json()
@@ -129,7 +142,25 @@ export default function InquiryForm({ pageId, slug, accentColor, agentCode, agen
           style={{ '--tw-ring-color': accentColor } as React.CSSProperties}
         />
       </div>
-      <ConsentCheckboxes value={consents} onChange={setConsents} accentColor={accentColor} />
+      {legacy ? (
+        <label className="flex items-start gap-2.5 cursor-pointer py-1">
+          <input
+            type="checkbox"
+            checked={agreed}
+            onChange={(e) => setAgreed(e.target.checked)}
+            className="mt-0.5 w-5 h-5 rounded border-gray-300 accent-current flex-shrink-0"
+            style={{ accentColor }}
+          />
+          <span className="text-sm text-gray-600 leading-snug">
+            개인정보 수집 및 이용에 동의합니다.
+            <span className="text-gray-400 block text-xs mt-0.5">
+              수집항목: 이름, 연락처 | 목적: 분양 상담 | 보유기간: 상담 완료 후 1년
+            </span>
+          </span>
+        </label>
+      ) : (
+        <ConsentCheckboxes value={consents} onChange={setConsents} accentColor={accentColor} />
+      )}
       {error && <p className="text-red-500 text-sm">{error}</p>}
       <button
         type="submit"

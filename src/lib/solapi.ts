@@ -26,7 +26,9 @@ export async function notifyAdmin(inquiry: {
   marketingConsent?: boolean
 }) {
   const agentInfo = inquiry.agentName ? ` (담당: ${inquiry.agentName})` : ''
-  const text = `[온시아] 문의 접수${agentInfo}\n${inquiry.projectName}\n이름: ${inquiry.name}\n연락처: ${inquiry.phone}\n광고수신 ${inquiry.marketingConsent ? 'O' : 'X'}`
+  // 광고수신 표기는 동의 3분리 적용 현장(marketingConsent 전달 시)에만 — 기존 현장 SMS 문구는 그대로
+  const marketingInfo = inquiry.marketingConsent === undefined ? '' : `\n광고수신 ${inquiry.marketingConsent ? 'O' : 'X'}`
+  const text = `[온시아] 문의 접수${agentInfo}\n${inquiry.projectName}\n이름: ${inquiry.name}\n연락처: ${inquiry.phone}${marketingInfo}`
 
   const to =
     (inquiry.slug && inquiry.agentCode

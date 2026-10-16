@@ -14,6 +14,7 @@ import YamokYsHeroCopy from './YamokYsHeroCopy'
 import Reveal from './Reveal'
 import type { BusinessInfo as FullBusinessInfo } from '@/lib/supabase-landing'
 import { getAgentFooter } from './agent-footer'
+import { isLegacyLanding } from '@/lib/landing-slugs'
 
 // 라이트박스는 첫 탭 전까지 번들 미로드 (yamok-grandhill 전용)
 const ImageLightbox = dynamic(() => import('./ImageLightbox'), { ssr: false })
@@ -142,8 +143,8 @@ export default function PCLanding({
   const isAgent = !!agent
   // 광고 심사용 사업주체 표기 (해당 직원 페이지에만 푸터 노출)
   const agentFooter = isAgent ? getAgentFooter(slug, agentCode) : undefined
-  // 사업자 정보가 있으면 agent 페이지에도 푸터 기본 노출 (광고 심사 대응)
-  const showFooter = !isAgent || !!agentFooter || !!page.business_info?.company_name
+  // 사업자 정보가 있으면 agent 페이지에도 푸터 기본 노출 (광고 심사 대응) — 기존 현장은 이전 조건 그대로
+  const showFooter = !isAgent || !!agentFooter || (!isLegacyLanding(slug) && !!page.business_info?.company_name)
   const navItems = navLinks && navLinks.length > 0 ? navLinks : DEFAULT_NAV_ITEMS
   const isYamok = slug === 'yamok-grandhill'
   // 윤상(?a=ys) 전용 히어로 카피 — 광고 심사용 "4억원대" 텍스트 노출
