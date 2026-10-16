@@ -66,12 +66,20 @@ interface Props {
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>
 }
 
+// 비공개 미리보기: ?preview=<LANDING_PREVIEW_KEY> 가 서버측 키와 일치할 때만 is_published=false 페이지 렌더
+function isPreviewKey(preview: string | string[] | undefined): boolean {
+  const key = process.env.LANDING_PREVIEW_KEY
+  return !!key && typeof preview === 'string' && preview === key
+}
+
 export async function generateMetadata({ params, searchParams }: Props): Promise<Metadata> {
   const { slug } = await params
-  const { a: agentCode } = await searchParams
-  const page = await getLandingPageBySlug(slug)
+  const { a: agentCode, preview } = await searchParams
+  const isPreview = isPreviewKey(preview)
+  const page = await getLandingPageBySlug(slug, isPreview)
 
   if (!page) return { title: '페이지를 찾을 수 없습니다' }
+  if (isPreview) return { title: `[미리보기] ${page.project_name}`, robots: { index: false, follow: false } }
 
   // Agent별 OG 타이틀: "{프로젝트명} {직원명}" — 모든 슬러그 동일 패턴
   const agentCodeStr = typeof agentCode === 'string' ? agentCode : undefined
@@ -125,8 +133,9 @@ export const revalidate = 3600
 
 export default async function LandingPage({ params, searchParams }: Props) {
   const { slug } = await params
-  const { a: agentCode } = await searchParams
-  const page = await getLandingPageBySlug(slug)
+  const { a: agentCode, preview } = await searchParams
+  const isPreview = isPreviewKey(preview)
+  const page = await getLandingPageBySlug(slug, isPreview)
 
   if (!page) notFound()
 
@@ -268,6 +277,11 @@ export default async function LandingPage({ params, searchParams }: Props) {
 
   const body = (
     <>
+      {isPreview && (
+        <div className="fixed top-2 left-2 z-[9999] px-2.5 py-1 rounded bg-red-600 text-white text-xs font-bold shadow pointer-events-none">
+          미리보기 (비공개)
+        </div>
+      )}
       {/* ===== SEO 구조화 데이터 (JSON-LD, yamok-grandhill 한정, 메타데이터로만 사용) ===== */}
       {slug === 'yamok-grandhill' && (
         <YamokStructuredData faq={YAMOK_FAQ} ogImage={page.og_image || undefined} baseUrl={pageBaseUrl} />

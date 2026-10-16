@@ -5,6 +5,7 @@
 // 방문예약·비고는 별도 컬럼 없이 message 필드에 합쳐 저장(DB 변경 0) + 관리자 SMS.
 import { useState } from 'react'
 import { useFraudGate } from './FraudGateContext'
+import ConsentCheckboxes, { EMPTY_CONSENTS, type Consents } from './ConsentCheckboxes'
 
 const GOLD = '#C9A96E'
 
@@ -17,7 +18,7 @@ export default function YamokConsultForm({ pageId, slug }: Props) {
   const [name, setName] = useState('')
   const [phone, setPhone] = useState('')
   const [memo, setMemo] = useState('')
-  const [agreed, setAgreed] = useState(false)
+  const [consents, setConsents] = useState<Consents>(EMPTY_CONSENTS)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [submitted, setSubmitted] = useState(false)
   const [error, setError] = useState('')
@@ -43,8 +44,8 @@ export default function YamokConsultForm({ pageId, slug }: Props) {
       setError('올바른 연락처를 입력해주세요. (010-XXXX-XXXX)')
       return
     }
-    if (!agreed) {
-      setError('개인정보 수집 및 이용에 동의해주세요.')
+    if (!consents.privacy || !consents.third_party) {
+      setError('필수 항목(개인정보 수집·이용, 제3자 제공)에 동의해주세요.')
       return
     }
     setIsSubmitting(true)
@@ -69,6 +70,11 @@ export default function YamokConsultForm({ pageId, slug }: Props) {
           utm_source: urlParams.get('utm_source') || undefined,
           utm_medium: urlParams.get('utm_medium') || undefined,
           utm_campaign: urlParams.get('utm_campaign') || undefined,
+          consent_privacy: consents.privacy,
+          consent_third_party: consents.third_party,
+          consent_marketing: consents.marketing,
+          consent_marketing_night: consents.marketing_night,
+          page_url: window.location.href,
         }),
       })
       const result = await res.json()
@@ -127,12 +133,7 @@ export default function YamokConsultForm({ pageId, slug }: Props) {
               className="w-full px-3.5 py-2.5 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-amber-400 text-gray-900 placeholder-gray-400 text-[15px] resize-none"
             />
           </div>
-          <label className="flex items-start gap-2 cursor-pointer">
-            <input type="checkbox" checked={agreed} onChange={(e) => setAgreed(e.target.checked)} className="mt-0.5 w-4 h-4 rounded border-gray-300 accent-amber-500 flex-shrink-0" />
-            <span className="text-[12px] text-gray-500 leading-snug">
-              개인정보 수집·이용 동의 (이름·연락처 / 분양 상담 / 상담 완료 후 1년)
-            </span>
-          </label>
+          <ConsentCheckboxes value={consents} onChange={setConsents} accentColor="#F59E0B" compact />
           {error && <p className="text-red-500 text-[12px]">{error}</p>}
           <button
             type="submit"

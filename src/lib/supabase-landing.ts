@@ -110,13 +110,14 @@ export interface LandingAgent {
 }
 
 // 공개 페이지 조회 (slug로)
-export async function getLandingPageBySlug(slug: string): Promise<LandingPage | null> {
-  const { data, error } = await supabaseLanding
+// includeUnpublished: 비공개 미리보기(?preview=KEY 서버측 검증 통과 시)에만 true — anon RLS가 비공개 행을 숨기므로 service_role 사용
+export async function getLandingPageBySlug(slug: string, includeUnpublished = false): Promise<LandingPage | null> {
+  let q = (includeUnpublished ? createLandingAdminClient() : supabaseLanding)
     .from('pages')
     .select('*')
     .eq('slug', slug)
-    .eq('is_published', true)
-    .single()
+  if (!includeUnpublished) q = q.eq('is_published', true)
+  const { data, error } = await q.single()
 
   if (error) {
     console.error('Error fetching landing page:', error)
@@ -171,11 +172,27 @@ export async function submitLandingInquiry(inquiry: {
   utm_source?: string
   utm_medium?: string
   utm_campaign?: string
+  consent_privacy?: boolean
+  consent_third_party?: boolean
+  consent_marketing?: boolean
+  consent_marketing_night?: boolean
+  consented_at?: string
+  consent_version?: string
+  ip?: string
+  user_agent?: string
+  page_url?: string
 }): Promise<{ success: boolean; error?: string }> {
   const admin = createLandingAdminClient()
-  const { error } = await admin
+  let { error } = await admin
     .from('inquiries')
     .insert(inquiry)
+
+  // 004-inquiry-consent.sql 미적용 환경 호환: 동의 컬럼이 없으면 기존 컬럼만으로 재시도 (문의 유실 방지)
+  if (error && /consent|user_agent|page_url|column/i.test(error.message)) {
+    console.warn('inquiries consent 컬럼 없음 — 동의 필드 제외 재시도. scripts/migration/004-inquiry-consent.sql 적용 필요:', error.message)
+    const { page_id, name, phone, message, agent_code, utm_source, utm_medium, utm_campaign } = inquiry
+    ;({ error } = await admin.from('inquiries').insert({ page_id, name, phone, message, agent_code, utm_source, utm_medium, utm_campaign }))
+  }
 
   if (error) {
     console.error('Error submitting inquiry:', error)

@@ -23,9 +23,10 @@ export async function notifyAdmin(inquiry: {
   agentName?: string
   slug?: string
   agentCode?: string
+  marketingConsent?: boolean
 }) {
   const agentInfo = inquiry.agentName ? ` (담당: ${inquiry.agentName})` : ''
-  const text = `[온시아] 문의 접수${agentInfo}\n${inquiry.projectName}\n이름: ${inquiry.name}\n연락처: ${inquiry.phone}`
+  const text = `[온시아] 문의 접수${agentInfo}\n${inquiry.projectName}\n이름: ${inquiry.name}\n연락처: ${inquiry.phone}\n광고수신 ${inquiry.marketingConsent ? 'O' : 'X'}`
 
   const to =
     (inquiry.slug && inquiry.agentCode

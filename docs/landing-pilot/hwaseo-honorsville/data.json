@@ -1,0 +1,139 @@
+{
+  "slug": "hwaseo-honorsville",
+  "slug_ko": "화서역호수공원아너스빌",
+  "project_name": "화서역 호수공원 아너스빌",
+  "subtitle": "수원 유일 비규제 권선구, 서호공원 옆 전용 84·94·99㎡ 476세대 — 선착순 동·호 지정 계약 중",
+  "developer": "삼환기업㈜ (SM그룹 건설부문, 자체사업)",
+  "constructor": "삼환기업㈜",
+  "location": "경기도 수원시 권선구 서둔동 212-1번지 일원 (도로명 수인로135번길 22)",
+  "total_units": 476,
+  "floors": "지하 4층 ~ 지상 최고 15층",
+  "buildings": 7,
+  "unit_types": [
+    { "type": "84A", "area_m2": 84.7459, "units": 27, "price_from": "8억 3,200만원 (최고 8억 9,800만원)" },
+    { "type": "84B", "area_m2": 84.8508, "units": 84, "price_from": "8억 5,900만원 (최고 8억 9,300만원)" },
+    { "type": "84C", "area_m2": 84.6391, "units": 39, "price_from": "8억 5,600만원 (최고 8억 9,300만원)" },
+    { "type": "84D", "area_m2": 84.9663, "units": 70, "price_from": "8억 4,100만원 (최고 8억 9,300만원)" },
+    { "type": "84E", "area_m2": 84.9739, "units": 14, "price_from": "8억 5,900만원 (최고 8억 9,300만원)" },
+    { "type": "94A", "area_m2": 94.9503, "units": 147, "price_from": "8억 1,400만원 (최고 9억 400만원)" },
+    { "type": "94B", "area_m2": 94.961, "units": 14, "price_from": "8억 6,800만원 (최고 9억 400만원)" },
+    { "type": "99A", "area_m2": 99.6774, "units": 81, "price_from": "8억 7,500만원 (최고 9억 1,100만원)" }
+  ],
+  "price_note": "최고가는 돈보·킴군·리치고 일치(공고문). 최저가는 mhb-blog 단일 출처. 3.3㎡당 평균 약 2,489만원.",
+  "move_in_date": "2029년 10월 예정",
+  "parking": "세대당 1.92대",
+  "nearest_station": {
+    "name": "화서역 (1호선)",
+    "distance_m": 1307,
+    "note": "조직공고·단지명 기준 화서역 생활권. 아파트진 1,307m. 수원역(1호선·수인분당선·KTX) 약 1,805m"
+  },
+  "benefits": [
+    "계약금 5% (1차 500만원)",
+    "입주 시까지 2천만원 정액제",
+    "중도금 60% 무이자",
+    "발코니 확장 무상",
+    "시스템에어컨 등 2천만원 상당 옵션 무상",
+    "8천만원 상당 혜택",
+    "비규제지역 · 전매제한 1년",
+    "LTV 최대 70%",
+    "실거주 의무 · 청약통장 불필요"
+  ],
+  "premium_points": [
+    { "title": "수원 유일 비규제 권선구", "desc": "영통·장안·팔달구가 규제지역으로 묶인 지금, 권선구만 예외. 전매제한 1년, 실거주 의무 없음, 청약통장 불필요, LTV 최대 70%." },
+    { "title": "8천만원 상당 혜택", "desc": "계약금 5%(1차 500만원), 입주 시까지 2천만원 정액제, 중도금 60% 무이자, 발코니 확장 무상, 시스템에어컨 등 2천만원 상당 옵션 무상." },
+    { "title": "서호공원 생활권", "desc": "수원팔경 '서호낙조'의 서호공원 산책로 도보 10분, 국립농업박물관·여기산 녹지 인접. 호수 조망 세대." },
+    { "title": "전 세대 중대형 84·94·99㎡", "desc": "5.6m 광폭 거실 + 3면 발코니 특화, 커튼월룩 외관·유리난간. 476세대 7개 동, 세대당 주차 1.92대, 근생시설 1,258평." },
+    { "title": "화서역·수원역 더블 역 + 트리플 몰", "desc": "화서역·수원역(KTX, GTX-C 추진) 이용권. 스타필드 수원·롯데몰 타임빌라스·AK플라자 인근." },
+    { "title": "AI 스마트 단지", "desc": "안면인식 출입, 수원 최초 실시간 빈자리 주차 안내, 비대면 진료 연계 헬스케어(솔닥 협업)." }
+  ],
+  "development_plans": [
+    { "name": "신분당선 광교~호매실 연장 (구운역 신설 예정)", "status": "construction", "source": "세계일보 2026-04" },
+    { "name": "GTX-C (수원역 경유)", "status": "planned", "source": "뉴스핌 2026-09" },
+    { "name": "탑동 이노베이션밸리 (2029 준공 목표)", "status": "planned", "source": "헤럴드경제 2026-09" },
+    { "name": "수원 경제자유구역 (약 3.3㎢)", "status": "review", "source": "뉴스핌 2026-09" },
+    { "name": "수원 R&D 사이언스파크", "status": "planned", "source": "헤럴드경제 2026-09" }
+  ],
+  "model_house": {
+    "address": "경기도 수원시 권선구 고색동 533-1",
+    "open_date": "2026-09-11",
+    "phone": "1551-1480"
+  },
+  "phone_number": "1551-1480",
+  "official_url": "https://www.xn--h50bp5wx7b30b79e72a035f.com/",
+  "hero_image": "/uploads/landing/hwaseo-honorsville/hero.jpg",
+  "business_info": {
+    "company_name": "화서역 호수공원 아너스빌 분양홍보관",
+    "modelhouse_address": "경기도 수원시 권선구 고색동 533-1",
+    "site_address": "경기도 수원시 권선구 서둔동 212-1번지 일원"
+  },
+  "cheongyak": {
+    "house_manage_no": "2026000449",
+    "notice_date": "2026-09-11",
+    "schedule": {
+      "special": "2026-09-21",
+      "first": "2026-09-22",
+      "second": "2026-09-23",
+      "announce": "2026-10-01",
+      "documents": "2026-10-04 ~ 2026-10-08",
+      "contract": "2026-10-12 ~ 2026-10-14"
+    },
+    "result": {
+      "special_supply": "153세대 모집 / 83건 — 0.54:1, 소진율 54.2%",
+      "general": "1순위 해당지역 전 타입 미달. 1순위 기타지역 84A 2.56:1 · 84B 2.19:1 · 84D 1.77:1. 84C·84E·94A·94B·99A 2순위까지 미달(94A 78세대·99A 46세대 미달). 총 접수 360건(킴군)",
+      "status_now": "선착순 동호지정 계약 중 (공식 홈페이지, 2026-10-17). 정당계약 후 계약률·잔여세대 수 미확인"
+    }
+  },
+  "regulation": {
+    "status": "비규제 (조정대상지역·투기과열지구·토지거래허가구역 아님)",
+    "basis": "2025-10-15 주택시장 안정화 대책으로 수원 영통·장안·팔달구 지정, 권선구 제외. 2026-07-01 추가 지정(동탄·기흥·구리)에도 미포함. 2026-10 기준 변동 없음(2차 출처) — 국토부 원문 최종 확인 권장"
+  },
+  "images": {
+    "renderings_not_usable": [
+      "https://www.xn--h50bp5wx7b30b79e72a035f.com/pages/place.html",
+      "https://www.xn--h50bp5wx7b30b79e72a035f.com/pages/premium.html",
+      "https://www.xn--h50bp5wx7b30b79e72a035f.com/pages/location.html",
+      "https://www.xn--h50bp5wx7b30b79e72a035f.com/pages/unit.html"
+    ],
+    "refs_dir": "docs/landing-pilot/refs/hwaseo/",
+    "gap": "서호 호수 전경 실사 없음 — 직접 촬영 또는 수원시 공공누리 사진 필요. 현재 hero.jpg는 임시 그라디언트 플레이스홀더"
+  },
+  "seo": {
+    "title": "화서역 호수공원 아너스빌 | 수원 권선구 비규제 476세대 선착순 동호지정",
+    "description": "수원시 권선구 서둔동 화서역 호수공원 아너스빌. 전용 84·94·99㎡ 476세대, 계약금 5%·중도금 60% 무이자·발코니 확장 무상. 수원 유일 비규제, 전매 1년·실거주 의무 없음. 2029년 10월 입주 예정, 선착순 동·호 지정 계약 중. 모델하우스 고색동.",
+    "keywords": [
+      "화서역 호수공원 아너스빌",
+      "화서역 아너스빌",
+      "서둔동 아너스빌",
+      "수원 아너스빌",
+      "권선구 분양",
+      "수원 비규제 아파트",
+      "서호공원 아파트",
+      "수원 선착순 분양",
+      "삼환기업 아너스빌",
+      "수원 신축 분양 2026"
+    ]
+  },
+  "sources": [
+    "https://www.bunyangline.com/recruit/view/542908",
+    "https://www.xn--h50bp5wx7b30b79e72a035f.com/",
+    "https://donbo.co.kr/cheongyak_detail.do?pblancNo=2026000449",
+    "https://housing.kimgoon.kr/apply/hwaseoyeok-hosugongwon-aneoseubil-2026000449",
+    "https://m.richgo.ai/realty/parcel/a3WcyVY",
+    "https://aptgin.com/home/popup/pp_danji/apt/am333555em16869",
+    "https://mhb-blog.com/hwaseo-station-lake-park-honorsville-subscription-guide/",
+    "https://www.straightnews.co.kr/news/articleView.html?idxno=311783",
+    "https://biz.heraldcorp.com/article/10870708",
+    "https://www.newspim.com/news/view/20260915001174",
+    "https://www.kyeongin.com/article/1770781",
+    "https://www.g-enews.com/article/Real-Estate/2026/09/202609111136502878fbfc802b3_1",
+    "https://www.ajunews.com/view/20260805112204415",
+    "https://www.fntimes.com/html/view.php?ud=202609110951292120048b718333_18",
+    "https://mobile.newsis.com/view/NISX20251015_0003363935",
+    "https://www.heraldk.com/article/2025120916383053437",
+    "https://sekkomi.com/blog/jojeong-daesang-jiyeok-choesin",
+    "https://segye.com/newsView/20260424506050",
+    "https://view.asiae.co.kr/article/2026072808265192883",
+    "https://magazine.hankyung.com/money/article/202609156334c"
+  ],
+  "collected_at": "2026-10-17"
+}
