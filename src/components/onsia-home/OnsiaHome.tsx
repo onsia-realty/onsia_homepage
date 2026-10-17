@@ -1,7 +1,7 @@
 'use client';
 
 // Ported from public/preview/main.html (approved mockup). Markup/CSS/behaviour kept 1:1.
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, type CSSProperties } from 'react';
 import s from './OnsiaHome.module.css';
 import SiteHeader, { cormorant } from './SiteHeader';
 import SiteFooter from './SiteFooter';
@@ -33,15 +33,12 @@ const NUMS: [number, string, string][] = [
   [15, '년', '업력'],
 ];
 
+// [현장명, 위치, 대표 이미지, 랜딩 링크]
 const RESIDENCES = [
-  ['상지카일룸 밤섬', '서울 마포구'],
-  ['에테르노 압구정', '서울 강남구'],
-  ['르엘 어퍼하우스', '서울 성동구'],
-  ['더파크사이드 서울', '서울 용산구'],
-  ['라브르27', '서울 강남구 삼성동'],
-  ['브라이튼 여의도', '서울 영등포구'],
-  ['세레노 삼성', '서울 강남구'],
-  ['코르디아 서울 드래곤시티', '서울 용산구'],
+  ['화서역 호수공원 아너스빌', '경기 수원시 권선구', '/uploads/landing/hwaseo-honorsville/hero.jpg', '/화서역호수공원아너스빌'],
+  ['오산헤리티지자이', '경기 오산시 양산동', '/uploads/landing/osan-heritage-xi/hero.jpg', '/병점역오산헤리티지자이'],
+  ['야목역 서희스타힐스 그랜드힐', '경기 화성시 비봉지구', '/uploads/landing/yamok/hero.jpg', 'https://xn--w52b01jv7aa057aotah02dmgmlja.xyz/'],
+  ['청라 아크원 푸르지오', '인천 서구 청라국제도시', '/uploads/landing/cheongna-arcone/hero.jpg', '/청라아크원푸르지오'],
 ];
 
 const NEWS = ['뉴스 제목이 들어갈 자리입니다', '보도자료 제목이 들어갈 자리입니다', '공지사항 제목이 들어갈 자리입니다'];
@@ -318,11 +315,15 @@ export default function OnsiaHome() {
         </div>
         <div ref={slider} className={`${s.slider} ${s.rv}`} onScroll={upd}>
           {/* 이미지 확보 후 .slide::before 대신 background-image 로 교체 */}
-          {RESIDENCES.map(([h, p]) => <article key={h} className={s.slide}><h3>{h}</h3><p>{p}</p></article>)}
+          {RESIDENCES.map(([h, p, img, href]) => (
+            <a key={h} href={href} className={`${s.slide} ${s.slideImg}`} style={{ '--img': `url("${img}")` } as CSSProperties}>
+              <h3>{h}</h3><p>{p}</p>
+            </a>
+          ))}
         </div>
         <div className={s.wrap}>
           <div className={`${s.ctrl} ${s.rv}`}>
-            <span className={s.counter}><em ref={cur}>01</em><small>/ 08</small></span>
+            <span className={s.counter}><em ref={cur}>01</em><small>/ {String(RESIDENCES.length).padStart(2, '0')}</small></span>
             <span className={s.bar}><i ref={bar}></i></span>
             <div className={s.arrows}>
               <button aria-label="이전" onClick={() => go(-1)}>&larr;</button>
