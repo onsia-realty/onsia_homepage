@@ -2,6 +2,7 @@
 // 출처: docs/landing-pilot/osan-heritage-xi/data.json + 00-구인공고-원문요약.md §2 (공고 문구 그대로 사용) + 공식 홈페이지(xi.co.kr/osxi) 프리미엄 문구
 // 이미지: 공식 홈페이지 원본 → public/uploads/landing/osan-heritage-xi/ (images.md 참고)
 import type { TplSiteConfig } from './types'
+import { STANDARD_EVENT_POPUP, STANDARD_INQUIRY_GIFT } from './common'
 
 const IMG = '/uploads/landing/osan-heritage-xi'
 const NAME = '오산헤리티지자이'
@@ -12,7 +13,7 @@ export const OSAN_HERITAGE_XI: TplSiteConfig = {
   name: NAME,
   nameEn: 'BYEONGJEOM STATION · OSAN HERITAGE XI',
   subtitle: '동탄 생활권 · 병점역 도보 15분 · GS건설 자이 1,783세대 · 선착순 동·호 지정 계약 중',
-  phone: '1661-1783',
+  phone: '1668-5257',
   colors: { primary: '#1F2A44', accent: '#C9A96E' },
 
   hero: {
@@ -70,11 +71,8 @@ export const OSAN_HERITAGE_XI: TplSiteConfig = {
     { key: 'firstcome', image: `${IMG}/popup/first_come.jpg`, alt: '오산헤리티지자이 선착순 동·호 지정 계약중 · 입주 전까지 계약금 5% · 1차 계약금 500만원', href: '#inquiry' },
   ],
 
-  inquiryGift: {
-    badge: 'FIRST COME · 선착순 동·호 지정 계약',
-    line: '관심고객 등록 시',
-    highlight: '잔여 동·호·층 · 분양가 우선 안내',
-  },
+  inquiryGift: STANDARD_INQUIRY_GIFT,
+  eventPopup: STANDARD_EVENT_POPUP(NAME),
 
   gallery: [
     {
@@ -167,7 +165,7 @@ export const OSAN_HERITAGE_XI: TplSiteConfig = {
 
   faq: [
     { q: '병점역 오산 헤리티지 자이 위치는 어디인가요?', a: '경기도 오산시 양산동 223번지 일원(1단지)·328-2번지 일원(2단지), 양산4지구입니다. 1호선 병점역 도보 15분, 동탄 생활권입니다.' },
-    { q: '모델하우스(견본주택)는 어디에 있나요?', a: '경기도 오산시 양산동 10-10에 있습니다. 방문 전 분양문의 1661-1783으로 예약하시면 대기 없이 상담받으실 수 있습니다.' },
+    { q: '모델하우스(견본주택)는 어디에 있나요?', a: '경기도 오산시 양산동 10-10에 있습니다. 방문 전 분양문의 1668-5257로 예약하시면 대기 없이 상담받으실 수 있습니다.' },
     { q: '현재 분양 진행 상황은 어떤가요?', a: '청약 및 정당계약이 완료되어 현재 선착순 동·호 지정 계약 중입니다. 원하는 동·호·층을 선택할 수 있으며, 관심고객 등록 시 잔여 동·호와 분양가를 우선 안내해 드립니다.' },
     { q: '계약 조건은 어떻게 되나요?', a: '계약금 5%, 1차 계약금 500만원 정액입니다. 비규제지역으로 청약통장이 필요 없고, 전매제한 6개월, 실거주의무·재당첨제한이 없습니다. 세부 조건은 상담 시 안내드립니다.' },
     { q: '세대 규모와 타입은 어떻게 되나요?', a: '지하 2층~지상 27층, 22개 동, 총 1,783세대(1단지 1,069세대·2단지 714세대)이며 전용 75㎡, 84㎡(A·B·C·D), 102㎡, 124㎡, 166㎡P 8개 타입으로 구성됩니다.' },
@@ -220,5 +218,5 @@ export const OSAN_HERITAGE_XI: TplSiteConfig = {
 
   // ponytail: 마케팅 baseline — 오너가 정할 값(화서역과 동일 임시값).
   reserveBaseline: 100,
-  flags: { fraudGate: false, liveRequests: true, eventPopup: false, reserveCounter: true },
+  flags: { fraudGate: false, liveRequests: true, eventPopup: true, reserveCounter: true },
 }

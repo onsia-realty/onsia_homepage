@@ -2,6 +2,7 @@
 // 출처: docs/landing-pilot/hwaseo-honorsville/data.json + 00-구인공고-원문요약.md §3 (공고 문구 그대로 사용)
 // 이미지: 공식 홈페이지(화서역호수공원아너스빌.com) 원본 → public/uploads/landing/hwaseo-honorsville/ (images.md 참고)
 import type { TplSiteConfig } from './types'
+import { STANDARD_EVENT_POPUP, STANDARD_INQUIRY_GIFT } from './common'
 
 const IMG = '/uploads/landing/hwaseo-honorsville'
 const NAME = '화서역 호수공원 아너스빌'
@@ -74,21 +75,8 @@ export const HWASEO_HONORSVILLE: TplSiteConfig = {
     { key: 'event', image: `${IMG}/popup/contract_event.jpg`, alt: '계약고객 감사 이벤트 · 계약고객 전원 주방 아일랜드장 무상 설치', href: '#inquiry' },
   ],
 
-  inquiryGift: {
-    badge: 'EVENT · 계약고객 감사 이벤트',
-    line: '관심고객 등록 후 계약 시',
-    highlight: '주방 아일랜드장 무상 설치 (계약고객 전원)',
-  },
-
-  eventPopup: {
-    eyebrow: '계약고객 감사 이벤트 · 화서역 호수공원 아너스빌',
-    title: '상담 접수 후 계약 시',
-    prize: '주방 아일랜드장',
-    prizeSub: '무상 설치',
-    stamp: '🎁 계약고객 전원 증정',
-    note: '※ 확장형(무상) 주방에 수납형 아일랜드장을 추가 설치해 드립니다. 별도 신청 없이 계약 시 자동 적용.',
-    defaultMessage: '[이벤트 접수] 주방 아일랜드장 무상 설치 이벤트',
-  },
+  inquiryGift: STANDARD_INQUIRY_GIFT,
+  eventPopup: STANDARD_EVENT_POPUP(NAME),
 
   gallery: [
     {

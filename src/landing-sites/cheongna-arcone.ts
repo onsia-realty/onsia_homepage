@@ -3,6 +3,7 @@
 // 이미지: 공식 홈페이지(arkone-prugio.com) 원본 → public/uploads/landing/cheongna-arcone/ (images.md 참고)
 // 상태: 입주자모집공고 10/22 예정 · 청약 11/2 예정 → 사전 관심고객 등록 톤
 import type { TplSiteConfig } from './types'
+import { STANDARD_EVENT_POPUP, STANDARD_INQUIRY_GIFT } from './common'
 
 const IMG = '/uploads/landing/cheongna-arcone'
 const NAME = '청라 아크원 푸르지오'
@@ -12,7 +13,7 @@ export const CHEONGNA_ARCONE: TplSiteConfig = {
   name: NAME,
   nameEn: 'CHEONGNA ARKONE · PRUGIO',
   subtitle: '청라국제업무단지 10년 만의 분양가상한제 대단지 — 아파트 868세대 + 오피스텔 987실',
-  phone: '1551-6881',
+  phone: '1668-5257',
   colors: { primary: '#1B3A34', accent: '#C9A96E' },
 
   hero: {
@@ -70,11 +71,8 @@ export const CHEONGNA_ARCONE: TplSiteConfig = {
   // 공식 홈페이지(티저)에 팝업 이미지 없음 → 팝업존 미노출
   popupSlides: [],
 
-  inquiryGift: {
-    badge: 'PRE-REGISTRATION · 사전 관심고객 등록',
-    line: '관심고객 등록 시',
-    highlight: '입주자모집공고 · 청약 일정 · 분양가 우선 안내',
-  },
+  inquiryGift: STANDARD_INQUIRY_GIFT,
+  eventPopup: STANDARD_EVENT_POPUP(NAME),
 
   gallery: [
     {
@@ -145,7 +143,7 @@ export const CHEONGNA_ARCONE: TplSiteConfig = {
 
   faq: [
     { q: '청라 아크원 푸르지오 위치는 어디인가요?', a: '인천광역시 서구 청라동 86-1번지 일원, 청라국제업무단지 M5블록입니다. 청라 피크원 푸르지오(B1블록)와 나란히 위치합니다.' },
-    { q: '모델하우스(견본주택)는 언제, 어디서 오픈하나요?', a: '인천광역시 서구 청라동 87-1번지(청라 피크원 1차 모델하우스 자리)에서 10월 30일 오픈 예정입니다. 홍보관은 중봉대로586번길 19 홍익파크 1층 108·109호입니다. 방문 전 1551-6881로 예약하시면 대기 없이 상담받으실 수 있습니다.' },
+    { q: '모델하우스(견본주택)는 언제, 어디서 오픈하나요?', a: '인천광역시 서구 청라동 87-1번지(청라 피크원 1차 모델하우스 자리)에서 10월 30일 오픈 예정입니다. 홍보관은 중봉대로586번길 19 홍익파크 1층 108·109호입니다. 방문 전 1668-5257로 예약하시면 대기 없이 상담받으실 수 있습니다.' },
     { q: '입주자모집공고와 청약 일정은 어떻게 되나요?', a: '입주자모집공고 10월 22일 예정, 인터넷 청약 접수 11월 2일 예정, 당첨자 발표 11월 10일 예정입니다. 일정은 변경될 수 있으며 관심고객 등록 시 확정 일정을 우선 안내해 드립니다.' },
     { q: '분양가상한제가 적용되나요? 규제지역인가요?', a: '아파트 868세대는 분양가상한제가 적용되며, 인천 서구는 비규제지역입니다. 오피스텔 987실은 상한제 미적용으로 별도 분양됩니다. 분양가는 입주자모집공고에서 확정됩니다.' },
     { q: '세대 규모와 타입은 어떻게 되나요?', a: '지하 5층~지상 49층, 6개 동, 총 1,855세대(아파트 868세대 + 오피스텔 987실)입니다. 아파트는 전용 84㎡(A·B·C·D) 620세대와 103㎡ 248세대, 오피스텔은 전용 105·121·136㎡입니다.' },
@@ -199,5 +197,5 @@ export const CHEONGNA_ARCONE: TplSiteConfig = {
 
   // ponytail: 마케팅 baseline — 오너가 정할 값(화서역과 동일 임시값).
   reserveBaseline: 100,
-  flags: { fraudGate: false, liveRequests: true, eventPopup: false, reserveCounter: true },
+  flags: { fraudGate: false, liveRequests: true, eventPopup: true, reserveCounter: true },
 }
