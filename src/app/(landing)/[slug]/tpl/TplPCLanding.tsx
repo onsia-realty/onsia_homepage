@@ -47,7 +47,8 @@ export default function TplPCLanding({ config: c, pageId, agent, agentCode, agen
 
   const navItems = [
     ...c.gallery.map((s) => ({ label: s.navLabel, id: `pc-${s.id}` })),
-    { label: '세대안내', id: 'pc-unitplan' },
+    // 평면 미공개 현장(unitPlans 비어 있음)은 네비에서 제외 — TplUnitPlans 도 null 렌더
+    ...(c.unitPlans.length ? [{ label: '세대안내', id: 'pc-unitplan' }] : []),
     { label: '관심고객 등록', id: 'pc-inquiry' },
   ]
   const allImages = c.gallery.flatMap((s) => s.images)

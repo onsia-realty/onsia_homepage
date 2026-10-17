@@ -1,0 +1,129 @@
+{
+  "slug": "cheongna-arcone",
+  "slug_ko": "청라아크원푸르지오",
+  "project_name": "청라 아크원 푸르지오",
+  "subtitle": "청라국제업무단지 10년 만의 분양가상한제 대단지 — 아파트 868세대 + 오피스텔 987실",
+  "developer": "㈜청라스마트시티",
+  "constructor": "㈜대우건설",
+  "location": "인천광역시 서구 청라동 86-1번지 일원 (청라국제업무단지 M5블록)",
+  "coordinates": { "lat": 37.53657, "lng": 126.62005, "source": "카카오맵 검색 API" },
+  "total_units": 1855,
+  "units_detail": { "apt": 868, "officetel": 987 },
+  "floors": "지하 5층 ~ 지상 최고 49층",
+  "buildings": 6,
+  "unit_types": [
+    { "type": "아파트 84㎡ (84A/B/C/D)", "area_m2": 84, "units": 620, "price_from": null, "note": "분양가상한제 적용, 분양가 미공개" },
+    { "type": "아파트 103㎡", "area_m2": 103, "units": 248, "price_from": null, "note": "분양가상한제 적용, 분양가 미공개" },
+    { "type": "오피스텔 105㎡", "area_m2": 105, "units": 423, "price_from": null, "note": "상한제 미적용, 별도 분양" },
+    { "type": "오피스텔 121㎡", "area_m2": 121, "units": 282, "price_from": null, "note": "상한제 미적용, 별도 분양" },
+    { "type": "오피스텔 136㎡", "area_m2": 136, "units": 282, "price_from": null, "note": "상한제 미적용, 별도 분양" }
+  ],
+  "move_in_date": "2031년 예정 (블로터 2031-06 / 카카오맵 2031-08, 월 미확정)",
+  "parking": "미확인 (비공식 홍보사이트: 총 3,124대 = 아파트 1,389·오피스텔 1,695·상업 40)",
+  "site_area_m2": { "value": 35306.0, "verified": false, "source": "apt-foryou.co.kr, ooca.co.kr (비공식)" },
+  "nearest_station": {
+    "name": "공항철도 청라국제도시역",
+    "distance_m": 2100,
+    "note": "직선거리, 도보권 아님. 7호선 청라연장 국제업무단지역(예정)은 1단계 2030년으로 지연(뉴스토마토 2026-08-14)"
+  },
+  "benefits": [
+    "아파트 868세대 분양가상한제 적용",
+    "비규제지역 (2025-10-15·2026-06-30 규제지역 지정에서 인천 제외)",
+    "청라 500세대 이상 신규 아파트 2017년 이후 약 10년 만",
+    "하나금융 청라 헤드쿼터 2026년 준공·입주 진행 (관계사 2,200명, 합산 약 4,000명)",
+    "청라 피크원 푸르지오(전량 계약 완료)와 합산 2,911가구 푸르지오 브랜드타운",
+    "코스트코 청라점 직선 약 420m (2024-08 개장)"
+  ],
+  "premium_points": [
+    { "title": "10년 만의 청라 신규 공급", "desc": "2017년 이후 첫 500세대 이상 대단지. 2021년 이후 입주 공백이 이어진 청라의 새 선택지." },
+    { "title": "분양가상한제 + 비규제", "desc": "건축비 상승기에 상한제로 책정되는 아파트 분양가. 인천은 두 차례 규제지역 지정에서 제외." },
+    { "title": "하나금융 4,000명 직주근접", "desc": "2026년 준공된 하나금융 청라 헤드쿼터로 10개 관계사 2,200명 이전 진행 중. 확정된 수요." },
+    { "title": "2,911가구 푸르지오 브랜드타운", "desc": "완판된 청라 피크원 푸르지오와 나란히, 같은 시행·시공이 잇는 M5블록." },
+    { "title": "생활 인프라 가까이, 더 큰 그림은 진행 중", "desc": "코스트코 청라 개장 완료. 스타필드 청라·서울아산청라병원 공사 중, 7호선 국제업무단지역(예정) 추진." }
+  ],
+  "development_plans": [
+    { "name": "하나금융 청라 헤드쿼터(하나드림타운)", "status": "완료·입주 진행 (2026-05 준공, 10/2 오프닝)", "source": "https://news.mtn.co.kr/news-detail/2026063013470734331" },
+    { "name": "코스트코 청라점", "status": "완료 (2024-08-22 개장)", "source": "https://www.inews24.com/view/1755667" },
+    { "name": "청라하늘대교", "status": "개통 (2026년 초)", "source": "https://view.asiae.co.kr/article/2026090213134292808" },
+    { "name": "서울아산청라병원(청라의료복합타운)", "status": "공사 중 (2025-12-29 착공, 800병상, 2029 준공 목표)", "source": "https://dailypharm.com/user/news/334384" },
+    { "name": "스타필드 청라·돔구장", "status": "공사 중 (2027 준공·2028 개장 목표, 오수관로 예산 이슈로 일정 리스크)", "source": "https://kyeonggi.com/article/20260712580114" },
+    { "name": "서울 7호선 청라연장 국제업무단지역(예정)", "status": "공사 중·지연 (실공정 55.1%, 1단계 2030·2단계 2033, 전동차 제작사 회생절차)", "source": "https://newstomato.com/ReadNews.aspx?no=1310302" },
+    { "name": "경인고속도로 지하화", "status": "계획 (2028 착공 목표)", "source": "https://isplus.com/article/view/isp202610120047" },
+    { "name": "GTX-D·E", "status": "계획", "source": "https://www.newspim.com/news/view/20261002000793" },
+    { "name": "인천로봇랜드", "status": "계획 (2028 준공 목표, 장기 표류 이력)", "source": "https://www.heraldk.com/article/2026031118520031968" },
+    { "name": "청라 영상문화복합단지", "status": "계획 ('31, 우선협상자 지위 회수 이력)", "source": "https://m.go.seoul.co.kr/news/2022/07/13/20220713500163" },
+    { "name": "청라시티타워", "status": "계획 (최신 상태 미확인)", "source": "https://www.arkone-prugio.com/" },
+    { "name": "9호선 연장", "status": "미확인 (구인공고 주장, 근거 없음 — 사용 금지)", "source": null }
+  ],
+  "model_house": {
+    "address": "인천광역시 서구 청라동 87-1번지",
+    "open_date": "2026년 10월 중 예정 (정확한 날짜 미확인, 구인공고 10/30)",
+    "promo_office": "인천 서구 중봉대로586번길 19 홍익파크 1층 108·109호",
+    "phone": "1551-6881"
+  },
+  "phone_number": "1551-6881",
+  "official_url": "https://www.arkone-prugio.com/",
+  "hero_image": "/uploads/landing/cheongna-arcone/hero.jpg",
+  "business_info": {
+    "company_name": "청라 아크원 푸르지오 분양홍보관",
+    "modelhouse_address": "인천광역시 서구 청라동 87-1번지",
+    "site_address": "인천광역시 서구 청라동 86-1번지 일원"
+  },
+  "cheongyak": {
+    "house_manage_no": null,
+    "notice_date": "2026-10-22 예정 (당초 10-15에서 변경)",
+    "schedule": {
+      "notice": "2026-10-22 예정",
+      "online_apply": "2026-11-02 예정 (장애인 특별공급 기준; 일반 1·2순위 날짜 미확인)",
+      "winner_announcement": "2026-11-10 예정",
+      "ifez_special_supply": "86가구(84㎡ 62·103㎡ 24), 공고 10/8, 청약 10/19, 발표 10/27, 계약 11/8~10 (별도 공고)"
+    },
+    "source": "https://news.seoul.go.kr/welfare/archives/583953"
+  },
+  "related_project": {
+    "name": "청라 피크원 푸르지오",
+    "relation": "같은 시행(㈜청라스마트시티)·시공(대우건설), 인접 B1블록 오피스텔 1,056실",
+    "status": "2025-07 청약 평균 2.38:1, 2026-03-31 전량 계약 완료, 입주 2029-12",
+    "source": "https://www.bloter.net/news/articleView.html?idxno=675228"
+  },
+  "risks": [
+    "분양가·일반 청약일정 미확정 (공고 10/22 예정)",
+    "시행 PFV 2024년 LH 토지 중도금 764억 연체 보도, 해소 여부 미확인",
+    "오피스텔 121㎡ 이상 564실 대형 비중",
+    "10월 인천 7개 단지 6,921가구 경쟁 분양",
+    "7호선 개통 지연, 스타필드 관로 이슈",
+    "청라국제도시역 직선 2.1km — 역세권 표현 불가"
+  ],
+  "seo": {
+    "title": "청라 아크원 푸르지오 | 분양가상한제 868세대 분양안내",
+    "description": "인천 서구 청라국제업무단지 M5블록, 대우건설 시공 청라 아크원 푸르지오. 아파트 868세대 분양가상한제·비규제, 전용 84·103㎡, 총 1,855세대. 견본주택·청약 일정 안내.",
+    "keywords": ["청라 아크원 푸르지오", "청라아크원푸르지오", "청라 푸르지오 분양", "청라국제업무단지 아파트", "인천 서구 분양", "청라 분양가상한제", "청라 신규분양 2026", "대우건설 청라", "청라 M5블록", "청라 아크원 모델하우스"]
+  },
+  "sources": [
+    "https://www.arkone-prugio.com/",
+    "https://www.newspim.com/news/view/20261002000793",
+    "https://www.bloter.net/news/articleView.html?idxno=675228",
+    "https://isplus.com/article/view/isp202610120047",
+    "https://isplus.com/article/view/isp202609290212",
+    "https://economist.co.kr/article/view/ecn202610130009",
+    "https://view.asiae.co.kr/article/2026090213134292808",
+    "https://www.fnnews.com/news/202609111310464127",
+    "https://news.seoul.go.kr/welfare/archives/583636",
+    "https://news.seoul.go.kr/welfare/archives/583953",
+    "https://www.hankyung.com/article/202607169467i",
+    "https://www.sankun.com/blog/detail/1749_cheongna-international-business-district-daewoo-m5",
+    "https://www.hankyung.com/article/202510303541O",
+    "https://www.kyeonggi.com/article/20250717580282",
+    "https://newstomato.com/ReadNews.aspx?no=1310302",
+    "https://kyeonggi.com/article/20260113580522",
+    "https://kyeonggi.com/article/20260712580114",
+    "https://www.youthdaily.co.kr/mobile/article.html?no=223097",
+    "https://news.mtn.co.kr/news-detail/2026063013470734331",
+    "https://sateconomy.co.kr/news/view/1065573532071368",
+    "https://dailypharm.com/user/news/334384",
+    "https://www.inews24.com/view/1755667",
+    "https://www.heraldk.com/article/2026031118520031968",
+    "https://core.asiae.co.kr/article/2024052716514772675"
+  ],
+  "collected_at": "2026-10-17"
+}

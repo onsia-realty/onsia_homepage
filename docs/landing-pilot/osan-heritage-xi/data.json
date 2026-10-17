@@ -1,0 +1,98 @@
+{
+  "slug": "osan-heritage-xi",
+  "slug_ko": "병점역오산헤리티지자이",
+  "project_name": "오산헤리티지자이",
+  "subtitle": "1호선 병점역 생활권 · GS건설 자이 1,783세대 · 선착순 동·호 지정 계약 중",
+  "developer": "㈜양산사지구에스피씨 (신탁: ㈜하나자산신탁, 관리형 토지신탁)",
+  "constructor": "GS건설㈜",
+  "location": "경기도 오산시 양산동 223번지 일원(1단지) · 328-2번지 일원(2단지), 양산4지구",
+  "total_units": 1783,
+  "floors": "지하 2층 ~ 지상 27층 (1단지 11~27층, 2단지 19~27층)",
+  "buildings": 22,
+  "unit_types": [
+    { "type": "75", "area_m2": 75.4736, "units": 91, "price_from": 669800000, "price_to": 733800000, "balcony": 17700000 },
+    { "type": "84A", "area_m2": 84.9796, "units": 509, "price_from": 712000000, "price_to": 783000000, "balcony": 19900000 },
+    { "type": "84B", "area_m2": 84.9665, "units": 436, "price_from": 718000000, "price_to": 789000000, "balcony": 20400000 },
+    { "type": "84C", "area_m2": 84.8237, "units": 446, "price_from": 723000000, "price_to": 794000000, "balcony": 25000000 },
+    { "type": "84D", "area_m2": 84.9708, "units": 88, "price_from": 746000000, "price_to": 793000000, "balcony": 24700000, "note": "1단지만" },
+    { "type": "102", "area_m2": 102.6201, "units": 140, "price_from": 822100000, "price_to": 907100000, "balcony": 26900000 },
+    { "type": "124", "area_m2": 124.8692, "units": 68, "price_from": 996000000, "price_to": 1063000000, "balcony": 31000000 },
+    { "type": "166P", "area_m2": 166.2309, "units": 5, "price_from": 2077300000, "price_to": 2077300000, "balcony": 40900000 }
+  ],
+  "move_in_date": "2029-09 (예정)",
+  "parking": "미확인 (나무위키: 총 2,684대, 세대당 약 1.5대 — 공식 확인 필요)",
+  "nearest_station": {
+    "name": "병점역 (1호선)",
+    "distance_m": null,
+    "note": "공식 수치 없음. 인접 단지 기준 약 1.6km 추정, 세마역(1호선)이 약 1.0km로 더 가까울 가능성. '도보 N분' 표기 금지"
+  },
+  "benefits": [
+    "계약금 5% · 1차 계약금 500만원 정액 (선착순, 공식 팝업 2026-09-11)",
+    "선착순 동·호 지정 계약 (원하는 동·호·층 선택)",
+    "청약통장 불필요",
+    "비규제지역 · 전매제한 6개월 (2027-01-28 이후 전매 가능)",
+    "실거주의무 없음 · 재당첨제한 없음",
+    "2029년 9월 입주 예정"
+  ],
+  "premium_points": [
+    { "title": "1호선 병점역 생활권", "desc": "병점역 복합환승센터 국토부 제4차 환승센터 기본계획(2026~2030) 반영, GTX-C 병점 연장 추진 중(미확정)" },
+    { "title": "동탄 인접", "desc": "서동탄역·동탄1신도시·삼성 화성캠퍼스 차량권, 병점·동탄 학원가 이용" },
+    { "title": "자이 1,783세대 대단지", "desc": "22개동, 클럽 자이안(피트니스·골프연습장·사우나·독서실), 입주민 스카이라운지" },
+    { "title": "교육", "desc": "양산중학교 2027년 개교 예정, (가칭)양산1초 계획 — 도보권" },
+    { "title": "광역 도로망", "desc": "수도권제2순환·오산화성·오산용인고속도로, 양산동~국도1호선 연결도로 공사 중(2026년 말 준공 목표)" }
+  ],
+  "development_plans": [
+    { "name": "병점역 복합환승센터", "status": "국토부 제4차 환승센터 기본계획(2026~2030) 반영 (계획)", "source": "https://magazine.hankyung.com/money/article/202609170848c" },
+    { "name": "GTX-C 병점 연장", "status": "추진/거론 (미확정). GTX-C 본선 2026-09-15 착공", "source": "https://www.ksilbo.co.kr/news/articleView.html?idxno=1068800" },
+    { "name": "1호선 동탄역 연장 · 동탄도시철도(트램)", "status": "계획", "source": "https://www.sedaily.com/article/20067677" },
+    { "name": "양산동~국도1호선 연결도로 (588m, 6차로)", "status": "2025-06 착공, 2026년 말 준공 목표", "source": "https://kyeonggi.com/article/20250624580291" },
+    { "name": "양산중학교(가칭 양산1중)", "status": "2027-03 개교 예정 (2024 교육부 중앙투자심사 통과)", "source": "https://www.ajunews.com/view/20260520164656941" },
+    { "name": "양산1초등학교(가칭)", "status": "계획 (개교 시기 미정)", "source": "https://m.ekn.kr/view.php?key=20260720024184100" },
+    { "name": "단지 서측 체육공원", "status": "조성 예정", "source": "https://www.seoul.co.kr/news/economy/2026/08/06/20260806500032" }
+  ],
+  "model_house": { "address": "경기도 오산시 양산동 10-10", "open_date": "2026-07-16" },
+  "official_url": "https://www.xi.co.kr/osxi",
+  "official_phone": "1661-1783",
+  "phone_number": "1661-1783",
+  "hero_image": "/uploads/landing/osan-heritage-xi/hero.jpg",
+  "business_info": {
+    "company_name": "오산헤리티지자이 분양홍보관",
+    "modelhouse_address": "경기도 오산시 양산동 10-10",
+    "site_address": "경기도 오산시 양산동 223번지 일원(1단지) · 328-2번지 일원(2단지)"
+  },
+  "cheongyak": {
+    "house_manage_no": "최초 1·2단지 미확인 / 1단지 무순위(사후) 2026910222",
+    "notice_date": "2026-07-10 (최초) / 2026-08-25 (1단지 무순위)",
+    "schedule": "특공 2026-07-20, 1순위 07-21, 2순위 07-22, 당첨자발표 07-28, 정당계약 08-10~12 / 무순위 접수 08-31, 발표 09-03, 계약 09-05",
+    "result": "1·2순위 1,664세대 모집 496건 0.29:1 (1단지 0.47:1, 2단지 0.06:1, 전 타입 미달) / 1단지 무순위 256세대 103건 0.40:1 미달 / 2026-09~ 선착순 동·호 지정 계약 중"
+  },
+  "risks": [
+    "청약·무순위 연속 미달, '대규모 미분양' 기사 다수",
+    "분양가 고평가 지적 (84㎡ 평당 약 2,340만~2,481만 vs 양산동 평균 1,406만)",
+    "공고문에 양산봉 내 분묘 명시 (묘지뷰 민원 가능)",
+    "양산1초 미개교 시 광성초 배정 민원 가능성",
+    "오산 공급 과잉 (GS건설 오산 3개 단지 연속 미달)"
+  ],
+  "seo": {
+    "title": "오산헤리티지자이 | 병점역 생활권 자이 1,783세대 선착순 계약 | 분양 안내",
+    "description": "GS건설 오산헤리티지자이 1·2단지(오산 양산동) 선착순 동·호 지정 계약 중. 계약금 5%·1차 500만원, 전매 6개월, 2029년 9월 입주 예정. 전용 75·84·102·124㎡.",
+    "keywords": ["오산헤리티지자이", "오산 헤리티지 자이", "병점역 자이", "오산 양산동 아파트", "양산4지구", "오산 자이 분양", "병점 신축 아파트", "GS건설 오산", "오산 선착순 분양", "동탄 인접 아파트"]
+  },
+  "sources": [
+    "https://www.xi.co.kr/osxi",
+    "https://xi.co.kr/Files/cmsPage/20260824_134805_390002.pdf",
+    "https://inews24.com/view/1993405",
+    "https://www.asiatime.co.kr/article/20260723500294",
+    "https://m.ekn.kr/view.php?key=20260720024184100",
+    "https://www.sedaily.com/article/20067677",
+    "https://www.seoul.co.kr/news/economy/2026/08/06/20260806500032",
+    "https://economist.co.kr/article/view/ecn202608060012",
+    "https://magazine.hankyung.com/money/article/202609170848c",
+    "https://www.ksilbo.co.kr/news/articleView.html?idxno=1068800",
+    "https://www.geconomy.co.kr/news/article.html?no=324218",
+    "https://newstomato.com/ReadNews.aspx?no=1245904",
+    "https://kyeonggi.com/article/20250624580291",
+    "https://www.ajunews.com/view/20260520164656941",
+    "https://www.bunyangline.com/recruit/view/542907"
+  ]
+}
