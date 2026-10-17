@@ -25,7 +25,6 @@ const BIZ = [
 const SHORTS = ['한강을 마주한 저녁', '압구정, 새로운 기준', '숲과 강 사이의 집', '여의도 스카이라인'];
 // 제작 완료된 카드만 영상 연결 (/media/home/creative/{name}.mp4 + .jpg)
 const SHORT_MEDIA: Record<string, string> = { '한강을 마주한 저녁': 'banpo', '압구정, 새로운 기준': 'apgujeong', '숲과 강 사이의 집': 'sylva', '여의도 스카이라인': 'yeouido' };
-const DRIFT = ['.04', '.08', '.04', '.08'];
 
 const NUMS: [number, string, string][] = [
   [120, '+', '진행 현장'],
@@ -151,20 +150,9 @@ export default function OnsiaHome() {
     return () => io.disconnect();
   }, []);
 
-  // subtle parallax drift on AI cards (desktop only)
+  // AI 카드 영상: 모션 줄이기 설정이면 정지
   useEffect(() => {
-    if (reduced()) { creative.current!.querySelectorAll('video').forEach(v => v.pause()); return; }
-    const sec = creative.current!, drift = Array.from(sec.querySelectorAll<HTMLElement>('[data-drift]'));
-    let tick = false;
-    const run = () => {
-      tick = false;
-      if (innerWidth < 601) { drift.forEach(d => { (d.firstElementChild as HTMLElement).style.transform = ''; }); return; }
-      const rc = sec.getBoundingClientRect(), c = rc.top + rc.height / 2 - innerHeight / 2;
-      drift.forEach(d => { (d.firstElementChild as HTMLElement).style.transform = `translateY(${(-c * +d.dataset.drift!).toFixed(1)}px)`; });
-    };
-    const onScroll = () => { if (!tick) { tick = true; requestAnimationFrame(run); } };
-    addEventListener('scroll', onScroll, { passive: true }); run();
-    return () => removeEventListener('scroll', onScroll);
+    if (reduced()) creative.current!.querySelectorAll('video').forEach(v => v.pause());
   }, []);
 
   // residences slider
@@ -290,10 +278,10 @@ export default function OnsiaHome() {
             <a href="#" className={`${s.more} ${s.rv}`}>View All</a>
           </div>
           <div className={s.shorts}>
-            {SHORTS.map((t, i) => {
+            {SHORTS.map((t) => {
               const m = SHORT_MEDIA[t];
               return (
-                <a key={t} href="#" className={`${s.short} ${s.rv}`} data-drift={DRIFT[i]}>
+                <a key={t} href="#" className={`${s.short} ${s.rv}`}>
                   <div className={s.frame}>
                     {m
                       ? <video src={`/media/home/creative/${m}.mp4`} poster={`/media/home/creative/${m}.jpg`} autoPlay muted loop playsInline preload="metadata" aria-hidden="true"></video>
