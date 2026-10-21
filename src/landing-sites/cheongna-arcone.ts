@@ -197,5 +197,5 @@ export const CHEONGNA_ARCONE: TplSiteConfig = {
 
   // ponytail: 마케팅 baseline — 오너가 정할 값(화서역과 동일 임시값).
   reserveBaseline: 100,
-  flags: { fraudGate: false, liveRequests: true, eventPopup: true, reserveCounter: true },
+  flags: { fraudGate: true, liveRequests: true, eventPopup: true, reserveCounter: true },
 }

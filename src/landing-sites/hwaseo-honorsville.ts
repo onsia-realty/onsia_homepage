@@ -233,5 +233,5 @@ export const HWASEO_HONORSVILLE: TplSiteConfig = {
 
   // ponytail: 마케팅 baseline — 오너가 정할 값. 0이면 "총 0명"으로 보여 임시 100으로 둠.
   reserveBaseline: 100,
-  flags: { fraudGate: false, liveRequests: true, eventPopup: true, reserveCounter: true },
+  flags: { fraudGate: true, liveRequests: true, eventPopup: true, reserveCounter: true },
 }
