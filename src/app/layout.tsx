@@ -178,7 +178,7 @@ export default function RootLayout({
       >
 {process.env.NODE_ENV === 'production' && (
           <DynamicTracker
-            apiEndpoint={process.env.NEXT_PUBLIC_TRACKER_API || 'https://tracker-1jtn6j9qy-realtors77-7871s-projects.vercel.app/api/analytics'}
+            apiEndpoint={process.env.NEXT_PUBLIC_TRACKER_API || 'https://tracker-two-brown.vercel.app/api/analytics'}
           />
         )}
         <SessionProvider>

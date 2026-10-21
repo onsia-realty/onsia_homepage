@@ -2,6 +2,7 @@
 
 import { usePathname } from 'next/navigation';
 import AnalyticsTracker from './AnalyticsTracker';
+import { isLandingContext } from '@/lib/landing-slugs';
 
 /** 경로 → siteSlug 매핑 */
 const SLUG_MAP: Record<string, string> = {
@@ -22,6 +23,9 @@ interface DynamicTrackerProps {
 export default function DynamicTracker({ apiEndpoint }: DynamicTrackerProps) {
   const pathname = usePathname();
   const siteSlug = getSiteSlug(pathname);
+
+  // 랜딩은 FraudGate가 현장 slug로 추적 → 중복 세션 방지
+  if (typeof window !== 'undefined' && isLandingContext(window.location.host, pathname)) return null;
 
   return (
     <AnalyticsTracker
