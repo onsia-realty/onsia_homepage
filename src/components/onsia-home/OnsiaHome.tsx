@@ -75,10 +75,10 @@ export default function OnsiaHome() {
     const heroEl = hero.current!, v = vid.current!, pinEl = pin.current!;
     const hc = Array.from(copies.current!.children) as HTMLElement[], N = hc.length;
     const mobile = () => matchMedia('(hover: none) and (pointer: coarse)').matches || innerWidth <= 860;
-    let target = 0, c = 0, ready = false, tick = false, raf = 0, url = '', alive = true;
-    const read = () => {
-      tick = false;
-      const p = reduce ? 0 : clamp(scrollY / (heroEl.offsetHeight - innerHeight)); target = p;
+    let target = 0, c = 0, ready = false, failed = false, tick = false, raf = 0, url = '', alive = true, shown = -1;
+    // 문구·레일은 영상의 실제 위치를 따라감 → 영상이 늦어도 장면 순서가 어긋나지 않음
+    const paint = (p: number) => {
+      if (Math.abs(p - shown) < 1e-4) return; shown = p;
       hc.forEach((el, i) => {
         const l = p * N - i, before = l < 0, after = l > 1; let op: number;
         if (i === 0) op = after ? 0 : smooth(1 - l / 0.7);
@@ -90,13 +90,20 @@ export default function OnsiaHome() {
       });
       hnum.current!.textContent = String(Math.min(N, Math.floor(p * N) + 1)).padStart(2, '0');
       hprog.current!.style.transform = `scaleY(${p})`;
+    };
+    const read = () => {
+      tick = false;
+      target = reduce ? 0 : clamp(scrollY / (heroEl.offsetHeight - innerHeight));
       cue.current!.style.opacity = String(clamp(1 - scrollY / (0.5 * innerHeight)));
+      // 영상 로드 전엔 첫 장면 유지, 로드 실패 시에만 스크롤 기준
+      if (!ready) paint(failed ? target : 0);
     };
     const loop = () => {
       if (ready && !v.seeking) {
         c += (target - c) * 0.08; const t = clamp(c, 0, .999) * (v.duration || 1);
         if (Math.abs(v.currentTime - t) > (mobile() ? 0.02 : 0.008)) { try { v.currentTime = t; } catch { /* not seekable yet */ } }
       }
+      if (ready) paint(clamp(v.currentTime / (v.duration || 1)));
       raf = requestAnimationFrame(loop);
     };
     const onScroll = () => { if (!tick) { tick = true; requestAnimationFrame(read); } };
@@ -105,12 +112,14 @@ export default function OnsiaHome() {
     const onMeta = () => { ready = true; read(); };
     const onSeeked = () => pinEl.classList.add(s.hasClip);
     if (!reduce) {
-      fetch('/media/home/hero.mp4').then(r => r.ok ? r.blob() : Promise.reject(new Error(String(r.status)))).then(b => {
+      // 세로 모바일은 화면에 보이는 가운데만 잘라낸 경량본(6MB)
+      const src = matchMedia('(max-width: 860px) and (orientation: portrait)').matches ? '/media/home/hero_m.mp4' : '/media/home/hero.mp4';
+      fetch(src).then(r => r.ok ? r.blob() : Promise.reject(new Error(String(r.status)))).then(b => {
         if (!alive) return;
         url = URL.createObjectURL(b); v.src = url;
         v.addEventListener('loadedmetadata', onMeta);
         v.addEventListener('seeked', onSeeked, { once: true });
-      }).catch(e => console.warn('hero.mp4 load failed', e));
+      }).catch(e => { failed = true; read(); console.warn('hero video load failed', e); });
       addEventListener('pointerdown', prime, { once: true, passive: true });
       addEventListener('touchstart', prime, { once: true, passive: true });
       addEventListener('scroll', onScroll, { passive: true });
@@ -147,9 +156,15 @@ export default function OnsiaHome() {
     return () => io.disconnect();
   }, []);
 
-  // AI 카드 영상: 모션 줄이기 설정이면 정지
+  // AI 카드 영상: 화면에 보일 때만 재생 (모션 줄이기면 포스터만)
   useEffect(() => {
-    if (reduced()) creative.current!.querySelectorAll('video').forEach(v => v.pause());
+    if (reduced()) return;
+    const io = new IntersectionObserver(es => es.forEach(e => {
+      const v = e.target as HTMLVideoElement;
+      if (e.isIntersecting) v.play().catch(() => {}); else v.pause();
+    }), { threshold: .25 });
+    creative.current!.querySelectorAll('video').forEach(v => io.observe(v));
+    return () => io.disconnect();
   }, []);
 
   // residences slider
@@ -211,7 +226,7 @@ export default function OnsiaHome() {
                 <div className={s.label}>{sc.label}</div>
                 <h1>{sc.h1}</h1>
                 {i === HERO_SCENES.length - 1 && (
-                  <div className={s.btns}><a href="#contact" className={s.btn}>현장 마케팅 문의</a><a href="#contact" className={s.btn}>제휴 문의</a></div>
+                  <div className={s.btns}><a href="tel:1668-5257" className={s.btn}>현장 마케팅 문의</a><a href="tel:1555-1245" className={s.btn}>제휴 문의</a></div>
                 )}
               </div>
             ))}
@@ -281,7 +296,7 @@ export default function OnsiaHome() {
                 <a key={t} href="#" className={`${s.short} ${s.rv}`}>
                   <div className={s.frame}>
                     {m
-                      ? <video src={`/media/home/creative/${m}.mp4`} poster={`/media/home/creative/${m}.jpg`} autoPlay muted loop playsInline preload="metadata" aria-hidden="true"></video>
+                      ? <video src={`/media/home/creative/${m}.mp4`} poster={`/media/home/creative/${m}.jpg`} muted loop playsInline preload="none" aria-hidden="true"></video>
                       : <i className={s.play}></i>}
                   </div>
                   <div className={s.cap}><small>AI Shorts</small><h4>{t}</h4></div>
@@ -361,8 +376,8 @@ export default function OnsiaHome() {
           <div className={`${s.label} ${s.rv}`}>Contact</div>
           <h2 className={s.rv}>다음 현장의 성공을<br />함께 설계합니다</h2>
           <div className={`${s.btns} ${s.rv}`}>
-            <a href="#" className={s.btn}>현장 마케팅 문의</a>
-            <a href="#" className={s.btn}>제휴 문의</a>
+            <a href="tel:1668-5257" className={s.btn}>현장 마케팅 문의</a>
+            <a href="tel:1555-1245" className={s.btn}>제휴 문의</a>
           </div>
         </div>
       </section>
