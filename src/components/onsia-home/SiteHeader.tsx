@@ -22,6 +22,7 @@ const NAV = [
   ['#creative', 'Creative'],
   ['#residences', 'Residences'],
   ['#pr', 'PR Center'],
+  ['/lms', '타겟 LMS'],
   ['/subscriptions', '청약 일정'],
   ['#contact', 'Contact'],
 ] as const;

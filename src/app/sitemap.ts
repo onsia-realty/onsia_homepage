@@ -99,6 +99,13 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       changeFrequency: 'monthly',
       priority: 0.7,
     },
+    // 타겟 LMS 문자광고
+    {
+      url: `${baseUrl}/lms`,
+      lastModified: new Date(),
+      changeFrequency: 'monthly',
+      priority: 0.8,
+    },
     // 분양 홈페이지 목록
     {
       url: `${baseUrl}/homepage`,

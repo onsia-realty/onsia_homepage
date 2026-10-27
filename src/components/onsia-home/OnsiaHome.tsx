@@ -2,6 +2,7 @@
 
 // Ported from public/preview/main.html (approved mockup). Markup/CSS/behaviour kept 1:1.
 import { useEffect, useRef, type CSSProperties } from 'react';
+import Link from 'next/link';
 import s from './OnsiaHome.module.css';
 import SiteHeader, { cormorant } from './SiteHeader';
 import SiteFooter from './SiteFooter';
@@ -25,6 +26,9 @@ const BIZ = [
 const SHORTS = ['한강을 마주한 저녁', '압구정, 새로운 기준', '숲과 강 사이의 집', '여의도 스카이라인'];
 // 제작 완료된 카드만 영상 연결 (/media/home/creative/{name}.mp4 + .jpg)
 const SHORT_MEDIA: Record<string, string> = { '한강을 마주한 저녁': 'banpo', '압구정, 새로운 기준': 'apgujeong', '숲과 강 사이의 집': 'sylva', '여의도 스카이라인': 'yeouido' };
+
+// 타겟 LMS 소개 영상: 제작 후 경로만 넣으면 됨 (예: '/media/home/lms.mp4'). 비어 있으면 자리 표시
+const LMS_VIDEO = '/media/home/lms.mp4';
 
 const NUMS: [number, string, string][] = [
   [120, '+', '진행 현장'],
@@ -163,7 +167,7 @@ export default function OnsiaHome() {
       const v = e.target as HTMLVideoElement;
       if (e.isIntersecting) v.play().catch(() => {}); else v.pause();
     }), { threshold: .25 });
-    creative.current!.querySelectorAll('video').forEach(v => io.observe(v));
+    root.current!.querySelectorAll('#creative video, #lms video').forEach(v => io.observe(v));
     return () => io.disconnect();
   }, []);
 
@@ -307,16 +311,20 @@ export default function OnsiaHome() {
         </div>
       </section>
 
-      {/* 5. NUMBERS */}
-      <section className={s.sec}>
-        <div className={s.wrap}>
-          <div className={`${s.label} ${s.rv}`}>ONSIA in Numbers</div>
-          {/* TODO 실제 수치로 교체 */}
-          <div className={s.nums}>
-            {NUMS.map(([to, sup, t]) => (
-              <div key={t} className={s.rv}><b><span data-to={to}>0</span><sup>{sup}</sup></b><span>{t}</span></div>
-            ))}
+      {/* 5. TARGET LMS — 소개 영상(제작 예정) + /lms 연결 */}
+      <section className={s.sec} id="lms">
+        <div className={`${s.wrap} ${s.lms}`}>
+          <div className={s.rv}>
+            <div className={s.label}>Target LMS</div>
+            <h2>수신동의 2,000만 명 중,<br />우리 현장 고객에게만</h2>
+            <p>통신사·카드사·포인트사에서 광고 수신에 동의한 고객 데이터로 타겟을 골라, 현장 이미지가 담긴 LMS를 보냅니다.</p>
+            <Link href="/lms" className={s.btn}>타겟 LMS 자세히 보기</Link>
           </div>
+          <Link href="/lms" className={`${s.lmsFrame} ${s.rv}`} aria-label="타겟 LMS 자세히 보기">
+            {LMS_VIDEO
+              ? <video src={LMS_VIDEO} poster="/media/home/lms_poster.jpg" muted loop playsInline preload="none" aria-hidden="true"></video>
+              : <i className={s.play}></i>}
+          </Link>
         </div>
       </section>
 
@@ -370,7 +378,20 @@ export default function OnsiaHome() {
         </div>
       </section>
 
-      {/* 9. CONTACT */}
+      {/* 9. NUMBERS */}
+      <section className={s.sec}>
+        <div className={s.wrap}>
+          <div className={`${s.label} ${s.rv}`}>ONSIA in Numbers</div>
+          {/* TODO 실제 수치로 교체 */}
+          <div className={s.nums}>
+            {NUMS.map(([to, sup, t]) => (
+              <div key={t} className={s.rv}><b><span data-to={to}>0</span><sup>{sup}</sup></b><span>{t}</span></div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* 10. CONTACT */}
       <section className={`${s.sec} ${s.cta}`} id="contact">
         <div className={s.wrap}>
           <div className={`${s.label} ${s.rv}`}>Contact</div>
