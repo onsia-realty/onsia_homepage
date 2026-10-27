@@ -42,7 +42,7 @@ const MEDIA: [string, [string, string][]][] = [
 
 // [매체, 현장, 이미지, 타겟 조건, 발송(모수) 건수, 계약 건수] — 계약 건수가 비면 집행 대기
 const CASES = [
-  ['통신사', '화서역 호수공원 아너스빌', '/uploads/landing/hwaseo-honorsville/hero.jpg', '1년 내 분양 대표번호 송수신 이력', '13만', '42'],
+  ['통신사', '북오산 자이 드포레', '/uploads/landing/bukosan-xi-deforet/hero.jpg', '1년 내 분양 대표번호 송수신 이력', '13만', '42'],
   ['카드사', '오산헤리티지자이', '/uploads/landing/osan-heritage-xi/hero.jpg', '월 카드소비 80만원 이상', '27만', '130'],
   ['통신사', '청라 아크원 푸르지오', '/uploads/landing/cheongna-arcone/hero.jpg', '현장 반경 거주 + 부동산 앱 사용', '15만', ''],
 ];
