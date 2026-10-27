@@ -137,6 +137,7 @@
 .lms{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:clamp(40px,5vw,96px);align-items:center}
 .lms h2{font-family:var(--kr);font-weight:200;font-size:clamp(28px,3vw,46px);line-height:1.3;letter-spacing:-.01em;margin-top:28px}
 .lms p{margin:28px 0 48px;color:#bdb9b0;font-size:clamp(14px,1.15vw,17px);line-height:1.85;max-width:460px}
+.lmsStack{display:flex;flex-direction:column;gap:clamp(16px,2vw,28px)}
 .lmsFrame{position:relative;display:block;aspect-ratio:16/9;border:1px solid var(--ln);overflow:hidden;transition:border-color .5s;background:radial-gradient(circle at 50% 50%,rgba(200,169,106,.14) 0%,transparent 60%),linear-gradient(180deg,#1b1915 0%,#101010 60%,#0b0b0b 100%)}
 .lmsFrame::before{content:"";position:absolute;inset:0;background:repeating-linear-gradient(90deg,transparent 0 47px,rgba(255,255,255,.025) 47px 48px),repeating-linear-gradient(0deg,transparent 0 47px,rgba(255,255,255,.025) 47px 48px)}
 .lmsFrame video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}

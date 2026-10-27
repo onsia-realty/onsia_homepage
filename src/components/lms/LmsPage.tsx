@@ -16,9 +16,6 @@ const STEPS = [
 const CHIPS = ['경기 남부 거주', '35~59세', '무주택 · 가구형태', '1년 내 분양 대표번호 수신 이력', '월 카드소비 80만원 이상'];
 // 모수 감소 경로: 필터 진행도에 맞춰 인접 값 사이를 로그 보간
 const AUDIENCE = [20_000_000, 3_200_000, 640_000, 120_000, 30_000];
-// 12×8 점. rank = i*53 mod 96 (0~95 순열) → 필터가 진행될수록 rank 낮은 점부터 사라지고 KEEP 이상(8개)만 남음
-const DOTS = Array.from({ length: 96 }, (_, i) => (i * 53) % 96);
-const KEEP = 88;
 
 // 스텝 03 예시 문자 2통: [매체 · 시각, 이미지, 제목, 본문]
 const MSGS = [
@@ -43,11 +40,11 @@ const MEDIA: [string, [string, string][]][] = [
   ['기타', [['tmap', 'TMAP'], ['nice', 'NICE평가정보'], ['zigbang', '직방'], ['hogangnono', '호갱노노'], ['kakaopay', '카카오페이']]],
 ];
 
-// [매체, 타겟 조건, 설명]
+// [매체, 현장, 이미지, 타겟 조건, 발송(모수) 건수, 계약 건수] — 계약 건수가 비면 집행 대기
 const CASES = [
-  ['통신사', '1년 내 분양 대표번호 송수신 이력', '최근 1년 사이 분양 현장 대표번호와 통화한 고객. 지금 집을 알아보는 사람에게 바로 닿습니다.'],
-  ['카드사', '월 카드소비 80만원 이상', '소비 여력이 확인된 고객만 골라, 상품 가격대에 맞는 수요층에 보냅니다.'],
-  ['통신사', '현장 반경 거주 + 부동산 앱 사용', '현장 인근에 살면서 부동산 앱을 쓰는 고객. 갈아타기·실거주 수요를 겨냥합니다.'],
+  ['통신사', '화서역 호수공원 아너스빌', '/uploads/landing/hwaseo-honorsville/hero.jpg', '1년 내 분양 대표번호 송수신 이력', '13만', '42'],
+  ['카드사', '오산헤리티지자이', '/uploads/landing/osan-heritage-xi/hero.jpg', '월 카드소비 80만원 이상', '27만', '130'],
+  ['통신사', '청라 아크원 푸르지오', '/uploads/landing/cheongna-arcone/hero.jpg', '현장 반경 거주 + 부동산 앱 사용', '15만', ''],
 ];
 
 const PROC = [
@@ -72,7 +69,6 @@ export default function LmsPage() {
   const root = useRef<HTMLDivElement>(null);
   const story = useRef<HTMLElement>(null);
   const cnt = useRef<HTMLElement>(null);
-  const dots = useRef<HTMLDivElement>(null);
   const chips = useRef<HTMLDivElement>(null);
   const thread = useRef<HTMLDivElement>(null);
   const flow = useRef<HTMLDivElement>(null);
@@ -83,7 +79,6 @@ export default function LmsPage() {
   useEffect(() => {
     const st = story.current!;
     const steps = Array.from(st.querySelectorAll<HTMLElement>(`.${s.step}`)), N = steps.length;
-    const ds = Array.from(dots.current!.children) as HTMLElement[];
     const cs = Array.from(chips.current!.children) as HTMLElement[];
     const fs = Array.from(flow.current!.children) as HTMLElement[];
     const nums = Array.from(ind.current!.querySelectorAll('span'));
@@ -98,7 +93,6 @@ export default function LmsPage() {
         const x = f * (AUDIENCE.length - 1), k = Math.min(AUDIENCE.length - 2, Math.floor(x));
         const v = AUDIENCE[k] * Math.pow(AUDIENCE[k + 1] / AUDIENCE[k], x - k);
         cnt.current!.textContent = (Math.round(v / 1000) * 1000).toLocaleString('ko-KR');
-        ds.forEach((d, i) => { d.style.opacity = DOTS[i] >= KEEP ? '1' : String(smooth((DOTS[i] / 96 - f * 0.97) / 0.05 + 1)); });
       },
       (l: number) => {
         // 1통 도착(0.08~0.3) → 스레드 위로 → 2통 도착(0.46~0.68)
@@ -154,18 +148,12 @@ export default function LmsPage() {
     return () => io.disconnect();
   }, []);
 
-  const dotGrid = (ref?: typeof dots) => (
-    <div ref={ref} className={s.dots} aria-hidden="true">
-      {DOTS.map((r, i) => <i key={i} className={ref && r >= KEEP ? s.keep : undefined}></i>)}
-    </div>
-  );
-
   // 스텝별 우측 비주얼
   const VIS = [
     <video key="db" className={s.film} src="/media/home/lms.mp4" poster="/media/home/lms_poster.jpg" autoPlay muted loop playsInline aria-hidden="true"></video>,
     <Fragment key="target">
       <div className={s.cnt}><b ref={cnt}>20,000,000</b><small>Target Audience</small></div>
-      {dotGrid(dots)}
+      <video className={s.clip} src="/media/home/lms2.mp4" poster="/media/home/lms2_poster.jpg" autoPlay muted loop playsInline aria-hidden="true"></video>
       <div ref={chips} className={s.chips}>{CHIPS.map(c => <span key={c}>{c}</span>)}</div>
     </Fragment>,
     <div key="msg" className={s.phoneWrap} aria-hidden="true">
@@ -276,11 +264,16 @@ export default function LmsPage() {
             <div className={s.rv}><div className={s.label}>Cases</div><h2>분양 집행 예시</h2></div>
           </div>
           <div className={s.cases}>
-            {CASES.map(([m, t, d], i) => (
-              <div key={t} className={s.rv}>
+            {CASES.map(([m, site, img, t, sent, won], i) => (
+              <div key={site} className={s.rv}>
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src={img} alt={site} loading="lazy" />
                 <small>Case {String(i + 1).padStart(2, '0')} &middot; {m}</small>
-                <h3>{t}</h3>
-                <p>{d}</p>
+                <h3>{site}</h3>
+                <p>{t}</p>
+                <p className={s.stat}>{won
+                  ? <>타겟 <b>{sent}</b>건 발송 &middot; 계약 <b>{won}</b>건</>
+                  : <>타겟 <b>{sent}</b>건 모수 확보 &middot; 집행 대기</>}</p>
               </div>
             ))}
           </div>

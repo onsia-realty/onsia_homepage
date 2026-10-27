@@ -320,11 +320,16 @@ export default function OnsiaHome() {
             <p>통신사·카드사·포인트사에서 광고 수신에 동의한 고객 데이터로 타겟을 골라, 현장 이미지가 담긴 LMS를 보냅니다.</p>
             <Link href="/lms" className={s.btn}>타겟 LMS 자세히 보기</Link>
           </div>
-          <Link href="/lms" className={`${s.lmsFrame} ${s.rv}`} aria-label="타겟 LMS 자세히 보기">
-            {LMS_VIDEO
-              ? <video src={LMS_VIDEO} poster="/media/home/lms_poster.jpg" muted loop playsInline preload="none" aria-hidden="true"></video>
-              : <i className={s.play}></i>}
-          </Link>
+          <div className={s.lmsStack}>
+            <Link href="/lms" className={`${s.lmsFrame} ${s.rv}`} aria-label="타겟 LMS 자세히 보기">
+              {LMS_VIDEO
+                ? <video src={LMS_VIDEO} poster="/media/home/lms_poster.jpg" muted loop playsInline preload="none" aria-hidden="true"></video>
+                : <i className={s.play}></i>}
+            </Link>
+            <Link href="/lms" className={`${s.lmsFrame} ${s.rv}`} aria-label="타겟 LMS 자세히 보기">
+              <video src="/media/home/lms2.mp4" poster="/media/home/lms2_poster.jpg" muted loop playsInline preload="none" aria-hidden="true"></video>
+            </Link>
+          </div>
         </div>
       </section>
 
