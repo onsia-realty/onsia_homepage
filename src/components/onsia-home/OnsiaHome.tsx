@@ -27,6 +27,9 @@ const SHORTS = ['한강을 마주한 저녁', '압구정, 새로운 기준', '�
 // 제작 완료된 카드만 영상 연결 (/media/home/creative/{name}.mp4 + .jpg)
 const SHORT_MEDIA: Record<string, string> = { '한강을 마주한 저녁': 'banpo', '압구정, 새로운 기준': 'apgujeong', '숲과 강 사이의 집': 'sylva', '여의도 스카이라인': 'yeouido' };
 
+// 쇼츠·릴스 4칸: [제목, 파일명] — 파일명은 /media/home/reels/{name}.mp4 + .jpg, 비어 있으면 자리 표시
+const REELS: [string, string][] = [['야목역 서희스타힐스', 'yamok'], ['', ''], ['', ''], ['', '']];
+
 // 타겟 LMS 소개 영상: 제작 후 경로만 넣으면 됨 (예: '/media/home/lms.mp4'). 비어 있으면 자리 표시
 const LMS_VIDEO = '/media/home/lms.mp4';
 
@@ -167,7 +170,7 @@ export default function OnsiaHome() {
       const v = e.target as HTMLVideoElement;
       if (e.isIntersecting) v.play().catch(() => {}); else v.pause();
     }), { threshold: .25 });
-    root.current!.querySelectorAll('#creative video, #lms video').forEach(v => io.observe(v));
+    root.current!.querySelectorAll('#creative video, #lms video, #reels video').forEach(v => io.observe(v));
     return () => io.disconnect();
   }, []);
 
@@ -361,12 +364,24 @@ export default function OnsiaHome() {
         </div>
       </section>
 
-      {/* 7. TECHNOLOGY */}
-      <section className={`${s.sec} ${s.tech}`}>
+      {/* 7. SHORTS · REELS — 특허 소개는 회사 소개 페이지로 이동 예정 */}
+      <section className={s.sec} id="reels">
         <div className={s.wrap}>
-          <div className={`${s.label} ${s.rv}`}>Technology</div><br />
-          <div className={`${s.patent} ${s.rv}`}>PATENT</div>
-          <p className={s.rv}>블록체인 기반 부동산 거래 정보 검증 기술 특허 보유</p>
+          <div className={s.head}>
+            <div className={s.rv}><div className={s.label}>Shorts · Reels · Promotion</div><h2>분양 현장을 움직이는<br />쇼츠·릴스·홍보영상</h2></div>
+          </div>
+          <div className={`${s.shorts} ${s.reels}`}>
+            {REELS.map(([t, m], i) => (
+              <a key={i} href="#" className={`${s.short} ${s.rv}`}>
+                <div className={s.frame}>
+                  {m
+                    ? <video src={`/media/home/reels/${m}.mp4`} poster={`/media/home/reels/${m}.jpg`} muted loop playsInline preload="none" aria-hidden="true"></video>
+                    : <i className={s.play}></i>}
+                </div>
+                <div className={s.cap}><small>Shorts</small><h4>{t}</h4></div>
+              </a>
+            ))}
+          </div>
         </div>
       </section>
 
